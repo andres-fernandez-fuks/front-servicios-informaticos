@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+Dockerfile
+.dockerignore
+/build
+/node_modules
+package-lock.json
+/build
+.vscode
+.eslintcache
