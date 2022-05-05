@@ -3,7 +3,6 @@
   "version": "1.2.0",
   "private": true,
   "homepage": "https://demos.creative-tim.com/black-dashboard-react/#/admin/dashboard",
-  "engines": {"node": "16.x","npm": "8.x" },
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@fortawesome/fontawesome-free": "5.15.1",
