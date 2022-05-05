@@ -50,8 +50,12 @@ export default function CustomDataTable(props) {
         }
       });
       
+      
       var new_columns = Object.entries(props.columns).map(([key, value]) => {
+        var has_chip = value.name === 'priority' || value.name === 'status';
+        if (has_chip) {
         return {
+            
             name: value.name,
             label: value.label,
             options: {
@@ -63,7 +67,27 @@ export default function CustomDataTable(props) {
                 setCellProps: () => ({
                     style: { whiteSpace: "nowrap", textAlign:"left"},
                 }),
-                customBodyRender: priority => <Chip color="primary" style={{backgroundColor:{getBacgroundColor}}} label={priority} size="small" />
+                customBodyRender: priority => <Chip color="primary" style={{backgroundColor: 'green'}} label={priority} size="small" />
+            
+            }
+        }
+        }
+        else {
+            return {
+            
+                name: value.name,
+                label: value.label,
+                options: {
+                    filter: true,
+                    sort: true,
+                    setCellHeaderProps: () => ({
+                        style: { fontWeight: "bold", whiteSpace: "nowrap", justifyContent: "center"},
+                    }),
+                    setCellProps: () => ({
+                        style: { whiteSpace: "nowrap", textAlign:"left"},
+                    })
+                
+                }
             }
         }
     }
@@ -88,7 +112,7 @@ function priorities_sort(a, b) {
     return a_index < b_index;
 }
 
-function getBacgroundColor(priority) {
+function getBackgroundColor(priority) {
     const PRIORITIES = ["Muy Alta", "Alta", "Media", "Baja", "Muy Baja"];
     var index = PRIORITIES.indexOf(priority);
     switch (index) {
