@@ -17,7 +17,7 @@
 */
 import React, {useState, useEffect} from "react";
 import classNames from "classnames";
-import {CustomDataTable} from "../components/Table/DynamicTable.js";
+import CustomDataTable from "../components/Table/DynamicTable.js";
 import useStyles from "../styles";
 import {dbGet} from "../utils/backendFetchers";
 
@@ -40,11 +40,21 @@ const tableData = [
 
 const incidentColumns = [
     {"name": "id", "label": "id"},
-    {"name": "title", "label": "Título"},
     {"name": "description", "label": "Descripción"},
-    {"name": "created_at", "label": "Reportado el"}
+    {"name": "created_by", "label": "Creado por"},
+    {"name": "created_at", "label": "Reportado el"},
+    {"name": "priority", "label": "Prioridad"},
+    {"name": "status", "label": "Estado"},
 ]
 
+const incidentColumns2 = [
+    {"id": "id"},
+    {"description": "Descripción"},
+    {"created_by": "Creado por"},
+    {"created_at": "Reportado el"},
+    {"priority": "Prioridad"},
+    {"status": "Estado"},
+]
 
 
 
