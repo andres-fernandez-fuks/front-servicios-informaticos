@@ -16,3 +16,4 @@ jobs:
           heroku_app_name: ${{secrets.HEROKU_APP}} #Must be unique in Heroku
           heroku_email: ${{secrets.HEROKU_MAIL}}
           usedocker: true
+          stack: "container"
