@@ -1,11 +1,19 @@
 version: "3"
 
 services:
-  app:
+  appdev:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - ./src:/app/src
     ports:
       - "3000:3000"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "80:80"

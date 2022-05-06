@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: mv Dockerfile.dev Dockerfile #Preparo la Dockerfile para que funcione con la accion
       - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -17,3 +18,4 @@ jobs:
           heroku_email: ${{secrets.HEROKU_MAIL}}
           usedocker: true
           stack: "container"
+        
