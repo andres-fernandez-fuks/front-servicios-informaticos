@@ -21,7 +21,7 @@ jobs:
           usedocker: true
           stack: "container"
 
-  deploy-staging:
+  deploy-production:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/production'
     steps:
