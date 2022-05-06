@@ -10,8 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        run: mv Dockerfile.dev Dockerfile #Preparo la Dockerfile para que funcione con la accion
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+      - name: Preparo la Dockerfile para que funcione con la accion
+        run: mv Dockerfile.dev Dockerfile 
+      - uses: akhileshns/heroku-deploy@v3.12.12 # Deploy a heroku action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP}} #Must be unique in Heroku
