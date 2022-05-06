@@ -3,6 +3,19 @@ import MUIDataTable from "mui-datatables";
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import Chip from "@material-ui/core/Chip";
 
+function choosePriorityColor(priority) {
+    switch(priority) {
+        case "Muy alta": return "#9F0606";
+        case "Pendiente": return "#9F0606";
+        case "Alta": return "#E86C36";
+        case "Media": return "#E86C36";
+        case "En proceso": return "#9B5F45";
+        case "Baja": return "#9B5F45";
+        case "Muy baja": return "#6F975C";
+        case "Resuelto": return "#6F975C";
+        default: return "red"
+    }
+}
 
 export default function CustomDataTable(props) {
 
@@ -24,6 +37,7 @@ export default function CustomDataTable(props) {
           root: {
             height: 15,
             whiteSpace: "nowrap",
+            borderBottom: "none"
           },
         },
         MUIDataTableToolbar: {
@@ -60,14 +74,14 @@ export default function CustomDataTable(props) {
             label: value.label,
             options: {
                 filter: true,
-                sort: true,
+                sort: false,
                 setCellHeaderProps: () => ({
                     style: { fontWeight: "bold", whiteSpace: "nowrap", justifyContent: "center"},
                 }),
                 setCellProps: () => ({
-                    style: { whiteSpace: "nowrap", textAlign:"left"},
+                    style: { whiteSpace: "nowrap", textAlign:"center"},
                 }),
-                customBodyRender: priority => <Chip color="primary" style={{backgroundColor: 'green'}} label={priority} size="small" />
+                customBodyRender: priority => <Chip color="primary" style={{backgroundColor: choosePriorityColor(priority) }} label={priority} size="small" />
             
             }
         }
@@ -95,11 +109,17 @@ export default function CustomDataTable(props) {
 
     console.log(new_columns);
 
+    const table_options = {
+        filterType: 'dropdown',
+        selectableRows: false
+      };
+
     return (
         <ThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
                 columns={new_columns}
                 data={props.data}
+                options={table_options}
             />
         </ThemeProvider>
     );
