@@ -2,12 +2,14 @@ name: Deploy
 
 on:
   push:
+  pull_request:
     branches:
-      - staging
+      - [staging, production]
 
 jobs:
-  build:
+  deploy-staging:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
     steps:
       - uses: actions/checkout@v2
       - name: Preparo la Dockerfile para que funcione con la accion
@@ -16,6 +18,21 @@ jobs:
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP}} #Must be unique in Heroku
+          heroku_email: ${{secrets.HEROKU_MAIL}}
+          usedocker: true
+          stack: "container"
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/production'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Preparo la Dockerfile para que funcione con la accion
+        run: mv Dockerfile.prod Dockerfile 
+      - uses: akhileshns/heroku-deploy@v3.12.12 # Deploy a heroku action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_PROD}} 
           heroku_email: ${{secrets.HEROKU_MAIL}}
           usedocker: true
           stack: "container"
