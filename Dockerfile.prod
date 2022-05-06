@@ -11,4 +11,4 @@ RUN yarn build
 RUN yarn global add serve
 WORKDIR /app/build
 #Start the application
-CMD serve -p 80 -s . 
+CMD serve -p 8081 -s . 
