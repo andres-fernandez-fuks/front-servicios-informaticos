@@ -2,9 +2,9 @@ name: Deploy
 
 on:
   push:
-    branches: [ staging, production ]
+    branches: [ staging, main ]
   pull_request:
-    branches: [ staging, production ]
+    branches: [ staging, main ]
 
 jobs:
   deploy-staging:
@@ -24,7 +24,7 @@ jobs:
 
   deploy-production:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/production'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
       - name: Preparo la Dockerfile para que funcione con la accion
