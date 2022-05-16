@@ -34,9 +34,7 @@ import {
 } from "reactstrap";
 // import { Component } from "react/cjs/react.development";
 
-const tableData = [
-    {'id': 1, 'Nombre': 100, 'Prioridad': 'Alta', 'Estado': 'Resuelto', 'Creado por': 'mail@fi.uba.ar', 'Tomado por': 'mail@fi.uba.ar'}
-];
+const tableData = [];
 
 const incidentColumns = [
     {"name": "id", "label": "id"},
@@ -46,16 +44,6 @@ const incidentColumns = [
     {"name": "priority", "label": "Prioridad"},
     {"name": "status", "label": "Estado"},
 ]
-
-const incidentColumns2 = [
-    {"id": "id"},
-    {"description": "Descripción"},
-    {"created_by": "Creado por"},
-    {"created_at": "Reportado el"},
-    {"priority": "Prioridad"},
-    {"status": "Estado"},
-]
-
 
 
 function IncidentsTable() {

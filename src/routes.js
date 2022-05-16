@@ -18,9 +18,11 @@
 import Dashboard from "views/Dashboard.js";
 import Items from "views/Items.js";
 import IncidentsTable from "views/Incidents.js";
+import ItemsTable from "views/Items.js";
 import ProblemsTable from "views/Problems.js";
 import Rtl from "views/Rtl.js";
 import ChangesTable from "views/Changes.js";
+import ErrorsTable from "views/Errors.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
 
@@ -38,7 +40,7 @@ var routes = [
     name: "Items de configuración",
     rtlName: "الرموز",
     icon: "tim-icons icon-app",
-    component: Items,
+    component: ItemsTable,
     layout: "/admin",
   },
   {
@@ -66,11 +68,11 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/tables",
+    path: "/errors",
     name: "Errores",
     rtlName: "قائمة الجدول",
     icon: "tim-icons icon-alert-circle-exc",
-    component: ChangesTable,
+    component: ErrorsTable,
     layout: "/admin",
   },
   {

@@ -15,8 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, {useState, useEffect} from "react";
 import classNames from "classnames";
+import CustomDataTable from "../components/Table/DynamicTable.js";
+import useStyles from "../styles";
+import {dbGet} from "../utils/backendFetchers";
 
 // reactstrap components
 import {
@@ -26,22 +29,47 @@ import {
   CardHeader,
   CardBody,
   CardTitle,
-  Table,
   Row,
   Col,
 } from "reactstrap";
+// import { Component } from "react/cjs/react.development";
 
-function Items() {
-    const [bigChartData, setbigChartData] = React.useState("data1");
-    const setBgChartData = (name) => {
-    setbigChartData(name);
-    };
+const tableData = [];
+
+const hardwareItemColumns = [
+    {"name": "id", "label": "id"},
+    {"name": "name", "label": "Nombre"},
+    {"name": "Description", "label": "Descripción"},
+    {"name": "manufacturer", "label": "Proveedor"},
+    {"name": "serial_number", "label": "N° de serie"},
+]
+
+
+
+function ItemsTable() {
+    const [bigChartData, setbigChartData] = useState(tableData);
+    const [columns, setColumns] = useState(hardwareItemColumns);
+    const [category, setCategory] = useState("Hardware");
+    const classes = useStyles();
+    useEffect(() => {
+        dbGet("items").then(data => {
+            setbigChartData(data);
+            // setColumns(columns);
+        }).catch(err => {console.log(err)});
+    }   , []);
+    function fetchData(event, endpoint) {
+        const category = event.target.getAttribute("aria-label");
+        setCategory(category);
+        dbGet(endpoint).then(data => {
+            setbigChartData(data);
+        }).catch(err => {console.log(err)});
+    }
   return (
     <>
       <div className="content">
         <Row>
           <Col md="12">
-            <Card style={{paddingTop:5}}>
+            <Card className={classes.card} style={{paddingTop:5}}>
             <Col sm="12">
             <ButtonGroup
                 className="btn-group-toggle float-right"
@@ -50,15 +78,15 @@ function Items() {
                 <Button
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: bigChartData === "data1",
+                    active: category === "Hardware",
                 })}
                 color="info"
                 id="0"
                 size="sm"
-                onClick={() => setBgChartData("data1")}
+                onClick={(e) => fetchData(e, "/configuration-items/hardware")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                    Software
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Hardware">
+                Hardware
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-single-02" />
@@ -70,12 +98,12 @@ function Items() {
                 size="sm"
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: bigChartData === "data2",
+                    active: category === "Software",
                 })}
-                onClick={() => setBgChartData("data2")}
+                onClick={(e) => fetchData(e, "/configuration-items/software")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                    Hardware
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Software">
+                   Software
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
@@ -87,12 +115,12 @@ function Items() {
                 size="sm"
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: bigChartData === "data3",
+                    active: category === "SLA",
                 })}
-                onClick={() => setBgChartData("data3")}
+                onClick={(e) => fetchData(e, "/configuration-items/sla")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                    S.L.A.
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="SLA">
+                    SLA
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
@@ -101,127 +129,10 @@ function Items() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Items de Configuración</CardTitle>
+                <CardTitle tag="h4">Items</CardTitle>
               </CardHeader>
               <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-center">Salary</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
-                      <td>Oud-Turnhout</td>
-                      <td className="text-center">$36,738</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                      <td>Sinaai-Waas</td>
-                      <td className="text-center">$23,789</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                      <td>Baileux</td>
-                      <td className="text-center">$56,142</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                      <td>Overland Park</td>
-                      <td className="text-center">$38,735</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                      <td>Feldkirchen in Kärnten</td>
-                      <td className="text-center">$63,542</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$78,615</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$98,615</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">Table on Plain Background</CardTitle>
-                <p className="category">Here is a subtitle for this table</p>
-              </CardHeader>
-              <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-center">Salary</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
-                      <td>Oud-Turnhout</td>
-                      <td className="text-center">$36,738</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                      <td>Sinaai-Waas</td>
-                      <td className="text-center">$23,789</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                      <td>Baileux</td>
-                      <td className="text-center">$56,142</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                      <td>Overland Park</td>
-                      <td className="text-center">$38,735</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                      <td>Feldkirchen in Kärnten</td>
-                      <td className="text-center">$63,542</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$78,615</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$98,615</td>
-                    </tr>
-                  </tbody>
-                </Table>
+              <CustomDataTable data={bigChartData} columns={columns}/>
               </CardBody>
             </Card>
           </Col>
@@ -231,4 +142,5 @@ function Items() {
   );
 }
 
-export default Items;
+
+export default ItemsTable;

@@ -2,22 +2,27 @@ import React from "react";
 import MUIDataTable from "mui-datatables";
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import Chip from "@material-ui/core/Chip";
+import Tooltip from "@material-ui/core/Tooltip";
+import datatableTextLabels from "components/Table/textLabels";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
+import useStyles from "../../styles";
 
 function choosePriorityColor(priority) {
     switch(priority) {
-        case "Muy alta": return "#9F0606";
         case "Pendiente": return "#9F0606";
-        case "Alta": return "#E86C36";
+        case "Alta": return "#9F0606";
         case "Media": return "#E86C36";
-        case "En proceso": return "#9B5F45";
-        case "Baja": return "#9B5F45";
-        case "Muy baja": return "#6F975C";
+        case "En proceso": return "#E86C36";
+        case "Baja": return "#6F975C";
         case "Resuelto": return "#6F975C";
         default: return "red"
     }
 }
 
 export default function CustomDataTable(props) {
+
+    var classes = useStyles();
 
     const getMuiTheme = () => createTheme({
       overrides: {
@@ -31,6 +36,7 @@ export default function CustomDataTable(props) {
             display: "table-cell",
             verticalAlign: "middle",
             zIndex: 1,
+            borderBottom: "none"
           },
         },
         MUIDataTableBodyCell: {
@@ -63,10 +69,14 @@ export default function CustomDataTable(props) {
           }
         }
       });
+
+       
       
       
       var new_columns = Object.entries(props.columns).map(([key, value]) => {
         var has_chip = value.name === 'priority' || value.name === 'status';
+        console.log(value.name);
+        console.log(has_chip);
         if (has_chip) {
         return {
             
@@ -76,7 +86,7 @@ export default function CustomDataTable(props) {
                 filter: true,
                 sort: false,
                 setCellHeaderProps: () => ({
-                    style: { fontWeight: "bold", whiteSpace: "nowrap", justifyContent: "center"},
+                    style: {whiteSpace: "nowrap", justifyContent: "center"},
                 }),
                 setCellProps: () => ({
                     style: { whiteSpace: "nowrap", textAlign:"center"},
@@ -93,9 +103,9 @@ export default function CustomDataTable(props) {
                 label: value.label,
                 options: {
                     filter: true,
-                    sort: true,
+                    sort: !props.center_all_columns,
                     setCellHeaderProps: () => ({
-                        style: { fontWeight: "bold", whiteSpace: "nowrap", justifyContent: "center"},
+                        style: {whiteSpace: "nowrap", justifyContent: "center"},
                     }),
                     setCellProps: () => ({
                         style: { whiteSpace: "nowrap", textAlign:"left"},
@@ -107,11 +117,50 @@ export default function CustomDataTable(props) {
     }
     );
 
+    console.log("edit colum ", props.addEditColumn)
+    var add_edit_column = props.addEditColumn === false ? false:true 
+    if (add_edit_column) {
+        new_columns.push({
+            name: "Editar",
+            options: {
+            download: false,
+            filter: false,
+            sort: false,
+            setCellHeaderProps: () => {
+                return { style: {minWidth: 150, width: 150 } };
+            },
+            setCellProps: () => ({
+                style: { whiteSpace: "nowrap", textAlign:"center"},
+            }),
+            customBodyRender: (value, tableMeta, updateValue) => {
+                return (
+                <>
+                    <Tooltip title="Editar">
+                    <IconButton
+                    className={classes.onlyButtonSpacing}
+                        color="inherit"
+                        aria-label="upload picture"
+                        component="span"
+                        size="small"
+                    >
+                        <EditIcon />
+                    </IconButton>
+                    </Tooltip>
+                </>
+                );
+            },
+            },
+        });
+
+    }
+
     console.log(new_columns);
 
     const table_options = {
         filterType: 'dropdown',
-        selectableRows: false
+        selectableRows: false,
+        textLabels: datatableTextLabels(),
+        print: false
       };
 
     return (
