@@ -15,8 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, {useState, useEffect} from "react";
 import classNames from "classnames";
+import CustomDataTable from "../components/Table/DynamicTable.js";
+import useStyles from "../styles";
+import {dbGet} from "../utils/backendFetchers";
 
 // reactstrap components
 import {
@@ -26,22 +29,47 @@ import {
   CardHeader,
   CardBody,
   CardTitle,
-  Table,
   Row,
   Col,
 } from "reactstrap";
+// import { Component } from "react/cjs/react.development";
+
+const tableData = [];
+
+const changeColumns = [
+    {"name": "id", "label": "id"},
+    {"name": "description", "label": "Descripción"},
+    {"name": "created_by", "label": "Creado por"},
+    {"name": "created_at", "label": "Reportado el"},
+    {"name": "priority", "label": "Prioridad"},
+    {"name": "status", "label": "Estado"},
+]
+
 
 function ChangesTable() {
-    const [bigChartData, setbigChartData] = React.useState("data1");
-    const setBgChartData = (name) => {
-    setbigChartData(name);
-    };
+    const [bigChartData, setbigChartData] = useState(tableData);
+    const [columns, setColumns] = useState(changeColumns);
+    const [category, setCategory] = useState("Mis changeas");
+    const classes = useStyles();
+    useEffect(() => {
+        dbGet("changes").then(data => {
+            setbigChartData(data);
+            // setColumns(changeColumns);
+        }).catch(err => {console.log(err)});
+    }   , []);
+    function fetchData(event, endpoint) {
+        const category = event.target.getAttribute("aria-label");
+        setCategory(category);
+        dbGet(endpoint).then(data => {
+            setbigChartData(data);
+        }).catch(err => {console.log(err)});
+    }
   return (
     <>
       <div className="content">
         <Row>
           <Col md="12">
-            <Card style={{paddingTop:5}}>
+            <Card className={classes.card} style={{paddingTop:5}}>
             <Col sm="12">
             <ButtonGroup
                 className="btn-group-toggle float-right"
@@ -50,14 +78,14 @@ function ChangesTable() {
                 <Button
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: bigChartData === "data1",
+                    active: category === "Mis cambios",
                 })}
                 color="info"
                 id="0"
                 size="sm"
-                onClick={() => setBgChartData("data1")}
+                onClick={(e) => fetchData(e, "changes")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis cambios">
                     Mis cambios
                 </span>
                 <span className="d-block d-sm-none">
@@ -70,11 +98,11 @@ function ChangesTable() {
                 size="sm"
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: bigChartData === "data2",
+                    active: category === "No tomados",
                 })}
-                onClick={() => setBgChartData("data2")}
+                onClick={(e) => fetchData(e, "changes/not-assigned")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="No tomados">
                     No tomados
                 </span>
                 <span className="d-block d-sm-none">
@@ -87,11 +115,11 @@ function ChangesTable() {
                 size="sm"
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: bigChartData === "data3",
+                    active: category === "Tomados",
                 })}
-                onClick={() => setBgChartData("data3")}
+                onClick={(e) => fetchData(e, "changes/assigned")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Tomados">
                     Tomados
                 </span>
                 <span className="d-block d-sm-none">
@@ -104,11 +132,11 @@ function ChangesTable() {
                 size="sm"
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: bigChartData === "data4",
+                    active: category === "Resueltos",
                 })}
-                onClick={() => setBgChartData("data4")}
+                onClick={(e) => fetchData(e, "changes/solved")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Resueltos">
                     Resueltos
                 </span>
                 <span className="d-block d-sm-none">
@@ -118,127 +146,10 @@ function ChangesTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Cambios</CardTitle>
+                <CardTitle tag="h4">Problemas</CardTitle>
               </CardHeader>
               <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-center">Salary</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
-                      <td>Oud-Turnhout</td>
-                      <td className="text-center">$36,738</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                      <td>Sinaai-Waas</td>
-                      <td className="text-center">$23,789</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                      <td>Baileux</td>
-                      <td className="text-center">$56,142</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                      <td>Overland Park</td>
-                      <td className="text-center">$38,735</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                      <td>Feldkirchen in Kärnten</td>
-                      <td className="text-center">$63,542</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$78,615</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$98,615</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col md="12">
-            <Card className="card-plain">
-              <CardHeader>
-                <CardTitle tag="h4">Table on Plain Background</CardTitle>
-                <p className="category">Here is a subtitle for this table</p>
-              </CardHeader>
-              <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-center">Salary</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
-                      <td>Oud-Turnhout</td>
-                      <td className="text-center">$36,738</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                      <td>Sinaai-Waas</td>
-                      <td className="text-center">$23,789</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                      <td>Baileux</td>
-                      <td className="text-center">$56,142</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                      <td>Overland Park</td>
-                      <td className="text-center">$38,735</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                      <td>Feldkirchen in Kärnten</td>
-                      <td className="text-center">$63,542</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$78,615</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$98,615</td>
-                    </tr>
-                  </tbody>
-                </Table>
+              <CustomDataTable data={bigChartData} columns={columns}/>
               </CardBody>
             </Card>
           </Col>
@@ -247,5 +158,6 @@ function ChangesTable() {
     </>
   );
 }
+
 
 export default ChangesTable;
