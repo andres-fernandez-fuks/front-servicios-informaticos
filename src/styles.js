@@ -149,5 +149,5 @@ export default makeStyles((theme) => ({
     alignSelf: "center",
     marginTop: "1%",
     height: 40,
-  },
+  }
 }));

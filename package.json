@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
     "@fortawesome/fontawesome-free": "5.15.1",
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.19",
@@ -22,6 +23,7 @@
     "devextreme": "21.2.7",
     "devextreme-quill": "1.5.14",
     "devextreme-react": "21.2.7",
+    "final-form": "^4.20.7",
     "material-table": "1.69.3",
     "material-ui-search-bar": "^1.0.0",
     "mui-datatables": "^3.7.4",
@@ -32,6 +34,7 @@
     "react": "17.0.1",
     "react-chartjs-2": "2.11.1",
     "react-dom": "17.0.1",
+    "react-final-form": "^6.5.9",
     "react-notification-alert": "0.0.13",
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.1",
