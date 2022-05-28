@@ -135,7 +135,7 @@ function RTL(props) {
                 }}
                 toggleSidebar={toggleSidebar}
               />
-              <div className="main-panel" ref={mainPanelRef} data={color}>
+              <div className="main-panel" data={color}>
                 <RTLNavbar
                   brandText={getBrandText(location.pathname)}
                   toggleSidebar={toggleSidebar}

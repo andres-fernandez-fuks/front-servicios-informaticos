@@ -7,6 +7,7 @@ import datatableTextLabels from "components/Table/textLabels";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import useStyles from "../../styles";
+import { NavLink, Link, useLocation } from "react-router-dom";
 
 function choosePriorityColor(priority) {
     switch(priority) {
@@ -133,16 +134,19 @@ export default function CustomDataTable(props) {
                 style: { whiteSpace: "nowrap", textAlign:"center"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
+                var incident_id = tableMeta.rowData[0];
                 return (
                 <>
                     <Tooltip title="Editar">
                     <IconButton
-                    className={classes.onlyButtonSpacing}
+                        className={classes.onlyButtonSpacing}
                         color="inherit"
                         aria-label="upload picture"
-                        component="span"
+                        //component="span"
                         size="small"
-                    >
+                        component={Link}
+                        to={'/admin' + props.edit_details_path + "/" + incident_id}
+                        path >
                         <EditIcon />
                     </IconButton>
                     </Tooltip>
@@ -153,8 +157,6 @@ export default function CustomDataTable(props) {
         });
 
     }
-
-    console.log(new_columns);
 
     const table_options = {
         filterType: 'dropdown',

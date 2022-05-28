@@ -24,8 +24,6 @@ import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
-
-
 // reactstrap components
 import {
   Button,  
@@ -37,6 +35,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import {INCIDENT_DETAILS_PATH} from "./Incident_details.js";
 // import { Component } from "react/cjs/react.development";
 
 const tableData = [];
@@ -169,7 +168,9 @@ function IncidentsTable() {
                 </CardTitle>
               </CardHeader>
               <CardBody>
-              <CustomDataTable data={bigChartData} columns={columns}/>
+              <CustomDataTable data={bigChartData} columns={columns} 
+                    edit_details_path = {INCIDENT_DETAILS_PATH}
+                    />
               </CardBody>
             </Card>
           </Col>

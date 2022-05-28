@@ -25,6 +25,7 @@ import ChangesTable from "views/Changes.js";
 import ErrorsTable from "views/Errors.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
+import Incident from "views/Incident_details.js";
 
 var routes = [
   {
@@ -82,8 +83,7 @@ var routes = [
     icon: "tim-icons icon-single-02",
     component: UserProfile,
     layout: "/admin",
-  },
-  
+  },  
 ];
 
 export default routes;

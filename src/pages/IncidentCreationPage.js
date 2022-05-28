@@ -28,7 +28,7 @@ const darkTheme = createTheme({
   });
 
 
-export default function SignUp(props) {
+export default function IncidentCreation(props) {
   const history = useHistory();
   const [confItems, setConfItems]  = React.useState([]);
   const [values, setValues] = React.useState("");

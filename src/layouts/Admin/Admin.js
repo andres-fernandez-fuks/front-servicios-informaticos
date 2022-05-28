@@ -30,7 +30,8 @@ import routes from "utils/routes.js";
 
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
-
+import {INCIDENT_DETAILS_PATH} from "views/Incident_details.js";
+import IncidentDetails from "views/Incident_details.js";
 var ps;
 
 function Admin(props) {
@@ -115,7 +116,7 @@ function Admin(props) {
               }}
               toggleSidebar={toggleSidebar}
             />
-            <div className="main-panel" ref={mainPanelRef} data={color}>
+            <div className="main-panel"  data={color}>
               <AdminNavbar
                 brandText={getBrandText(location.pathname)}
                 toggleSidebar={toggleSidebar}
@@ -123,6 +124,10 @@ function Admin(props) {
               />
               <Switch>
                 {getRoutes(routes)}
+                <Route
+                path={'/admin' + INCIDENT_DETAILS_PATH}
+                component={IncidentDetails}
+                />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>
               {
