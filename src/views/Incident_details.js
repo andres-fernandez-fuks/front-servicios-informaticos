@@ -50,13 +50,26 @@ import {
 
 
 const formData = {};
-export const INCIDENT_DETAILS_PATH = "/incidents_table";
+export const INCIDENT_DETAILS_PATH = "/incidents_details";
 
 
-function IncidentDetails() {
+function IncidentDetails(props) {
   const history = useHistory();
+
+  var paths = window.location.pathname.split("/") 
+  var incident_id = paths[paths.length - 1]
+
   const [confItems, setConfItems]  = React.useState([]);
   const [values, setValues] = React.useState("");
+
+  React.useEffect(() => {
+    dbGet("incidents/" + incident_id).then(data => {
+        setValues(data);
+    }).catch(err => {console.log(err)});
+    }   , []);
+
+  console.log("Values: ", values)
+
 
   React.useEffect(() => {
     dbGet("configuration-items/names").then(data => {
@@ -73,7 +86,6 @@ function IncidentDetails() {
       }
 
     const handleSubmit = (event) => {
-        debugger;
       event.preventDefault();
       const data = new FormData(event.currentTarget);
       console.log({
@@ -114,6 +126,8 @@ function IncidentDetails() {
 
   setFormFields([...formFields, object])
   }
+  
+  
   return (
     <>
       <div className="content">
@@ -130,7 +144,7 @@ function IncidentDetails() {
                       <FormGroup>
                         <label>Descripción</label>
                         <Input
-                          defaultValue="michael23"
+                          defaultValue= {values.description}
                           placeholder="description"
                           type="text"
                         />
@@ -142,13 +156,14 @@ function IncidentDetails() {
                       <FormGroup>
                         <label>Prioridad</label>
                         <Input
-                          defaultValue="alta"
+                          defaultValue={values.priority}
                           placeholder="priority"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
                   </Row>
+                  <label> <b>Items de configuración</b></label>
                   <Grid item xs={12}>
               {formFields.map((form, index) => {
                 return (
