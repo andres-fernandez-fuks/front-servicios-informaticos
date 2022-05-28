@@ -30,6 +30,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper";
+import simple_routes from "utils/routes_simple.js"
 
 ReactDOM.render(
   <ThemeContextWrapper>
@@ -38,7 +39,7 @@ ReactDOM.render(
         <Switch>
           <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
           <Route path="/rtl" render={(props) => <RTLLayout {...props} />} />
-          <Route path="/incidents/create" render={(props) => <IncidentCreationForm {...props}/>} />
+          <Route path={simple_routes.incidentCreation} render={(props) => <IncidentCreationForm {...props}/>} />
           <Redirect from="/" to="/admin/dashboard" />
         </Switch>
       </BrowserRouter>

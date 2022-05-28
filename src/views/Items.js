@@ -69,7 +69,7 @@ function ItemsTable() {
     const [category, setCategory] = useState("Hardware");
     const classes = useStyles();
     useEffect(() => {
-        dbGet("items").then(data => {
+        dbGet("/configuration-items/hardware").then(data => {
             setbigChartData(data);
             // setColumns(columns);
         }).catch(err => {console.log(err)});
