@@ -163,7 +163,9 @@ function IncidentDetails(props) {
                       </FormGroup>
                     </Col>
                   </Row>
-                  <label> <b>Items de configuración</b></label>
+                  <Row>
+                    <Col className="px-md-1" md="3">
+                    <label> <b>Items de Software</b></label>
                   <Grid item xs={12}>
               {formFields.map((form, index) => {
                 return (
@@ -172,7 +174,7 @@ function IncidentDetails(props) {
                 <SelectSearch
                     flexDirection="column"
                     options={confItems}
-                    value={values[index]}
+                    value={values ? values["software_configuration_items"][index].name : null}
                     onChange={event => handleFormChange(event, index, "item_name_"+index)}
                     search
                     filterOptions={fuzzySearch} 
@@ -193,6 +195,74 @@ function IncidentDetails(props) {
                 })}
                 <button onClick={addFields}>Nuevo ítem</button>
               </Grid>
+                    </Col>
+                    <Col className="px-md-1" md="3">
+                    <label> <b>Ítems de Hardware</b></label>
+                  <Grid item xs={12}>
+              {formFields.map((form, index) => {
+                return (
+                <Grid item xs={12}>
+                <div key={index} class="row_div" >
+                <SelectSearch
+                    flexDirection="column"
+                    options={confItems}
+                    value={values ? values["hardware_configuration_items"][index].name : null}
+                    onChange={event => handleFormChange(event, index, "item_name_"+index)}
+                    search
+                    filterOptions={fuzzySearch} 
+                    placeholder="Search something"
+                />
+                &nbsp; &nbsp; &nbsp;
+                <IconButton
+                        size="medium" 
+                        aria-label="delete"
+                        color="primary"
+                        onClick={() => removeFields(index)}
+                        >
+                        <DeleteIcon/>
+                    </IconButton>
+                </div>
+                </Grid>
+                )
+                })}
+                <button onClick={addFields}>Nuevo ítem</button>
+              </Grid>
+                    </Col>
+                    <Col className="px-md-1" md="3">
+                    <label> <b>Ítems SLA</b></label>
+                  <Grid item xs={12}>
+              {formFields.map((form, index) => {
+                return (
+                <Grid item xs={12}>
+                <div key={index} class="row_div" >
+                <SelectSearch
+                    flexDirection="column"
+                    options={confItems}
+                    value={values ? values["sla_configuration_items"][index].name : null}
+                    onChange={event => handleFormChange(event, index, "item_name_"+index)}
+                    search
+                    filterOptions={fuzzySearch} 
+                    placeholder="Search something"
+                />
+                &nbsp; &nbsp; &nbsp;
+                <IconButton
+                        size="medium" 
+                        aria-label="delete"
+                        color="primary"
+                        onClick={() => removeFields(index)}
+                        >
+                        <DeleteIcon/>
+                    </IconButton>
+                </div>
+                </Grid>
+                )
+                })}
+                <button onClick={addFields}>Nuevo ítem</button>
+              </Grid>
+                    </Col>
+                  </Row>
+
+                  
                 </Form>
               </CardBody>
               <CardFooter>
