@@ -33,6 +33,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
+import DynamicTable from "components/Table/DynamicTable"
+import useStyles from "styles"
 // reactstrap components
 import {
   Button,
@@ -48,23 +50,45 @@ import {
   Col,
 } from "reactstrap";
 
+import Select from 'react-select'
+
+const options = [
+  { value: 'Alta', label: 'Alta' },
+  { value: 'Media', label: 'Media' },
+  { value: 'Baja', label: 'Baja' }
+]
+
+
 
 const formData = {};
 export const INCIDENT_DETAILS_PATH = "/incidents_details";
 
+const tableData = [];
+const ciItemColumns = [
+    {"name": "id", "label": "id"},
+    {"name": "description", "label": "Descripción"},
+    {"name": "type", "type": "ci_item_type"}
+]
+const priorities = [{"name":"Alta"}, {"name":"Media"}, {"name":"Baja"},]
+
 
 function IncidentDetails(props) {
+  var classes = useStyles();
   const history = useHistory();
+  const [selectedOption, setSelectedOption] = React.useState(null);
 
   var paths = window.location.pathname.split("/") 
   var incident_id = paths[paths.length - 1]
 
   const [confItems, setConfItems]  = React.useState([]);
   const [values, setValues] = React.useState("");
+  const [bigChartData, setbigChartData] = React.useState(tableData);
+  const [columns, setColumns] = React.useState(ciItemColumns);
 
   React.useEffect(() => {
     dbGet("incidents/" + incident_id).then(data => {
         setValues(data);
+        setSelectedOption(values.priority)
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -134,12 +158,12 @@ function IncidentDetails(props) {
     }
 
   }
+
   
   return (
     <>
       <div className="content">
         <Row>
-          <Col md="8">
             <Card>
               <CardHeader>
                 <h5 className="title">Edit Incident</h5>
@@ -153,6 +177,7 @@ function IncidentDetails(props) {
                         <Input
                           defaultValue= {values.description}
                           placeholder="description"
+                          id = "description"
                           type="text"
                         />
                       </FormGroup>
@@ -162,163 +187,37 @@ function IncidentDetails(props) {
                     <Col className="px-md-1" md="3">
                       <FormGroup>
                         <label>Prioridad</label>
-                        <Input
-                          defaultValue={values.priority}
-                          placeholder="priority"
-                          type="text"
+                        <Select
+                            defaultValue={{label: values.priority, value: "Alta"}}
+                            onChange={setSelectedOption}
+                            options={options}
                         />
                       </FormGroup>
                     </Col>
                   </Row>
-                  <Row>
-                    <Col className="px-md-1" md="3">
-                    <label> <b>Items de Software</b></label>
-                  <Grid item xs={12}>
-              {formFields.map((form, index) => {
-                return (
-                <Grid item xs={12}>
-                <div key={index} class="row_div" >
-                <SelectSearch
-                    flexDirection="column"
-                    options={confItems}
-                    value={getConfigurationItem(values, "software_configuration_items", index)}
-                    onChange={event => handleFormChange(event, index, "item_name_"+index)}
-                    search
-                    filterOptions={fuzzySearch} 
-                    placeholder="Search something"
-                />
-                &nbsp; &nbsp; &nbsp;
-                <IconButton
-                        size="medium" 
-                        aria-label="delete"
-                        color="primary"
-                        onClick={() => removeFields(index)}
-                        >
-                        <DeleteIcon/>
-                    </IconButton>
-                </div>
-                </Grid>
-                )
-                })}
-                <button onClick={addFields}>Nuevo ítem</button>
-              </Grid>
-                    </Col>
-                    <Col className="px-md-1" md="3">
-                    <label> <b>Ítems de Hardware</b></label>
-                  <Grid item xs={12}>
-              {formFields.map((form, index) => {
-                return (
-                <Grid item xs={12}>
-                <div key={index} class="row_div" >
-                <SelectSearch
-                    flexDirection="column"
-                    options={confItems}
-                    value={getConfigurationItem(values, "hardware_configuration_items", index)}
-                    onChange={event => handleFormChange(event, index, "item_name_"+index)}
-                    search
-                    filterOptions={fuzzySearch} 
-                    placeholder="Search something"
-                />
-                &nbsp; &nbsp; &nbsp;
-                <IconButton
-                        size="medium" 
-                        aria-label="delete"
-                        color="primary"
-                        onClick={() => removeFields(index)}
-                        >
-                        <DeleteIcon/>
-                    </IconButton>
-                </div>
-                </Grid>
-                )
-                })}
-                <button onClick={addFields}>Nuevo ítem</button>
-              </Grid>
-                    </Col>
-                    <Col className="px-md-1" md="3">
-                    <label> <b>Ítems SLA</b></label>
-                  <Grid item xs={12}>
-              {formFields.map((form, index) => {
-                return (
-                <Grid item xs={12}>
-                <div key={index} class="row_div" >
-                <SelectSearch
-                    flexDirection="column"
-                    options={confItems}
-                    value={getConfigurationItem(values, "sla_configuration_items", index)}
-                    onChange={event => handleFormChange(event, index, "item_name_"+index)}
-                    search
-                    filterOptions={fuzzySearch} 
-                    placeholder="Search something"
-                />
-                &nbsp; &nbsp; &nbsp;
-                <IconButton
-                        size="medium" 
-                        aria-label="delete"
-                        color="primary"
-                        onClick={() => removeFields(index)}
-                        >
-                        <DeleteIcon/>
-                    </IconButton>
-                </div>
-                </Grid>
-                )
-                })}
-                <button onClick={addFields}>Nuevo ítem</button>
-              </Grid>
-                    </Col>
-                  </Row>
-
                   
+                    <Grid class = {classes.PaddedGrid}>
+                    <h6 >Hardware configuration items</h6>
+                    <DynamicTable data={values["hardware_configuration_items"]} columns={columns} 
+                    edit_details_path = {INCIDENT_DETAILS_PATH}
+                    />
+                    <h6 >Software configuration items</h6>
+                    <DynamicTable data={values["software_configuration_items"]} columns={columns} 
+                    edit_details_path = {INCIDENT_DETAILS_PATH}
+                    />
+                    <h6 >SLA configuration items</h6>
+                    <DynamicTable data={values["sla_configuration_items"]} columns={columns} 
+                    edit_details_path = {INCIDENT_DETAILS_PATH}
+                    />
+                    </Grid>
                 </Form>
               </CardBody>
               <CardFooter>
                 <Button className="btn-fill" color="primary" type="submit">
-                  Save
+                  Save (doesnt work yet)
                 </Button>
               </CardFooter>
             </Card>
-          </Col>
-          <Col md="4">
-            <Card className="card-user">
-              <CardBody>
-                <CardText />
-                <div className="author">
-                  <div className="block block-one" />
-                  <div className="block block-two" />
-                  <div className="block block-three" />
-                  <div className="block block-four" />
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar"
-                      src={require("assets/img/emilyz.jpg").default}
-                    />
-                    <h5 className="title">Mike Andrew</h5>
-                  </a>
-                  <p className="description">Ceo/Co-Founder</p>
-                </div>
-                <div className="card-description">
-                  Do not be scared of the truth because we need to restart the
-                  human foundation in truth And I love you like Kanye loves
-                  Kanye I love Rick Owens’ bed design but the back is...
-                </div>
-              </CardBody>
-              <CardFooter>
-                <div className="button-container">
-                  <Button className="btn-icon btn-round" color="facebook">
-                    <i className="fab fa-facebook" />
-                  </Button>
-                  <Button className="btn-icon btn-round" color="twitter">
-                    <i className="fab fa-twitter" />
-                  </Button>
-                  <Button className="btn-icon btn-round" color="google">
-                    <i className="fab fa-google-plus" />
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
         </Row>
       </div>
     </>

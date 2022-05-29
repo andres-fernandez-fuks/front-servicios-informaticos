@@ -39,10 +39,11 @@
     "react-notification-alert": "0.0.13",
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.1",
+    "react-select": "^5.3.2",
+    "react-select-search": "3.0.9",
     "reactjs-dropdown-component": "^1.2.0",
     "reactstrap": "8.7.1",
-    "semantic-ui-react": "2.1.2",
-    "react-select-search": "3.0.9"
+    "semantic-ui-react": "2.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
