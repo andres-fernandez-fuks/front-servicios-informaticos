@@ -127,6 +127,13 @@ function IncidentDetails(props) {
   setFormFields([...formFields, object])
   }
   
+  function getConfigurationItem(values, type, index){
+    if (!values ) return
+    if (type in values && (values[type].length > 0)){
+      return values[type][index].name
+    }
+
+  }
   
   return (
     <>
@@ -174,7 +181,7 @@ function IncidentDetails(props) {
                 <SelectSearch
                     flexDirection="column"
                     options={confItems}
-                    value={values ? values["software_configuration_items"][index].name : null}
+                    value={getConfigurationItem(values, "software_configuration_items", index)}
                     onChange={event => handleFormChange(event, index, "item_name_"+index)}
                     search
                     filterOptions={fuzzySearch} 
@@ -206,7 +213,7 @@ function IncidentDetails(props) {
                 <SelectSearch
                     flexDirection="column"
                     options={confItems}
-                    value={values ? values["hardware_configuration_items"][index].name : null}
+                    value={getConfigurationItem(values, "hardware_configuration_items", index)}
                     onChange={event => handleFormChange(event, index, "item_name_"+index)}
                     search
                     filterOptions={fuzzySearch} 
@@ -238,7 +245,7 @@ function IncidentDetails(props) {
                 <SelectSearch
                     flexDirection="column"
                     options={confItems}
-                    value={values ? values["sla_configuration_items"][index].name : null}
+                    value={getConfigurationItem(values, "sla_configuration_items", index)}
                     onChange={event => handleFormChange(event, index, "item_name_"+index)}
                     search
                     filterOptions={fuzzySearch} 
