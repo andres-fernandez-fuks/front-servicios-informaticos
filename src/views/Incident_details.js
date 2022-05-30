@@ -75,8 +75,6 @@ const priorities = [{"name":"Alta"}, {"name":"Media"}, {"name":"Baja"},]
 function IncidentDetails(props) {
   var classes = useStyles();
   const history = useHistory();
-  const [selectedOption, setSelectedOption] = React.useState(null);
-
   var paths = window.location.pathname.split("/") 
   var incident_id = paths[paths.length - 1]
 
@@ -84,16 +82,14 @@ function IncidentDetails(props) {
   const [values, setValues] = React.useState("");
   const [bigChartData, setbigChartData] = React.useState(tableData);
   const [columns, setColumns] = React.useState(ciItemColumns);
-
   React.useEffect(() => {
     dbGet("incidents/" + incident_id).then(data => {
         setValues(data);
-        setSelectedOption(values.priority)
     }).catch(err => {console.log(err)});
     }   , []);
 
+  
   console.log("Values: ", values)
-
 
   React.useEffect(() => {
     dbGet("configuration-items/names").then(data => {
@@ -159,7 +155,11 @@ function IncidentDetails(props) {
 
   }
 
-  
+  function updatePriority(new_priority){
+    //Llama al actualizador del values pasandole todos los datos
+    //anteriores pero actualiza la prioridad
+    setValues({...values, priority:new_priority})
+  }
   return (
     <>
       <div className="content">
@@ -188,8 +188,8 @@ function IncidentDetails(props) {
                       <FormGroup>
                         <label>Prioridad</label>
                         <Select
-                            defaultValue={{label: values.priority, value: "Alta"}}
-                            onChange={setSelectedOption}
+                            value={{ value: values.priority, label: values.priority }}
+                            onChange={function(new_option){updatePriority(new_option.value)}}
                             options={options}
                         />
                       </FormGroup>
