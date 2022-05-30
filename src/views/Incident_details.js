@@ -166,7 +166,7 @@ function IncidentDetails(props) {
         <Row>
             <Card>
               <CardHeader>
-                <h5 className="title">Edit Incident</h5>
+                <h4 className="title">Detalles del incidente</h4>
               </CardHeader>
               <CardBody>
                 <Form>
@@ -197,24 +197,29 @@ function IncidentDetails(props) {
                   </Row>
                   
                     <Grid class = {classes.PaddedGrid}>
-                    <h6 >Hardware configuration items</h6>
+                    <h4>Ítems de hardware</h4>
+                    
                     <DynamicTable data={values["hardware_configuration_items"]} columns={columns} 
                     edit_details_path = {INCIDENT_DETAILS_PATH}
                     />
-                    <h6 >Software configuration items</h6>
+                    <Grid class = {classes.PaddedGrid}>
+                    <h4>Ítems de software</h4>
                     <DynamicTable data={values["software_configuration_items"]} columns={columns} 
                     edit_details_path = {INCIDENT_DETAILS_PATH}
                     />
-                    <h6 >SLA configuration items</h6>
+                    </Grid>
+                    <Grid class = {classes.PaddedGrid}>
+                    <h4>SLAs</h4>
                     <DynamicTable data={values["sla_configuration_items"]} columns={columns} 
                     edit_details_path = {INCIDENT_DETAILS_PATH}
                     />
+                    </Grid>
                     </Grid>
                 </Form>
               </CardBody>
               <CardFooter>
                 <Button className="btn-fill" color="primary" type="submit">
-                  Save (doesnt work yet)
+                  Guardar (doesnt work yet)
                 </Button>
               </CardFooter>
             </Card>
