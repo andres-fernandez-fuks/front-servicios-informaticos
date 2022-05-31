@@ -127,6 +127,26 @@ function IncidentDetails(props) {
         password: data.get('password'),
       });
     };
+
+    function solveIncident() {
+        var patch_data = {status:"Resuelto"}
+        dbPatch("incidents/" + incident_id, patch_data);
+        history.push(simple_routes.incidents);
+    }
+
+    function blockIncident() {
+        var patch_data = {is_blocked:true}
+        dbPatch("incidents/" + incident_id, patch_data);
+        // history.push(simple_routes.incidents);
+        window.location.reload(false);
+    }
+
+    function unblockIncident() {
+        var patch_data = {is_blocked:false}
+        dbPatch("incidents/" + incident_id, patch_data);
+        // history.push(simple_routes.incidents);
+        window.location.reload(false);
+    }
     
 
   const handleFormChange = (event, index, field) => {
@@ -150,11 +170,8 @@ function IncidentDetails(props) {
     }
 
   const submitForm = (data) => { 
-      data = {}
-      // data["description"] = document.getElementById("description").value;
-      // data["priority"] = values["priority"]
-      data["taken_by"] = "SuperAdmin"
-      dbPatch("incidents/" + incident_id, data);
+      var patch_data = {taken_by:"SuperAdmin"}
+      dbPatch("incidents/" + incident_id, patch_data);
       history.push(simple_routes.incidents);
   }
 
@@ -183,9 +200,35 @@ function IncidentDetails(props) {
     fetchItemsData();
   }
 
+  function addBlockButton() {
+    if (values.is_blocked === true) {
+        return (
+            <Button className="btn-fill" align="left"
+            color="warning"
+            type="submit"
+            onClick={() => unblockIncident()}
+            >
+            Desbloquear        
+            </Button>
+        )
+    }
+    return (
+        <Button className="btn-fill" align="left"
+        color="warning"
+        type="submit"
+        onClick={() => blockIncident()}
+        >
+        Bloquear        
+        </Button>  
+    )
+  }
+
   function addButtons() {
       if (values === '') {
       fetchValues();
+    }
+    if (values.status === "Resuelto") {
+        return;
     }
     if (!values.taken_by) {
         return (
@@ -197,23 +240,19 @@ function IncidentDetails(props) {
         Tomar        
         </Button>)
     }
+    if (values.taken_by !== undefined) {
     return (
         <Grid align="center">
         <Button className="btn-fill" align="right"
         color="success"
         type="submit"
-        onClick={() => submitForm()}
+        onClick={() => solveIncident()}
         >
         Resolver        
         </Button>
-        <Button className="btn-fill" align="left"
-        color="warning"
-        type="submit"
-        onClick={() => submitForm()}
-        >
-        Bloquear        
-        </Button>
+        {addBlockButton()}
         </Grid>)
+    }
   }
 
   return (
