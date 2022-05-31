@@ -6,6 +6,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import datatableTextLabels from "components/Table/textLabels";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
+import InfoIcon from '@mui/icons-material/Info';
 import useStyles from "../../styles";
 import { NavLink, Link, useLocation } from "react-router-dom";
 
@@ -137,7 +138,7 @@ export default function CustomDataTable(props) {
                 var incident_id = tableMeta.rowData[0];
                 return (
                 <>
-                    <Tooltip title="Editar">
+                    <Tooltip title="Detalles">
                     <IconButton
                         className={classes.onlyButtonSpacing}
                         color="inherit"
@@ -147,7 +148,7 @@ export default function CustomDataTable(props) {
                         component={Link}
                         to={'/admin' + props.edit_details_path + "/" + incident_id}
                         path >
-                        <EditIcon />
+                        <InfoIcon />
                     </IconButton>
                     </Tooltip>
                 </>

@@ -4,6 +4,9 @@ export default makeStyles((theme) => ({
   PaddedGrid: {
     marginTop: 50
   },
+  SmallPaddedGrip: {
+    marginTop: 10
+  },
   LeftPaddedForm: {
     marginLeft: 2
   },

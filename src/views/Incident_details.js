@@ -99,6 +99,12 @@ function IncidentDetails(props) {
     }
   console.log("Values: ", values)
 
+  function fetchValues() {
+    dbGet("incidents/" + incident_id).then(data => {
+        setValues(data);
+    }).catch(err => {console.log(err)});
+}
+
   React.useEffect(() => {
     dbGet("configuration-items/names").then(data => {
         setConfItems(data["items"]);
@@ -145,9 +151,9 @@ function IncidentDetails(props) {
 
   const submitForm = (data) => { 
       data = {}
-      debugger;
-      data["description"] = document.getElementById("description").value;
-      data["priority"] = values["priority"]
+      // data["description"] = document.getElementById("description").value;
+      // data["priority"] = values["priority"]
+      data["taken_by"] = "SuperAdmin"
       dbPatch("incidents/" + incident_id, data);
       history.push(simple_routes.incidents);
   }
@@ -176,6 +182,40 @@ function IncidentDetails(props) {
   if (itemsData.length === 0) {
     fetchItemsData();
   }
+
+  function addButtons() {
+      if (values === '') {
+      fetchValues();
+    }
+    if (!values.taken_by) {
+        return (
+        <Button className="btn-fill"
+        color="primary"
+        type="submit"
+        onClick={() => submitForm()}
+        >
+        Tomar        
+        </Button>)
+    }
+    return (
+        <Grid align="center">
+        <Button className="btn-fill" align="right"
+        color="success"
+        type="submit"
+        onClick={() => submitForm()}
+        >
+        Resolver        
+        </Button>
+        <Button className="btn-fill" align="left"
+        color="warning"
+        type="submit"
+        onClick={() => submitForm()}
+        >
+        Bloquear        
+        </Button>
+        </Grid>)
+  }
+
   return (
     <>
       <div className="content">
@@ -184,21 +224,53 @@ function IncidentDetails(props) {
                 <h4 className="title">Detalles del incidente</h4>
               </CardHeader>
               <CardBody>
-                <Form >
-                  <Grid >
-                    <Col className="px-md-1" md="3" >
-                      <FormGroup>
+                <Form disabled>
+                  <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Descripción</h5>
-                        <Input
-                          defaultValue= {values.description}
-                          placeholder="description"
+                        <input
+                          readOnly
+                          value= {values.description}
                           id = "description"
                           type="text"
                         />
-                      </FormGroup>
-                    </Col>
                   </Grid>
-                  <Grid >
+                  <Grid class = {classes.SmallPaddedGrip} >
+                      <h5 className="title">Prioridad</h5>
+                        <input
+                          readOnly
+                          value= {values.priority}
+                          id = "description"
+                          type="text"
+                        />
+                  </Grid>
+                  <Grid class = {classes.SmallPaddedGrip} >
+                      <h5 className="title">Estado</h5>
+                        <input
+                          readOnly
+                          value= {values.status}
+                          id = "description"
+                          type="text"
+                        />
+                  </Grid>
+                  <Grid class = {classes.SmallPaddedGrip} >
+                      <h5 className="title">Creado por</h5>
+                        <input
+                          readOnly
+                          value= {values.created_by}
+                          id = "description"
+                          type="text"
+                        />
+                  </Grid>
+                  <Grid class = {classes.SmallPaddedGrip} >
+                      <h5 className="title">Tomado por</h5>
+                        <input
+                          readOnly
+                          value= {values.taken_by}
+                          id = "description"
+                          type="text"
+                        />
+                  </Grid>
+                  {/* <Grid class = {classes.SmallPaddedGrip}>
                     <Col className="px-md-1" md="3">
                       <FormGroup>
                       <h5 className="title">Prioridad</h5>
@@ -210,23 +282,15 @@ function IncidentDetails(props) {
                         />
                       </FormGroup>
                     </Col>
-                  </Grid>
-                  
+                  </Grid> */}
                     <Grid class = {classes.PaddedGrid} >
                     <h5> <b>Ítems de configuración</b></h5>
                     <SimpleTable data={itemsData} columns={columns} />
                     </Grid>
                 </Form>
               </CardBody>
-              <CardFooter >
-                <Button className="btn-fill"
-                        color="primary"
-                        type="submit"
-                        onClick={() => submitForm()}
-                >
-                  Guardar (doesnt work yet)
-                  
-                </Button>
+              <CardFooter align="center">
+                {addButtons()}
               </CardFooter>
             </Card>
       </div>
