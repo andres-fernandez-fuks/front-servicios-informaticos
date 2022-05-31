@@ -25,7 +25,7 @@ import ChangesTable from "views/Changes.js";
 import ErrorsTable from "views/Errors.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
-import Incident from "views/Incident_details.js";
+import Incident from "pages/IncidentDetailsPage.js";
 
 var routes = [
   {

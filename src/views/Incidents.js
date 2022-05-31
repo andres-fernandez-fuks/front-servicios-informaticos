@@ -35,7 +35,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import {INCIDENT_DETAILS_PATH} from "./Incident_details.js";
+import {INCIDENT_DETAILS_PATH} from "../pages/IncidentDetailsPage.js";
 // import { Component } from "react/cjs/react.development";
 
 const tableData = [];

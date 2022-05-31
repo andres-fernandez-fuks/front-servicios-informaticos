@@ -113,21 +113,6 @@ function IncidentDetails(props) {
 
     const [formFields, setFormFields] = React.useState([{}])
 
-    const removeFields = (index) => {
-        let data = [...formFields];
-        data.splice(index, 1)
-        setFormFields(data)
-      }
-
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      console.log({
-        email: data.get('email'),
-        password: data.get('password'),
-      });
-    };
-
     function solveIncident() {
         var patch_data = {status:"Resuelto"}
         dbPatch("incidents/" + incident_id, patch_data);
@@ -147,53 +132,11 @@ function IncidentDetails(props) {
         // history.push(simple_routes.incidents);
         window.location.reload(false);
     }
-    
-
-  const handleFormChange = (event, index, field) => {
-    let value;
-    let data = [...formFields];
-    if (field === "description" || field === "priority") {
-        value = event.target.value;
-        data[index] = value;
-    }
-    else {
-        value = event;
-        data[index] = value;
-        setFormFields(data);
-        setValues([...values, value]);
-    }
-    formData[field] = value;
-  }
-
-  const exitForm = () => { 
-    history.push(simple_routes.incidents);
-    }
 
   const submitForm = (data) => { 
       var patch_data = {taken_by:"SuperAdmin"}
       dbPatch("incidents/" + incident_id, patch_data);
       history.push(simple_routes.incidents);
-  }
-
-  const addFields = () => {
-    let object = {};
-
-  setFormFields([...formFields, object])
-  }
-  
-  
-  function getConfigurationItem(values, type, index){
-    if (!values ) return
-    if (type in values && (values[type].length > 0)){
-      return values[type][index].name
-    }
-
-  }
-
-  function updatePriority(new_priority){
-    //Llama al actualizador del values pasandole todos los datos
-    //anteriores pero actualiza la prioridad
-    setValues({...values, priority:new_priority})
   }
 
   if (itemsData.length === 0) {

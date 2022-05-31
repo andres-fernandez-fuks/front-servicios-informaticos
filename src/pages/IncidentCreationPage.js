@@ -1,6 +1,22 @@
-import * as React from 'react';
+/*!
+
+=========================================================
+* Black Dashboard React v1.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/black-dashboard-react
+* Copyright 2020 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://github.com/creativetimofficial/black-dashboard-react/blob/master/LICENSE.md)
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+*/
+import React from "react";
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
@@ -17,46 +33,60 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
+import DynamicTable from "components/Table/DynamicTable"
+import useStyles from "styles"
+// reactstrap components
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  CardText,
+  FormGroup,
+  Form,
+  Input,
+  Row,
+  Col,
+} from "reactstrap";
+
+import Select from 'react-select'
+import SimpleTable from "components/Table/SimpleTable";
+import { ValueAxis } from "devextreme-react/range-selector";
+
+const priorities = [
+  { value: 'Alta', label: 'Alta' },
+  { value: 'Media', label: 'Media' },
+  { value: 'Baja', label: 'Baja' }
+]
 
 
-const theme = createTheme();
+
 const formData = {};
+export const INCIDENT_DETAILS_PATH = "/incidents_details";
 
-const darkTheme = createTheme({
-    palette: {
-      mode: 'dark',
-    },
-  });
+const tableData = [];
+const ciItemColumns = [
+    {"name": "id", "label": "id"},
+    {"name": "name", "label": "Descripción"},
+    {"name": "type", "label": "Tipo"}
+]
 
 
-export default function IncidentCreation(props) {
+function IncidentCreation(props) {
+  var classes = useStyles();
   const history = useHistory();
+
   const [confItems, setConfItems]  = React.useState([]);
   const [values, setValues] = React.useState("");
+  const [formFields, setFormFields] = React.useState([{}])
+  const [itemValues, setItemValues] = React.useState([])
 
   React.useEffect(() => {
     dbGet("configuration-items/names").then(data => {
         setConfItems(data["items"]);
     }).catch(err => {console.log(err)});
     }   , []);
-
-    const [formFields, setFormFields] = React.useState([{}])
-
-    const removeFields = (index) => {
-        let data = [...formFields];
-        data.splice(index, 1)
-        setFormFields(data)
-      }
-
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      console.log({
-        email: data.get('email'),
-        password: data.get('password'),
-      });
-    };
-    
 
   const handleFormChange = (event, index, field) => {
     let value;
@@ -69,129 +99,130 @@ export default function IncidentCreation(props) {
         value = event;
         data[index] = value;
         setFormFields(data);
-        setValues([...values, value]);
+        setItemValues([...itemValues, value]);
     }
     formData[field] = value;
+  }
+
+  const removeFields = (index) => {
+    let data = [...formFields];
+    data.splice(index, 1)
+    setFormFields(data)
+  }
+
+  const addFields = () => {
+    let object = {};
+    setFormFields([...formFields, object])
+  }
+
+  function updatePriority(new_priority){
+    //Llama al actualizador del values pasandole todos los datos
+    //anteriores pero actualiza la prioridad
+    setValues({...values, priority:new_priority})
   }
 
   const exitForm = () => { 
     history.push(simple_routes.incidents);
     }
 
-  const submitForm = (data) => { 
+  const submitForm = (data) => {
       formData["created_by"] = "SuperAdmin";
+      formData["description"] = document.getElementById('description').value;
+      formData["priority"] = values.priority;
+      debugger;
       dbPost("incidents", formData);
       history.push(simple_routes.incidents);
   }
 
-  const addFields = () => {
-    let object = {};
-
-  setFormFields([...formFields, object])
-  }
+  const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <NotificationsIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Crear incidente
-          </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  name="description"
-                  required
-                  fullWidth
-                  id="description"
-                  label="Descripción"
-                  autoFocus
-                  onChange={event => handleFormChange(event, 0, "description")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="priority"
-                  label="Prioridad"
-                  name="priority"
-                  onChange={event => handleFormChange(event, 1, "priority")}
-                />
-              </Grid>
-              <Grid item xs={12}>
-              <label>
-                <b>Ítems de configuración</b>
-              </label>
-              </Grid>
-              <Grid item xs={12}>
-              {formFields.map((form, index) => {
-                return (
-                <Grid item xs={12}>
-                <div key={index} class="row_div" >
-                <SelectSearch
-                    flexDirection="column"
-                    options={confItems}
-                    value={values[index]}
-                    onChange={event => handleFormChange(event, index, "item_name_"+index)}
-                    search
-                    filterOptions={fuzzySearch} 
-                    placeholder="Search something"
-                />
-                &nbsp; &nbsp; &nbsp;
-                <IconButton
-                        size="medium" 
-                        aria-label="delete"
-                        color="primary"
-                        onClick={() => removeFields(index)}
-                        >
-                        <DeleteIcon/>
-                    </IconButton>
-                </div>
-                </Grid>
-                )
-                })}
-                <button onClick={addFields}>Nuevo ítem</button>
-              </Grid>
-              <Grid item xs={8} md={8} >
-          </Grid>
-            </Grid>
-            <div class="button_div">
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={() => submitForm()}
-            >
-            Crear incidente
-            </Button>
-            </div>
-            <div class="button_div">
-            <Button
-              type="submit"
-              color="error"
-              fullWidth
-              variant="contained"
-              onClick={() => exitForm()}
-            >
-            Salir sin guardar
-            </Button>
-            </div>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+    <>
+      <div className="content">
+          <Form>
+            <Card>
+              <CardHeader >
+                <h4 className="title">Detalles del incidente</h4>
+              </CardHeader>
+              <CardBody>
+                  <Grid className = {classes.SmallPaddedGrip} >
+                      <h5 className="title">Descripción</h5>
+                      <input size="40"
+                        name="description"
+                        required
+                        id="description"
+                        label="Descripción"
+                        autoFocus
+                        autoComplete="off"
+                        placeholder="Ingrese una descripción"
+                      />
+                  </Grid>
+                  <Grid className = {classes.SmallPaddedGrip}>
+                    <Col className="px-md-1" md="3">
+                      <FormGroup>
+                      <h5 className="title">Prioridad</h5>
+                        <Select styles={selectStyles}
+                            id="priority"
+                            value={{ value: values.priority, label: values.priority }}
+                            onChange={function(new_option){updatePriority(new_option.value)}}
+                            options={priorities}
+                            autoFocus
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Grid>
+                    <Grid className = {classes.PaddedGrip}>
+                    <h5> <b>Ítems de configuración</b></h5>
+                        {formFields.map((form, index) => {
+                            return (
+                            <Grid item xs={12}>
+                            <div key={index} className="row_div">
+                            <SelectSearch
+                                id={"item" + index+2}
+                                options={confItems}
+                                value={itemValues[index]}
+                                onChange={event => handleFormChange(event, index, "item_name_"+index)}
+                                search
+                                filterOptions={fuzzySearch} 
+                                placeholder="Search something"
+                            />
+                            &nbsp; &nbsp; &nbsp;
+                            <IconButton
+                                    size="medium" 
+                                    aria-label="delete"
+                                    color="primary"
+                                    onClick={() => removeFields(index)}
+                                    >
+                                    <DeleteIcon/>
+                                </IconButton>
+                            </div>
+                            </Grid>
+                            )
+                            })}
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                        </Grid>
+              </CardBody>
+              <CardFooter align="center">
+              <Button className="btn-fill"
+                color="success"
+                type="submit"
+                onClick={() => submitForm()}
+                >
+                Crear        
+              </Button>
+              <Button className="btn-fill"
+                color="warning"
+                onClick={() => exitForm()}
+                >
+                Volver        
+              </Button>
+              </CardFooter>
+              
+            </Card>
+            </Form>
+      </div>
+    </>
   );
 }
+
+export default IncidentCreation;

@@ -30,8 +30,8 @@ import routes from "utils/routes.js";
 
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
-import {INCIDENT_DETAILS_PATH} from "views/Incident_details.js";
-import IncidentDetails from "views/Incident_details.js";
+import {INCIDENT_DETAILS_PATH} from "pages/IncidentDetailsPage.js";
+import IncidentDetails from "pages/IncidentDetailsPage.js";
 import simple_routes from "utils/routes_simple.js";
 import IncidentCreation from "pages/IncidentCreationPage.js";
 
