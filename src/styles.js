@@ -4,6 +4,12 @@ export default makeStyles((theme) => ({
   PaddedGrid: {
     marginTop: 50
   },
+  LeftPaddedForm: {
+    marginLeft: 2
+  },
+  centeredGrid: {
+    alignItems: "center"
+  },
   card: {
     minHeight: "100%",
     maxHeight: "100%",

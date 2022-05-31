@@ -18,6 +18,7 @@ import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 
+
 const theme = createTheme();
 const formData = {};
 
@@ -48,7 +49,6 @@ export default function IncidentCreation(props) {
       }
 
     const handleSubmit = (event) => {
-        debugger;
       event.preventDefault();
       const data = new FormData(event.currentTarget);
       console.log({

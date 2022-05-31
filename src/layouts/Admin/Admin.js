@@ -32,6 +32,9 @@ import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import {INCIDENT_DETAILS_PATH} from "views/Incident_details.js";
 import IncidentDetails from "views/Incident_details.js";
+import simple_routes from "utils/routes_simple.js";
+import IncidentCreation from "pages/IncidentCreationPage.js";
+
 var ps;
 
 function Admin(props) {
@@ -127,6 +130,10 @@ function Admin(props) {
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}
                 component={IncidentDetails}
+                />
+                <Route
+                path={simple_routes.incidentCreation}
+                component={IncidentCreation}
                 />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>

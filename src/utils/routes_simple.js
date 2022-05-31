@@ -1,5 +1,5 @@
 const simple_routes = {
-    incidentCreation: "/incidents/create",
+    incidentCreation: "/admin/incidents_create",
     incidents: "/admin/incidents",
 }
 

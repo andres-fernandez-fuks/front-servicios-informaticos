@@ -27,7 +27,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SelectSearch, { fuzzySearch } from "react-select-search";
-import { dbGet, dbPost } from 'utils/backendFetchers';
+import { dbGet, dbPatch } from 'utils/backendFetchers';
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from '@mui/icons-material/Delete';
 import "pages/ic.css";
@@ -51,6 +51,8 @@ import {
 } from "reactstrap";
 
 import Select from 'react-select'
+import SimpleTable from "components/Table/SimpleTable";
+import { ValueAxis } from "devextreme-react/range-selector";
 
 const options = [
   { value: 'Alta', label: 'Alta' },
@@ -66,8 +68,8 @@ export const INCIDENT_DETAILS_PATH = "/incidents_details";
 const tableData = [];
 const ciItemColumns = [
     {"name": "id", "label": "id"},
-    {"name": "description", "label": "Descripción"},
-    {"name": "type", "type": "ci_item_type"}
+    {"name": "name", "label": "Descripción"},
+    {"name": "type", "label": "Tipo"}
 ]
 const priorities = [{"name":"Alta"}, {"name":"Media"}, {"name":"Baja"},]
 
@@ -77,6 +79,7 @@ function IncidentDetails(props) {
   const history = useHistory();
   var paths = window.location.pathname.split("/") 
   var incident_id = paths[paths.length - 1]
+  const [itemsData, setItemsData] = React.useState([]);
 
   const [confItems, setConfItems]  = React.useState([]);
   const [values, setValues] = React.useState("");
@@ -88,7 +91,12 @@ function IncidentDetails(props) {
     }).catch(err => {console.log(err)});
     }   , []);
 
-  
+    function fetchItemsData() {
+        dbGet("incidents/" + incident_id).then(data => {
+            var items_data = data["configuration_items"]
+            setItemsData(items_data);
+        }).catch(err => {console.log(err)});
+    }
   console.log("Values: ", values)
 
   React.useEffect(() => {
@@ -136,8 +144,11 @@ function IncidentDetails(props) {
     }
 
   const submitForm = (data) => { 
-      formData["created_by"] = "SuperAdmin";
-      dbPost("incidents", formData);
+      data = {}
+      debugger;
+      data["description"] = document.getElementById("description").value;
+      data["priority"] = values["priority"]
+      dbPatch("incidents/" + incident_id, data);
       history.push(simple_routes.incidents);
   }
 
@@ -146,6 +157,7 @@ function IncidentDetails(props) {
 
   setFormFields([...formFields, object])
   }
+  
   
   function getConfigurationItem(values, type, index){
     if (!values ) return
@@ -160,20 +172,23 @@ function IncidentDetails(props) {
     //anteriores pero actualiza la prioridad
     setValues({...values, priority:new_priority})
   }
+
+  if (itemsData.length === 0) {
+    fetchItemsData();
+  }
   return (
     <>
       <div className="content">
-        <Row>
             <Card>
-              <CardHeader>
+              <CardHeader >
                 <h4 className="title">Detalles del incidente</h4>
               </CardHeader>
               <CardBody>
-                <Form>
-                  <Row>
-                    <Col className="px-md-1" md="3">
+                <Form >
+                  <Grid >
+                    <Col className="px-md-1" md="3" >
                       <FormGroup>
-                        <label>Descripción</label>
+                      <h5 className="title">Descripción</h5>
                         <Input
                           defaultValue= {values.description}
                           placeholder="description"
@@ -182,48 +197,38 @@ function IncidentDetails(props) {
                         />
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row>
+                  </Grid>
+                  <Grid >
                     <Col className="px-md-1" md="3">
                       <FormGroup>
-                        <label>Prioridad</label>
+                      <h5 className="title">Prioridad</h5>
                         <Select
+                            id="priority"
                             value={{ value: values.priority, label: values.priority }}
                             onChange={function(new_option){updatePriority(new_option.value)}}
                             options={options}
                         />
                       </FormGroup>
                     </Col>
-                  </Row>
+                  </Grid>
                   
-                    <Grid class = {classes.PaddedGrid}>
-                    <h4>Ítems de hardware</h4>
-                    
-                    <DynamicTable data={values["hardware_configuration_items"]} columns={columns} 
-                    edit_details_path = {INCIDENT_DETAILS_PATH}
-                    />
-                    <Grid class = {classes.PaddedGrid}>
-                    <h4>Ítems de software</h4>
-                    <DynamicTable data={values["software_configuration_items"]} columns={columns} 
-                    edit_details_path = {INCIDENT_DETAILS_PATH}
-                    />
-                    </Grid>
-                    <Grid class = {classes.PaddedGrid}>
-                    <h4>SLAs</h4>
-                    <DynamicTable data={values["sla_configuration_items"]} columns={columns} 
-                    edit_details_path = {INCIDENT_DETAILS_PATH}
-                    />
-                    </Grid>
+                    <Grid class = {classes.PaddedGrid} >
+                    <h5> <b>Ítems de configuración</b></h5>
+                    <SimpleTable data={itemsData} columns={columns} />
                     </Grid>
                 </Form>
               </CardBody>
-              <CardFooter>
-                <Button className="btn-fill" color="primary" type="submit">
+              <CardFooter >
+                <Button className="btn-fill"
+                        color="primary"
+                        type="submit"
+                        onClick={() => submitForm()}
+                >
                   Guardar (doesnt work yet)
+                  
                 </Button>
               </CardFooter>
             </Card>
-        </Row>
       </div>
     </>
   );
