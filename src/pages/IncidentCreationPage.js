@@ -125,11 +125,17 @@ function IncidentCreation(props) {
     history.push(simple_routes.incidents);
     }
 
-  const submitForm = (data) => {
+  const submitForm = (e) => {
+      if (!values.priority) {
+        alert("Debe seleccionar una prioridad")
+        return
+      } else if(itemValues.length == 0){
+        alert("Debe relacionar por lo menos un ítem de configuración")
+        return
+      }
       formData["created_by"] = "SuperAdmin";
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
-      debugger;
       dbPost("incidents", formData);
       history.push(simple_routes.incidents);
   }
@@ -139,7 +145,7 @@ function IncidentCreation(props) {
   return (
     <>
       <div className="content">
-          <Form>
+          <Form onsubmit="return false">
             <Card>
               <CardHeader >
                 <h4 className="title">Detalles del incidente</h4>
@@ -206,7 +212,7 @@ function IncidentCreation(props) {
               <Button className="btn-fill"
                 color="success"
                 type="submit"
-                onClick={() => submitForm()}
+                onClick={(e) => {e.preventDefault(); submitForm()}}
                 >
                 Crear        
               </Button>

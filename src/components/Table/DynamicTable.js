@@ -67,7 +67,7 @@ export default function CustomDataTable(props) {
           },
           background: {
             default: "",
-            paper: "transparent"
+            paper: "#1f2131"
           }
         }
       });
@@ -119,11 +119,10 @@ export default function CustomDataTable(props) {
     }
     );
 
-    console.log("edit colum ", props.addEditColumn)
     var add_edit_column = props.addEditColumn === false ? false:true 
     if (add_edit_column) {
         new_columns.push({
-            name: "Editar",
+            name: "Ver",
             options: {
             download: false,
             filter: false,

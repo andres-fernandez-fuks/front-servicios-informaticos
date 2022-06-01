@@ -79,7 +79,6 @@ export default function IncidentCreation(props) {
     }
 
   const submitForm = (data) => {
-      debugger;
       formData["created_by"] = "SuperAdmin";
       dbPost("incidents", formData);
       history.push(simple_routes.incidents);

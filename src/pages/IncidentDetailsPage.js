@@ -67,7 +67,7 @@ export const INCIDENT_DETAILS_PATH = "/incidents_details";
 
 const tableData = [];
 const ciItemColumns = [
-    {"name": "id", "label": "id"},
+    {"name": "id", "label": "ID"},
     {"name": "name", "label": "Descripción"},
     {"name": "type", "label": "Tipo"}
 ]
@@ -85,6 +85,7 @@ function IncidentDetails(props) {
   const [values, setValues] = React.useState("");
   const [bigChartData, setbigChartData] = React.useState(tableData);
   const [columns, setColumns] = React.useState(ciItemColumns);
+  const isEditable = false
   React.useEffect(() => {
     dbGet("incidents/" + incident_id).then(data => {
         setValues(data);
@@ -211,6 +212,7 @@ function IncidentDetails(props) {
                       <h5 className="title">Descripción</h5>
                         <input
                           readOnly
+                          disabled = {!isEditable}
                           value= {values.description}
                           id = "description"
                           type="text"
@@ -220,6 +222,7 @@ function IncidentDetails(props) {
                       <h5 className="title">Prioridad</h5>
                         <input
                           readOnly
+                          disabled = {!isEditable}
                           value= {values.priority}
                           id = "description"
                           type="text"
@@ -229,6 +232,7 @@ function IncidentDetails(props) {
                       <h5 className="title">Estado</h5>
                         <input
                           readOnly
+                          disabled = {!isEditable}
                           value= {values.status}
                           id = "description"
                           type="text"
@@ -238,6 +242,7 @@ function IncidentDetails(props) {
                       <h5 className="title">Creado por</h5>
                         <input
                           readOnly
+                          disabled = {!isEditable}
                           value= {values.created_by}
                           id = "description"
                           type="text"
@@ -247,6 +252,8 @@ function IncidentDetails(props) {
                       <h5 className="title">Tomado por</h5>
                         <input
                           readOnly
+                          disabled = {!isEditable}
+                          placeholder = "Nadie..."
                           value= {values.taken_by}
                           id = "description"
                           type="text"

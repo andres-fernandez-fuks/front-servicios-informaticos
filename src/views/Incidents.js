@@ -41,9 +41,10 @@ import {INCIDENT_DETAILS_PATH} from "../pages/IncidentDetailsPage.js";
 const tableData = [];
 
 const incidentColumns = [
-    {"name": "id", "label": "id"},
+    {"name": "id", "label": "ID"},
     {"name": "description", "label": "Descripción"},
     {"name": "created_by", "label": "Creado por"},
+    {"name": "taken_by", "label": "Tomado por"},
     {"name": "created_at", "label": "Reportado el"},
     {"name": "priority", "label": "Prioridad"},
     {"name": "status", "label": "Estado"},
