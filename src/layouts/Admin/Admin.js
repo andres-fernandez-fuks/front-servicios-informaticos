@@ -26,10 +26,14 @@ import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
-import routes from "routes.js";
+import routes from "utils/routes.js";
 
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
+import {INCIDENT_DETAILS_PATH} from "pages/IncidentDetailsPage.js";
+import IncidentDetails from "pages/IncidentDetailsPage.js";
+import simple_routes from "utils/routes_simple.js";
+import IncidentCreation from "pages/IncidentCreationPage.js";
 
 var ps;
 
@@ -115,7 +119,7 @@ function Admin(props) {
               }}
               toggleSidebar={toggleSidebar}
             />
-            <div className="main-panel" ref={mainPanelRef} data={color}>
+            <div className="main-panel"  data={color}>
               <AdminNavbar
                 brandText={getBrandText(location.pathname)}
                 toggleSidebar={toggleSidebar}
@@ -123,6 +127,14 @@ function Admin(props) {
               />
               <Switch>
                 {getRoutes(routes)}
+                <Route
+                path={'/admin' + INCIDENT_DETAILS_PATH}
+                component={IncidentDetails}
+                />
+                <Route
+                path={simple_routes.incidentCreation}
+                component={IncidentCreation}
+                />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>
               {

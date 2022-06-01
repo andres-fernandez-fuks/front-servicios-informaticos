@@ -26,7 +26,7 @@ import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
-import routes from "routes.js";
+import routes from "utils/routes.js";
 
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
@@ -135,7 +135,7 @@ function RTL(props) {
                 }}
                 toggleSidebar={toggleSidebar}
               />
-              <div className="main-panel" ref={mainPanelRef} data={color}>
+              <div className="main-panel" data={color}>
                 <RTLNavbar
                   brandText={getBrandText(location.pathname)}
                   toggleSidebar={toggleSidebar}

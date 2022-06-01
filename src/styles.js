@@ -1,6 +1,18 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 export default makeStyles((theme) => ({
+  PaddedGrid: {
+    marginTop: 50
+  },
+  SmallPaddedGrip: {
+    marginTop: 10
+  },
+  LeftPaddedForm: {
+    marginLeft: 2
+  },
+  centeredGrid: {
+    alignItems: "center"
+  },
   card: {
     minHeight: "100%",
     maxHeight: "100%",
@@ -149,5 +161,5 @@ export default makeStyles((theme) => ({
     alignSelf: "center",
     marginTop: "1%",
     height: 40,
-  },
+  }
 }));

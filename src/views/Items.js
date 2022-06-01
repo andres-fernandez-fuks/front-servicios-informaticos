@@ -39,12 +39,29 @@ const tableData = [];
 const hardwareItemColumns = [
     {"name": "id", "label": "id"},
     {"name": "name", "label": "Nombre"},
-    {"name": "Description", "label": "Descripción"},
+    {"name": "description", "label": "Descripción"},
     {"name": "manufacturer", "label": "Proveedor"},
     {"name": "serial_number", "label": "N° de serie"},
 ]
 
+const softwareItemColumns = [
+    {"name": "id", "label": "id"},
+    {"name": "name", "label": "Nombre"},
+    {"name": "type", "label": "Tipo"},
+    {"name": "description", "label": "Descripción"},
+    {"name": "provider", "label": "Proveedor"},
+    {"name": "software_version", "label": "Versión de software"},
+]
 
+const SLAItemColumns = [
+    {"name": "id", "label": "id"},
+    {"name": "name", "label": "Nombre"},
+    {"name": "description", "label": "Descripción"},
+    {"name": "service_type", "label": "Tipo de servicio"},
+    {"name": "service_manager", "label": "Gerente de servicio"},
+    {"name": "starting_date", "label": "Inicio"},
+    {"name": "ending_date", "label": "Fin"},
+]
 
 function ItemsTable() {
     const [bigChartData, setbigChartData] = useState(tableData);
@@ -52,16 +69,17 @@ function ItemsTable() {
     const [category, setCategory] = useState("Hardware");
     const classes = useStyles();
     useEffect(() => {
-        dbGet("items").then(data => {
+        dbGet("/configuration-items/hardware").then(data => {
             setbigChartData(data);
             // setColumns(columns);
         }).catch(err => {console.log(err)});
     }   , []);
-    function fetchData(event, endpoint) {
+    function fetchData(event, endpoint, columns=hardwareItemColumns) {
         const category = event.target.getAttribute("aria-label");
         setCategory(category);
         dbGet(endpoint).then(data => {
             setbigChartData(data);
+            setColumns(columns);
         }).catch(err => {console.log(err)});
     }
   return (
@@ -100,7 +118,7 @@ function ItemsTable() {
                 className={classNames("btn-simple", {
                     active: category === "Software",
                 })}
-                onClick={(e) => fetchData(e, "/configuration-items/software")}
+                onClick={(e) => fetchData(e, "/configuration-items/software", softwareItemColumns)}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Software">
                    Software
@@ -117,7 +135,7 @@ function ItemsTable() {
                 className={classNames("btn-simple", {
                     active: category === "SLA",
                 })}
-                onClick={(e) => fetchData(e, "/configuration-items/sla")}
+                onClick={(e) => fetchData(e, "/configuration-items/sla", SLAItemColumns)}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="SLA">
                     SLA

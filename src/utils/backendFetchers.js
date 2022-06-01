@@ -50,6 +50,14 @@ async function dbGet(category) {
   
     return await getResponseData(response, data);
 };
+
+    async function dbPatch(category, patchData) {
+    const requestData = contentAuthData("PATCH", patchData);
+    const response = await fetch(`${apiUri}/${category}`, requestData);
+    const data = await response.json();
+  
+    return await getResponseData(response, data);
+};
   
   async function dbPost(category, postData) {
     const requestData = contentAuthData("POST", postData);
@@ -86,5 +94,6 @@ export {
     dbPut,
     dbDelete,
     dbPost,
+    dbPatch,
     Login
 };
