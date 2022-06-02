@@ -57,12 +57,13 @@ function IncidentsTable() {
     const RedirectToIncidentCreation = () => {
         history.push(simple_routes.incidentCreation);
     };
+    const my_incidents_route = "users/" + localStorage.getItem("user_id") + "/incidents" ;
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(incidentColumns);
     const [category, setCategory] = useState("Mis incidentes");
     const classes = useStyles();
     useEffect(() => {
-        dbGet("incidents").then(data => {
+        dbGet(my_incidents_route).then(data => {
             setbigChartData(data);
             // setColumns(incidentColumns);
         }).catch(err => {console.log(err)});
@@ -74,6 +75,8 @@ function IncidentsTable() {
             setbigChartData(data);
         }).catch(err => {console.log(err)});
     }
+
+  
   return (
     <>
       <div className="content">
@@ -93,7 +96,7 @@ function IncidentsTable() {
                 color="info"
                 id="0"
                 size="sm"
-                onClick={(e) => fetchData(e, "incidents/1")}
+                onClick={(e) => fetchData(e, my_incidents_route)}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis incidentes">
                     Mis incidentes

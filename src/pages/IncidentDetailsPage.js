@@ -135,7 +135,7 @@ function IncidentDetails(props) {
     }
 
   const submitForm = (data) => { 
-      var patch_data = {taken_by:"SuperAdmin"}
+      var patch_data = {taken_by:localStorage.getItem("username")}
       dbPatch("incidents/" + incident_id, patch_data);
       history.push(simple_routes.incidents);
   }

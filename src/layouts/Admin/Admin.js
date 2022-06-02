@@ -34,6 +34,7 @@ import {INCIDENT_DETAILS_PATH} from "pages/IncidentDetailsPage.js";
 import IncidentDetails from "pages/IncidentDetailsPage.js";
 import simple_routes from "utils/routes_simple.js";
 import IncidentCreation from "pages/IncidentCreationPage.js";
+import LoginPage from "pages/LoginPage.js";
 
 var ps;
 
@@ -127,6 +128,10 @@ function Admin(props) {
               />
               <Switch>
                 {getRoutes(routes)}
+                <Route
+                path={'/login'}
+                component={LoginPage}
+                />
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}
                 component={IncidentDetails}

@@ -129,11 +129,11 @@ function IncidentCreation(props) {
       if (!values.priority) {
         alert("Debe seleccionar una prioridad")
         return
-      } else if(itemValues.length == 0){
+      } else if(itemValues.length === 0){
         alert("Debe relacionar por lo menos un ítem de configuración")
         return
       }
-      formData["created_by"] = "SuperAdmin";
+      formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
       dbPost("incidents", formData);
