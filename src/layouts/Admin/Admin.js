@@ -34,6 +34,7 @@ import {INCIDENT_DETAILS_PATH} from "pages/IncidentDetailsPage.js";
 import IncidentDetails from "pages/IncidentDetailsPage.js";
 import simple_routes from "utils/routes_simple.js";
 import IncidentCreation from "pages/IncidentCreationPage.js";
+import ProblemCreation from "pages/ProblemCreationPage.js";
 import LoginPage from "pages/LoginPage.js";
 
 var ps;
@@ -139,6 +140,10 @@ function Admin(props) {
                 <Route
                 path={simple_routes.incidentCreation}
                 component={IncidentCreation}
+                />
+                                <Route
+                path={simple_routes.problemCreation}
+                component={ProblemCreation}
                 />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>

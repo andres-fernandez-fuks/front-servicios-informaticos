@@ -20,6 +20,10 @@ import classNames from "classnames";
 import CustomDataTable from "../components/Table/DynamicTable.js";
 import useStyles from "../styles";
 import {dbGet} from "../utils/backendFetchers";
+import { IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { useHistory } from "react-router-dom";
+import simple_routes from "utils/routes_simple.js"
 
 // reactstrap components
 import {
@@ -51,6 +55,12 @@ function ProblemsTable() {
     const [columns, setColumns] = useState(problemColumns);
     const [category, setCategory] = useState("Mis problemas");
     const classes = useStyles();
+    const history = useHistory();
+
+    const RedirectToProblemCreation = () => {
+        history.push(simple_routes.problemCreation);
+    };
+
     useEffect(() => {
         dbGet("problems").then(data => {
             setbigChartData(data);
@@ -146,7 +156,17 @@ function ProblemsTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Problemas</CardTitle>
+                <CardTitle tag="h4">Problemas &nbsp; &nbsp; &nbsp;
+                <IconButton
+                        size="small" 
+                        aria-label="delete"
+                        color="primary"
+                        style={{backgroundColor:"white"}}
+                        onClick={() => {RedirectToProblemCreation();}}
+                        >
+                        <AddIcon />
+                    </IconButton>
+                </CardTitle>
               </CardHeader>
               <CardBody>
               <CustomDataTable data={bigChartData} columns={columns}/>
