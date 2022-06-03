@@ -105,7 +105,7 @@ function ProblemCreation(props) {
         alert("Debe seleccionar una prioridad")
         return
       } else if(incidentValues.length === 0){
-        alert("Debe relacionar por lo menos un ítem de configuración")
+        alert("Debe relacionar por lo menos un incidente")
         return
       }
       formData["created_by"] = localStorage.getItem("username");
