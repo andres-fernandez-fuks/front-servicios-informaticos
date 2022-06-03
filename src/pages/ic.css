@@ -1,9 +1,36 @@
+#container {
+    display: grid;
+    grid-template-columns: fit-content(300px) fit-content(300px) 1fr;
+    grid-gap: 5px;
+    box-sizing: border-box;
+    height: 200px;
+    width: 100%;
+    background-color: #8cffa0;
+    padding: 10px;
+  }
+  
+  #container > div {
+    background-color: #8ca0ff;
+    padding: 5px;
+  }
+
 .row_div {
     display: flex;
     flex-direction: row;
     padding-top: 5px;
     padding-bottom: 5px;
     vertical-align: middle;
+}
+
+.description_input {
+    width: 50%;
+    height: 100%;
+    color: black;
+}
+
+.other_input {
+    width: 15%;
+    color: black;
 }
 
 .col_div {

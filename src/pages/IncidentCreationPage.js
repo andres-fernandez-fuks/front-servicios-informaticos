@@ -16,16 +16,7 @@
 
 */
 import React from "react";
-import Avatar from '@mui/material/Avatar';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import SelectSearch, { fuzzySearch } from "react-select-search";
 import { dbGet, dbPost } from 'utils/backendFetchers';
 import IconButton from "@material-ui/core/IconButton";
@@ -33,7 +24,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
-import DynamicTable from "components/Table/DynamicTable"
 import useStyles from "styles"
 // reactstrap components
 import {
@@ -42,17 +32,12 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  CardText,
   FormGroup,
   Form,
-  Input,
-  Row,
   Col,
 } from "reactstrap";
 
 import Select from 'react-select'
-import SimpleTable from "components/Table/SimpleTable";
-import { ValueAxis } from "devextreme-react/range-selector";
 
 const priorities = [
   { value: 'Alta', label: 'Alta' },
@@ -60,18 +45,7 @@ const priorities = [
   { value: 'Baja', label: 'Baja' }
 ]
 
-
-
 const formData = {};
-export const INCIDENT_DETAILS_PATH = "/incidents_details";
-
-const tableData = [];
-const ciItemColumns = [
-    {"name": "id", "label": "id"},
-    {"name": "name", "label": "Descripción"},
-    {"name": "type", "label": "Tipo"}
-]
-
 
 function IncidentCreation(props) {
   var classes = useStyles();
@@ -148,7 +122,7 @@ function IncidentCreation(props) {
           <Form onsubmit="return false">
             <Card>
               <CardHeader >
-                <h4 className="title">Detalles del incidente</h4>
+                <h4 className="title">Creación de Incidente</h4>
               </CardHeader>
               <CardBody>
                   <Grid className = {classes.SmallPaddedGrip} >

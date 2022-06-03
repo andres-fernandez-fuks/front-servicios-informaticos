@@ -29,49 +29,48 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  Form,
+  Form
 } from "reactstrap";
 
 import SimpleTable from "components/Table/SimpleTable";
-
-export const INCIDENT_DETAILS_PATH = "/incidents_details";
+export const PROBLEM_DETAILS_PATH = "/problems_details";
 
 const tableData = [];
-const ciItemColumns = [
+const incidentColumns = [
     {"name": "id", "label": "ID"},
-    {"name": "name", "label": "Descripción"},
-    {"name": "type", "label": "Tipo"}
+    {"name": "description", "label": "Descripción"},
+    {"name": "status", "label": "Estado"}
 ]
 
 
-
-function IncidentDetails(props) {
+function ProblemDetails(props) {
   var classes = useStyles();
   const history = useHistory();
   var paths = window.location.pathname.split("/") 
-  var incident_id = paths[paths.length - 1]
-  const [itemsData, setItemsData] = React.useState([]);
+  var problem_id = paths[paths.length - 1]
+  const [incidentsData, setIncidentsData] = React.useState([]);
   const [confItems, setConfItems]  = React.useState([]);
   const [values, setValues] = React.useState("");
   const [bigChartData, setbigChartData] = React.useState(tableData);
-  const [columns, setColumns] = React.useState(ciItemColumns);
-  const isEditable = false
+  const [columns, setColumns] = React.useState(incidentColumns);
+  const isEditable = false;
+
   React.useEffect(() => {
-    dbGet("incidents/" + incident_id).then(data => {
+    dbGet("problems/" + problem_id).then(data => {
         setValues(data);
     }).catch(err => {console.log(err)});
     }   , []);
 
-    function fetchItemsData() {
-        dbGet("incidents/" + incident_id).then(data => {
-            var items_data = data["configuration_items"]
-            setItemsData(items_data);
+    function fetchIncidentsData() {
+        dbGet("problems/" + problem_id).then(data => {
+            var incidents_data = data["incidents"]
+            setIncidentsData(incidents_data);
         }).catch(err => {console.log(err)});
     }
   console.log("Values: ", values)
 
   function fetchValues() {
-    dbGet("incidents/" + incident_id).then(data => {
+    dbGet("problems/" + problem_id).then(data => {
         setValues(data);
     }).catch(err => {console.log(err)});
 }
@@ -84,34 +83,34 @@ function IncidentDetails(props) {
 
     const [formFields, setFormFields] = React.useState([{}])
 
-    function solveIncident() {
+    function solveProblem() {
         var patch_data = {status:"Resuelto"}
-        dbPatch("incidents/" + incident_id, patch_data);
-        history.push(simple_routes.incidents);
+        dbPatch("problems/" + problem_id, patch_data);
+        history.push(simple_routes.problems);
     }
 
-    function blockIncident() {
+    function blockProblem() {
         var patch_data = {is_blocked:true}
-        dbPatch("incidents/" + incident_id, patch_data);
-        // history.push(simple_routes.incidents);
+        dbPatch("problems/" + problem_id, patch_data);
+        // history.push(simple_routes.problems);
         window.location.reload(false);
     }
 
-    function unblockIncident() {
+    function unblockProblem() {
         var patch_data = {is_blocked:false}
-        dbPatch("incidents/" + incident_id, patch_data);
-        // history.push(simple_routes.incidents);
+        dbPatch("problems/" + problem_id, patch_data);
+        // history.push(simple_routes.problems);
         window.location.reload(false);
     }
 
   const submitForm = (data) => { 
       var patch_data = {taken_by:localStorage.getItem("username")}
-      dbPatch("incidents/" + incident_id, patch_data);
-      history.push(simple_routes.incidents);
+      dbPatch("problems/" + problem_id, patch_data);
+      history.push(simple_routes.problems);
   }
 
-  if (itemsData.length === 0) {
-    fetchItemsData();
+  if (!incidentsData || incidentsData.length === 0) {
+    fetchIncidentsData();
   }
 
   function addBlockButton() {
@@ -120,7 +119,7 @@ function IncidentDetails(props) {
             <Button className="btn-fill" align="left"
             color="warning"
             type="submit"
-            onClick={() => unblockIncident()}
+            onClick={() => unblockProblem()}
             >
             Desbloquear        
             </Button>
@@ -130,7 +129,7 @@ function IncidentDetails(props) {
         <Button className="btn-fill" align="left"
         color="warning"
         type="submit"
-        onClick={() => blockIncident()}
+        onClick={() => blockProblem()}
         >
         Bloquear        
         </Button>  
@@ -160,7 +159,7 @@ function IncidentDetails(props) {
         <Button className="btn-fill" align="right"
         color="success"
         type="submit"
-        onClick={() => solveIncident()}
+        onClick={() => solveProblem()}
         >
         Resolver        
         </Button>
@@ -174,13 +173,13 @@ function IncidentDetails(props) {
       <div className="content">
             <Card>
               <CardHeader >
-                <h4 className="title">Detalles del incidente</h4>
+                <h4 className="title">Detalles del problema</h4>
               </CardHeader>
               <CardBody>
                 <Form disabled>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Descripción</h5>
-                        <input
+                        <input className="description_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.description}
@@ -190,7 +189,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Prioridad</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.priority}
@@ -200,7 +199,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Estado</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.status}
@@ -210,7 +209,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Creado por</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.created_by}
@@ -220,7 +219,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Tomado por</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           placeholder = "Nadie..."
@@ -229,22 +228,9 @@ function IncidentDetails(props) {
                           type="text"
                         />
                   </Grid>
-                  {/* <Grid class = {classes.SmallPaddedGrip}>
-                    <Col className="px-md-1" md="3">
-                      <FormGroup>
-                      <h5 className="title">Prioridad</h5>
-                        <Select
-                            id="priority"
-                            value={{ value: values.priority, label: values.priority }}
-                            onChange={function(new_option){updatePriority(new_option.value)}}
-                            options={options}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Grid> */}
                     <Grid class = {classes.PaddedGrid} >
                     <h5> <b>Ítems de configuración</b></h5>
-                    <SimpleTable data={itemsData} columns={columns} />
+                    <SimpleTable data={incidentsData} columns={columns} />
                     </Grid>
                 </Form>
               </CardBody>
@@ -257,4 +243,4 @@ function IncidentDetails(props) {
   );
 }
 
-export default IncidentDetails;
+export default ProblemDetails;
