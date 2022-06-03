@@ -20,6 +20,11 @@ import classNames from "classnames";
 import CustomDataTable from "../components/Table/DynamicTable.js";
 import useStyles from "../styles";
 import {dbGet} from "../utils/backendFetchers";
+import { IconButton } from '@mui/material';
+import { useHistory } from "react-router-dom";
+import simple_routes from "utils/routes_simple.js"
+import AddIcon from '@mui/icons-material/Add';
+import { PROBLEM_DETAILS_PATH } from "pages/ProblemDetailsPage";
 
 // reactstrap components
 import {
@@ -32,7 +37,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
-// import { Component } from "react/cjs/react.development";
+
 
 const tableData = [];
 
@@ -47,16 +52,23 @@ const problemColumns = [
 
 
 function ProblemsTable() {
+    const history = useHistory();
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(problemColumns);
     const [category, setCategory] = useState("Mis problemas");
     const classes = useStyles();
+
     useEffect(() => {
         dbGet("problems").then(data => {
             setbigChartData(data);
             // setColumns(problemColumns);
         }).catch(err => {console.log(err)});
     }   , []);
+
+    const RedirectToProblemCreation = () => {
+        history.push(simple_routes.problemCreation);
+    };
+
     function fetchData(event, endpoint) {
         const category = event.target.getAttribute("aria-label");
         setCategory(category);
@@ -146,10 +158,21 @@ function ProblemsTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Problemas</CardTitle>
+                <CardTitle
+                tag="h4">Problemas &nbsp; &nbsp; &nbsp;
+                <IconButton
+                    size="small" 
+                    aria-label="delete"
+                    color="primary"
+                    style={{backgroundColor:"white"}}
+                    onClick={() => {RedirectToProblemCreation();}}
+                    >
+                    <AddIcon />
+                </IconButton>
+                </CardTitle>
               </CardHeader>
               <CardBody>
-              <CustomDataTable data={bigChartData} columns={columns}/>
+              <CustomDataTable data={bigChartData} columns={columns} edit_details_path = {PROBLEM_DETAILS_PATH}/>
               </CardBody>
             </Card>
           </Col>

@@ -31,9 +31,12 @@ import routes from "utils/routes.js";
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import {INCIDENT_DETAILS_PATH} from "pages/IncidentDetailsPage.js";
+import { PROBLEM_DETAILS_PATH } from "pages/ProblemDetailsPage";
 import IncidentDetails from "pages/IncidentDetailsPage.js";
 import simple_routes from "utils/routes_simple.js";
 import IncidentCreation from "pages/IncidentCreationPage.js";
+import ProblemCreation from "pages/ProblemCreationPage.js";
+import ProblemDetails from "pages/ProblemDetailsPage.js";
 import LoginPage from "pages/LoginPage.js";
 
 var ps;
@@ -139,6 +142,14 @@ function Admin(props) {
                 <Route
                 path={simple_routes.incidentCreation}
                 component={IncidentCreation}
+                />
+                <Route
+                path={'/admin' + PROBLEM_DETAILS_PATH}
+                component={ProblemDetails}
+                />
+                <Route
+                path={simple_routes.problemCreation}
+                component={ProblemCreation}
                 />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>

@@ -47,18 +47,19 @@ const priorities = [
 
 const formData = {};
 
-function IncidentCreation(props) {
+
+function ProblemCreation(props) {
   var classes = useStyles();
   const history = useHistory();
 
-  const [confItems, setConfItems]  = React.useState([]);
+  const [incidents, setIncidents]  = React.useState([]);
   const [values, setValues] = React.useState("");
   const [formFields, setFormFields] = React.useState([{}])
-  const [itemValues, setItemValues] = React.useState([])
+  const [incidentValues, setIncidentValues] = React.useState([])
 
   React.useEffect(() => {
-    dbGet("configuration-items/names").then(data => {
-        setConfItems(data["items"]);
+    dbGet("incidents/names").then(data => {
+        setIncidents(data["incidents"]);
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -73,7 +74,7 @@ function IncidentCreation(props) {
         value = event;
         data[index] = value;
         setFormFields(data);
-        setItemValues([...itemValues, value]);
+        setIncidentValues([...incidentValues, value]);
     }
     formData[field] = value;
   }
@@ -96,22 +97,22 @@ function IncidentCreation(props) {
   }
 
   const exitForm = () => { 
-    history.push(simple_routes.incidents);
+    history.push(simple_routes.problems);
     }
 
   const submitForm = (e) => {
       if (!values.priority) {
         alert("Debe seleccionar una prioridad")
         return
-      } else if(itemValues.length === 0){
+      } else if(incidentValues.length === 0){
         alert("Debe relacionar por lo menos un ítem de configuración")
         return
       }
       formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
-      dbPost("incidents", formData);
-      history.push(simple_routes.incidents);
+      dbPost("problems", formData);
+      history.push(simple_routes.problems);
   }
 
   const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
@@ -119,10 +120,10 @@ function IncidentCreation(props) {
   return (
     <>
       <div className="content">
-          <Form onsubmit="return false">
+          <Form onSubmit={submitForm}>
             <Card>
               <CardHeader >
-                <h4 className="title">Creación de Incidente</h4>
+                <h4 className="title">Creación de Problema</h4>
               </CardHeader>
               <CardBody>
                   <Grid className = {classes.SmallPaddedGrip} >
@@ -152,16 +153,16 @@ function IncidentCreation(props) {
                     </Col>
                   </Grid>
                     <Grid className = {classes.PaddedGrip}>
-                    <h5> <b>Ítems de configuración</b></h5>
+                    <h5> <b>Incidentes</b></h5>
                         {formFields.map((form, index) => {
                             return (
                             <Grid item xs={12}>
                             <div key={index} className="row_div">
                             <SelectSearch
-                                id={"item" + index+2}
-                                options={confItems}
-                                value={itemValues[index]}
-                                onChange={event => handleFormChange(event, index, "item_name_"+index)}
+                                id={"incident" + index+2}
+                                options={incidents}
+                                value={incidentValues[index]}
+                                onChange={event => handleFormChange(event, index, "incident_name_"+index)}
                                 search
                                 filterOptions={fuzzySearch} 
                                 placeholder="Search something"
@@ -186,7 +187,7 @@ function IncidentCreation(props) {
               <Button className="btn-fill"
                 color="success"
                 type="submit"
-                onClick={(e) => {e.preventDefault(); submitForm()}}
+                //onClick={(e) => {e.preventDefault(); submitForm()}}
                 >
                 Crear        
               </Button>
@@ -205,4 +206,4 @@ function IncidentCreation(props) {
   );
 }
 
-export default IncidentCreation;
+export default ProblemCreation;
