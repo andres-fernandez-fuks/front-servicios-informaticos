@@ -16,7 +16,6 @@
 
 */
 import React from "react";
-
 // reactstrap components
 import {
   Button,
@@ -31,174 +30,96 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import {dbGet} from "utils/backendFetchers";
+import SimpleTable from "components/Table/SimpleTable";
+
 
 function UserProfile() {
+
+  const [values, setValues] = React.useState("");
+  const [roles, setRoles] = React.useState([]);
+
+  React.useEffect(() => {
+    dbGet("/profile").then(data => {
+        setValues(data);
+        setRoles([data["role"]]);
+    }).catch(err => {console.log(err)});
+    }   , []);
+
+  //setRoles(values["role"].name);
+  console.log("PROFILE VALUES: ", values)
+
+  const COLUMN_MAX_LENGTH= 12;
+  const roles_columns = [{"name": "name", "label": "Nombre"}]
   return (
     <>
       <div className="content">
         <Row>
-          <Col md="8">
+          <Col md={8}>
             <Card>
               <CardHeader>
-                <h5 className="title">Edit Profile</h5>
+                <h5 className="title">Mi perfil</h5>
               </CardHeader>
               <CardBody>
                 <Form>
                   <Row>
-                    <Col className="pr-md-1" md="5">
+                    <Col className="px-md-1" md="6">
                       <FormGroup>
-                        <label>Company (disabled)</label>
+                        <label>Nombre de usuario</label>
                         <Input
-                          defaultValue="Creative Code Inc."
-                          disabled
-                          placeholder="Company"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-md-1" md="3">
-                      <FormGroup>
-                        <label>Username</label>
-                        <Input
-                          defaultValue="michael23"
-                          placeholder="Username"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-md-1" md="4">
-                      <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Input placeholder="mike@email.com" type="email" />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-md-1" md="6">
-                      <FormGroup>
-                        <label>First Name</label>
-                        <Input
-                          defaultValue="Mike"
-                          placeholder="Company"
+                          value={values["username"]}
+                          placeholder="Nombre de usuario"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
                     <Col className="pl-md-1" md="6">
                       <FormGroup>
-                        <label>Last Name</label>
-                        <Input
-                          defaultValue="Andrew"
-                          placeholder="Last Name"
-                          type="text"
-                        />
+                        <label htmlFor="exampleInputEmail1">
+                          Correo electrónico
+                        </label>
+                        <Input 
+                          value = {values["email"]}
+                          placeholder="ejemplo@mail.com" 
+                          type="email" />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <Col md="12">
+                    <Col className="pr-md-1" md="6">
                       <FormGroup>
-                        <label>Address</label>
+                        <label>Nombre</label>
                         <Input
-                          defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                          placeholder="Home Address"
+                          value={values["name"]}
+                          placeholder="Nombre"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-md-1" md="4">
+                    <Col className="pl-md-1" md="6">
                       <FormGroup>
-                        <label>City</label>
+                        <label>Apellido</label>
                         <Input
-                          defaultValue="Mike"
-                          placeholder="City"
+                          value={values["lastname"]}
+                          placeholder="Apellido"
                           type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-md-1" md="4">
-                      <FormGroup>
-                        <label>Country</label>
-                        <Input
-                          defaultValue="Andrew"
-                          placeholder="Country"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-md-1" md="4">
-                      <FormGroup>
-                        <label>Postal Code</label>
-                        <Input placeholder="ZIP Code" type="number" />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="8">
-                      <FormGroup>
-                        <label>About Me</label>
-                        <Input
-                          cols="80"
-                          defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in
-                            that two seat Lambo."
-                          placeholder="Here can be your description"
-                          rows="4"
-                          type="textarea"
                         />
                       </FormGroup>
                     </Col>
                   </Row>
                 </Form>
               </CardBody>
-              <CardFooter>
-                <Button className="btn-fill" color="primary" type="submit">
-                  Save
-                </Button>
-              </CardFooter>
             </Card>
           </Col>
           <Col md="4">
             <Card className="card-user">
               <CardBody>
                 <CardText />
-                <div className="author">
-                  <div className="block block-one" />
-                  <div className="block block-two" />
-                  <div className="block block-three" />
-                  <div className="block block-four" />
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar"
-                      src={require("assets/img/emilyz.jpg").default}
-                    />
-                    <h5 className="title">Mike Andrew</h5>
-                  </a>
-                  <p className="description">Ceo/Co-Founder</p>
-                </div>
-                <div className="card-description">
-                  Do not be scared of the truth because we need to restart the
-                  human foundation in truth And I love you like Kanye loves
-                  Kanye I love Rick Owens’ bed design but the back is...
-                </div>
+                  <h5 className="title">Roles asignados</h5>
+                  <SimpleTable data={roles} columns={roles_columns}>
+                  </SimpleTable>
+
               </CardBody>
-              <CardFooter>
-                <div className="button-container">
-                  <Button className="btn-icon btn-round" color="facebook">
-                    <i className="fab fa-facebook" />
-                  </Button>
-                  <Button className="btn-icon btn-round" color="twitter">
-                    <i className="fab fa-twitter" />
-                  </Button>
-                  <Button className="btn-icon btn-round" color="google">
-                    <i className="fab fa-google-plus" />
-                  </Button>
-                </div>
-              </CardFooter>
             </Card>
           </Col>
         </Row>
