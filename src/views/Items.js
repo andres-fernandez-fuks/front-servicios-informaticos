@@ -34,13 +34,15 @@ import {
 } from "reactstrap";
 // import { Component } from "react/cjs/react.development";
 
+import {ITEM_DETAILS_PATH} from "../pages/items/HardwareItemDetailsPage.js";
+
 const tableData = [];
 
 const hardwareItemColumns = [
     {"name": "id", "label": "id"},
     {"name": "name", "label": "Nombre"},
     {"name": "description", "label": "Descripción"},
-    {"name": "manufacturer", "label": "Proveedor"},
+    {"name": "manufacturer", "label": "Fabricante"},
     {"name": "serial_number", "label": "N° de serie"},
 ]
 
@@ -150,7 +152,12 @@ function ItemsTable() {
                 <CardTitle tag="h4">Items</CardTitle>
               </CardHeader>
               <CardBody>
-              <CustomDataTable data={bigChartData} columns={columns}/>
+              <CustomDataTable
+                data={bigChartData}
+                columns={columns}
+                edit_details_path = {ITEM_DETAILS_PATH}
+                edit_extra_path = {category.toLowerCase()}
+                />
               </CardBody>
             </Card>
           </Col>

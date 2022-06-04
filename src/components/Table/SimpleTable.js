@@ -8,6 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import useStyles from "../../styles";
 import { NavLink, Link, useLocation } from "react-router-dom";
+import RestoreIcon from '@mui/icons-material/Restore';
 
 
 export default function SimpleTable(props) {
@@ -44,17 +45,17 @@ export default function SimpleTable(props) {
       },
         palette: {
           primary: {
-            main: "#242526"
+            main: "#1f2131"
           },
           secondary: {
-            main: "#d975d0"
+            main: "#E4E6EB"
           },
           text: {
             primary: "#E4E6EB",
             secondary: "#B0B3B8"
           },
           background: {
-            default: "",
+            default: "#1f2131",
             paper: "transparent"
           }
         }
@@ -119,7 +120,51 @@ export default function SimpleTable(props) {
 
     // }
 
+    if (props.addRestoreColumn === true) {
+        new_columns.push({
+            name: "Ver",
+            options: {
+            download: false,
+            filter: false,
+            sort: false,
+            setCellHeaderProps: () => {
+                return { style: {minWidth: 150, width: 150 } };
+            },
+            setCellProps: () => ({
+                style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle" },
+            }),
+            customBodyRender: (value, tableMeta, updateValue) => {
+                debugger;
+                var object_id = tableMeta.rowData[0];
+                var edit_details_path = props.edit_extra_path ? 
+                                            props.edit_details_path + "/" + props.edit_extra_path + "/" + object_id : 
+                                            props.edit_details_path + "/" + object_id;
+                
+                return (
+                <>
+                    <Tooltip title="Detalles">
+                    <IconButton
+                        className={classes.onlyButtonSpacing}
+                        color="inherit"
+                        aria-label="upload picture"
+                        size="small"
+                        component={Link}
+                        to={'/admin' + edit_details_path}
+                        path >
+                        <RestoreIcon />
+                    </IconButton>
+                    </Tooltip>
+                </>
+                );
+            },
+            },
+        });
+
+
+    }
+
     const table_options = {
+        pagination:false,
         viewColumns: false,
         download:false,
         search:false,

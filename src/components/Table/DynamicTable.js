@@ -134,7 +134,12 @@ export default function CustomDataTable(props) {
                 style: { whiteSpace: "nowrap", textAlign:"center"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
+                debugger;
                 var object_id = tableMeta.rowData[0];
+                var edit_details_path = props.edit_extra_path ? 
+                                            props.edit_details_path + "/" + props.edit_extra_path + "/" + object_id : 
+                                            props.edit_details_path + "/" + object_id;
+                
                 return (
                 <>
                     <Tooltip title="Detalles">
@@ -145,7 +150,7 @@ export default function CustomDataTable(props) {
                         //component="span"
                         size="small"
                         component={Link}
-                        to={'/admin' + props.edit_details_path + "/" + object_id}
+                        to={'/admin' + edit_details_path}
                         path >
                         <InfoIcon />
                     </IconButton>

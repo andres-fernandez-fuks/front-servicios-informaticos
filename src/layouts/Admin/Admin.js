@@ -38,6 +38,10 @@ import IncidentCreation from "pages/IncidentCreationPage.js";
 import ProblemCreation from "pages/ProblemCreationPage.js";
 import ProblemDetails from "pages/ProblemDetailsPage.js";
 import LoginPage from "pages/LoginPage.js";
+import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage";
+import { SOFTWARE_ITEM_DETAILS_PATH } from "pages/items/SoftwareItemDetailsPage";
+import HardwareItemDetails from "pages/items/practice.js";
+import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
 
 var ps;
 
@@ -134,6 +138,14 @@ function Admin(props) {
                 <Route
                 path={'/login'}
                 component={LoginPage}
+                />
+                <Route
+                path={'/admin' + HARDWARE_ITEM_DETAILS_PATH}
+                component={HardwareItemDetails}
+                />
+                <Route
+                path={'/admin' + SOFTWARE_ITEM_DETAILS_PATH}
+                component={SoftwareItemDetails}
                 />
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}

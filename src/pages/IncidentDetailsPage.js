@@ -74,7 +74,7 @@ function IncidentDetails(props) {
     dbGet("incidents/" + incident_id).then(data => {
         setValues(data);
     }).catch(err => {console.log(err)});
-}
+  }
 
   React.useEffect(() => {
     dbGet("configuration-items/names").then(data => {
@@ -180,7 +180,7 @@ function IncidentDetails(props) {
                 <Form disabled>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Descripción</h5>
-                        <input
+                        <input className="description_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.description}
@@ -190,7 +190,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Prioridad</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.priority}
@@ -200,7 +200,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Estado</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.status}
@@ -210,7 +210,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Creado por</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           value= {values.created_by}
@@ -220,7 +220,7 @@ function IncidentDetails(props) {
                   </Grid>
                   <Grid class = {classes.SmallPaddedGrip} >
                       <h5 className="title">Tomado por</h5>
-                        <input
+                        <input class = "other_input"
                           readOnly
                           disabled = {!isEditable}
                           placeholder = "Nadie..."
