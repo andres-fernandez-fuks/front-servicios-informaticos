@@ -113,6 +113,16 @@ function Admin(props) {
     }
     return "Brand";
   };
+  React.useEffect(
+    function checkIfLoggedIn() {
+      if (window.location.pathname == simple_routes.login) {
+        return
+      } else if (localStorage.getItem("token") === null) {
+        window.location.pathname = simple_routes.login;
+      }
+    }
+  )
+  
   return (
     <BackgroundColorContext.Consumer>
       {({ color, changeColor }) => (

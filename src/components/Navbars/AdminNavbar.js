@@ -18,7 +18,7 @@
 import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
-
+import simple_routes from "utils/routes_simple.js"
 // reactstrap components
 import {
   Button,
@@ -38,6 +38,7 @@ import {
   NavbarToggler,
   ModalHeader,
 } from "reactstrap";
+import { dbPost } from "utils/backendFetchers";
 
 function AdminNavbar(props) {
   const [collapseOpen, setcollapseOpen] = React.useState(false);
@@ -71,6 +72,14 @@ function AdminNavbar(props) {
   const toggleModalSearch = () => {
     setmodalSearch(!modalSearch);
   };
+
+  function logOut(e){
+    e.preventDefault();
+    localStorage.removeItem("token");
+    localStorage.clear()
+    window.location.pathname = simple_routes.login
+  }
+
   return (
     <>
       <Navbar className={classNames("navbar-absolute", color)} expand="lg">
@@ -161,14 +170,14 @@ function AdminNavbar(props) {
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item">Profile</DropdownItem>
+                    <DropdownItem className="nav-item" href={simple_routes.profile}>Mi perfil</DropdownItem>
                   </NavLink>
                   <NavLink tag="li">
                     <DropdownItem className="nav-item">Settings</DropdownItem>
                   </NavLink>
                   <DropdownItem divider tag="li" />
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item">Log out</DropdownItem>
+                    <DropdownItem className="nav-item" onClick={(e) =>{logOut(e)}}>Cerrar sesión</DropdownItem>
                   </NavLink>
                 </DropdownMenu>
               </UncontrolledDropdown>

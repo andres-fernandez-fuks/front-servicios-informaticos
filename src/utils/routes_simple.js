@@ -7,6 +7,8 @@ const simple_routes = {
     problemCreation: "/admin/problems_create",
     problemDetails: "/admin/problems_details",
     problems: "/admin/problems",
+    profile: "/admin/user-profile",
+    login: "/login",
 }
 
 export default simple_routes;
