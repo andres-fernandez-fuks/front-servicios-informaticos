@@ -134,7 +134,6 @@ export default function SimpleTable(props) {
                 style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle" },
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
-                debugger;
                 var object_id = tableMeta.rowData[0];
                 var edit_details_path = props.edit_extra_path ? 
                                             props.edit_details_path + "/" + props.edit_extra_path + "/" + object_id : 

@@ -56,7 +56,6 @@ right_container: {
 
     React.useEffect(() => {
         dbGet("configuration-items/hardware/" + item_id).then(data => {
-            debugger;
             setValues(data);
         }).catch(err => {console.log(err)});
         }   , []);
@@ -77,7 +76,6 @@ right_container: {
         if (values === '' || values === undefined) {
             fetchValues();
         }
-        debugger;
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable data={values.versions} columns={columns} addRestoreColumn={true}/>
         }

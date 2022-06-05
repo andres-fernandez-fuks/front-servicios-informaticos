@@ -49,7 +49,6 @@ function ProblemDetails(props) {
 
   React.useEffect(() => {
     dbGet("configuration-items/hardware/" + item_id).then(data => {
-        debugger;
         setValues(data);
     }).catch(err => {console.log(err)});
     }   , []);

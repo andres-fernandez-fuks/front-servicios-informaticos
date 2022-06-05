@@ -46,7 +46,8 @@
     "reactjs-dropdown-component": "^1.2.0",
     "reactjs-simple-table": "1.5.1",
     "reactstrap": "8.7.1",
-    "semantic-ui-react": "2.1.2"
+    "semantic-ui-react": "2.1.2",
+    "react-hot-toast":"2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -38,6 +38,7 @@ import {
 } from "reactstrap";
 
 import Select from 'react-select'
+import toast, { Toaster } from 'react-hot-toast';
 
 const priorities = [
   { value: 'Alta', label: 'Alta' },
@@ -100,11 +101,14 @@ function IncidentCreation(props) {
     }
 
   const submitForm = (e) => {
-      if (!values.priority) {
-        alert("Debe seleccionar una prioridad")
+      if (!document.getElementById('description').value){
+        toast.error("Debe escribir una descripción para el incidente")
+        return
+      } else if (!values.priority) {
+        toast.error("Debe seleccionar una prioridad")
         return
       } else if(itemValues.length === 0){
-        alert("Debe relacionar por lo menos un ítem de configuración")
+        toast.error("Debe relacionar por lo menos un ítem de configuración")
         return
       }
       formData["created_by"] = localStorage.getItem("username");
@@ -112,6 +116,8 @@ function IncidentCreation(props) {
       formData["priority"] = values.priority;
       dbPost("incidents", formData);
       history.push(simple_routes.incidents);
+      toast.success("Incidente creado correctamente")
+
   }
 
   const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
@@ -119,87 +125,88 @@ function IncidentCreation(props) {
   return (
     <>
       <div className="content">
-          <Form onsubmit="return false">
-            <Card>
-              <CardHeader >
-                <h4 className="title">Creación de Incidente</h4>
-              </CardHeader>
-              <CardBody>
-                  <Grid className = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Descripción</h5>
-                      <input size="40"
-                        name="description"
-                        required
-                        id="description"
-                        label="Descripción"
+      <Toaster/>
+      <Form onSubmit="return false">
+        <Card>
+          <CardHeader >
+            <h4 className="title">Creación de Incidente</h4>
+          </CardHeader>
+          <CardBody>
+              <Grid className = {classes.SmallPaddedGrip} >
+                  <h5 className="title">Descripción</h5>
+                  <input size="40"
+                    name="description"
+                    required
+                    id="description"
+                    label="Descripción"
+                    autoFocus
+                    autoComplete="off"
+                    placeholder="Ingrese una descripción"
+                  />
+              </Grid>
+              <Grid className = {classes.SmallPaddedGrip}>
+                <Col className="px-md-1" md="3">
+                  <FormGroup>
+                  <h5 className="title">Prioridad</h5>
+                    <Select styles={selectStyles}
+                        id="priority"
+                        value={{ value: values.priority, label: values.priority }}
+                        onChange={function(new_option){updatePriority(new_option.value)}}
+                        options={priorities}
                         autoFocus
-                        autoComplete="off"
-                        placeholder="Ingrese una descripción"
-                      />
-                  </Grid>
-                  <Grid className = {classes.SmallPaddedGrip}>
-                    <Col className="px-md-1" md="3">
-                      <FormGroup>
-                      <h5 className="title">Prioridad</h5>
-                        <Select styles={selectStyles}
-                            id="priority"
-                            value={{ value: values.priority, label: values.priority }}
-                            onChange={function(new_option){updatePriority(new_option.value)}}
-                            options={priorities}
-                            autoFocus
+                    />
+                  </FormGroup>
+                </Col>
+              </Grid>
+                <Grid className = {classes.PaddedGrip}>
+                <h5> <b>Ítems de configuración</b></h5>
+                    {formFields.map((form, index) => {
+                        return (
+                        <Grid item xs={12}>
+                        <div key={index} className="row_div">
+                        <SelectSearch
+                            id={"item" + index+2}
+                            options={confItems}
+                            value={itemValues[index]}
+                            onChange={event => handleFormChange(event, index, "item_name_"+index)}
+                            search
+                            filterOptions={fuzzySearch} 
+                            placeholder="Search something"
                         />
-                      </FormGroup>
-                    </Col>
-                  </Grid>
-                    <Grid className = {classes.PaddedGrip}>
-                    <h5> <b>Ítems de configuración</b></h5>
-                        {formFields.map((form, index) => {
-                            return (
-                            <Grid item xs={12}>
-                            <div key={index} className="row_div">
-                            <SelectSearch
-                                id={"item" + index+2}
-                                options={confItems}
-                                value={itemValues[index]}
-                                onChange={event => handleFormChange(event, index, "item_name_"+index)}
-                                search
-                                filterOptions={fuzzySearch} 
-                                placeholder="Search something"
-                            />
-                            &nbsp; &nbsp; &nbsp;
-                            <IconButton
-                                    size="medium" 
-                                    aria-label="delete"
-                                    color="primary"
-                                    onClick={() => removeFields(index)}
-                                    >
-                                    <DeleteIcon/>
-                                </IconButton>
-                            </div>
-                            </Grid>
-                            )
-                            })}
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                        &nbsp; &nbsp; &nbsp;
+                        <IconButton
+                                size="medium" 
+                                aria-label="delete"
+                                color="primary"
+                                onClick={() => removeFields(index)}
+                                >
+                                <DeleteIcon/>
+                            </IconButton>
+                        </div>
                         </Grid>
-              </CardBody>
-              <CardFooter align="center">
-              <Button className="btn-fill"
-                color="success"
-                type="submit"
-                onClick={(e) => {e.preventDefault(); submitForm()}}
-                >
-                Crear        
-              </Button>
-              <Button className="btn-fill"
-                color="warning"
-                onClick={() => exitForm()}
-                >
-                Volver        
-              </Button>
-              </CardFooter>
-              
-            </Card>
-            </Form>
+                        )
+                        })}
+                        <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                    </Grid>
+          </CardBody>
+          <CardFooter align="center">
+          <Button className="btn-fill"
+            color="success"
+            type="submit"
+            onClick={(e) => {e.preventDefault(); submitForm()}}
+            >
+            Crear        
+          </Button>
+          <Button className="btn-fill"
+            color="warning"
+            onClick={() => exitForm()}
+            >
+            Volver        
+          </Button>
+          </CardFooter>
+          
+        </Card>
+        </Form>
       </div>
     </>
   );

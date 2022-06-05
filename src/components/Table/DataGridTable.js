@@ -1,7 +1,6 @@
 import { DataGrid } from '@mui/x-data-grid';
 
 export default function DataGridTable(props) {
-    debugger;
     return (
     <DataGrid
         rows={props.rows}
