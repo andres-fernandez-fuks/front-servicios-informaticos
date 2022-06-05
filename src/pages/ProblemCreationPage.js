@@ -25,6 +25,8 @@ import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
+import toast, { Toaster } from 'react-hot-toast';
+
 // reactstrap components
 import {
   Button,
@@ -101,11 +103,14 @@ function ProblemCreation(props) {
     }
 
   const submitForm = (e) => {
-      if (!values.priority) {
-        alert("Debe seleccionar una prioridad")
+      if (!document.getElementById('description').value){
+        toast.error("Debe escribir una descripción para el problema")
+        return
+      } else if (!values.priority) {
+        toast.error("Debe seleccionar una prioridad")
         return
       } else if(incidentValues.length === 0){
-        alert("Debe relacionar por lo menos un incidente")
+        toast.error("Debe relacionar por lo menos un incidente")
         return
       }
       formData["created_by"] = localStorage.getItem("username");
@@ -113,6 +118,7 @@ function ProblemCreation(props) {
       formData["priority"] = values.priority;
       dbPost("problems", formData);
       history.push(simple_routes.problems);
+      toast.success("Problema creado correctamente")
   }
 
   const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
@@ -120,6 +126,7 @@ function ProblemCreation(props) {
   return (
     <>
       <div className="content">
+        <Toaster/>
           <Form onSubmit={submitForm}>
             <Card>
               <CardHeader >
@@ -187,7 +194,7 @@ function ProblemCreation(props) {
               <Button className="btn-fill"
                 color="success"
                 type="submit"
-                //onClick={(e) => {e.preventDefault(); submitForm()}}
+                onClick={(e) => {e.preventDefault(); submitForm()}}
                 >
                 Crear        
               </Button>

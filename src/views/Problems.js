@@ -25,6 +25,7 @@ import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import AddIcon from '@mui/icons-material/Add';
 import { PROBLEM_DETAILS_PATH } from "pages/ProblemDetailsPage";
+import toast, { Toaster } from 'react-hot-toast';
 
 // reactstrap components
 import {
@@ -79,6 +80,7 @@ function ProblemsTable() {
   return (
     <>
       <div className="content">
+      <Toaster />
         <Row>
           <Col md="12">
             <Card className={classes.card} style={{paddingTop:5}}>

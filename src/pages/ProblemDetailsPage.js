@@ -31,6 +31,7 @@ import {
   CardFooter,
   Form
 } from "reactstrap";
+import toast, { Toaster } from 'react-hot-toast';
 
 import SimpleTable from "components/Table/SimpleTable";
 export const PROBLEM_DETAILS_PATH = "/problems_details";
@@ -171,6 +172,7 @@ function ProblemDetails(props) {
   return (
     <>
       <div className="content">
+        <Toaster />
             <Card>
               <CardHeader >
                 <h4 className="title">Detalles del problema</h4>
