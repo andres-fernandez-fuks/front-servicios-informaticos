@@ -6,7 +6,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import datatableTextLabels from "components/Table/textLabels";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-import useStyles from "../../styles";
+import useStyles from "styles";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import RestoreIcon from '@mui/icons-material/Restore';
 
@@ -75,80 +75,38 @@ export default function SimpleTable(props) {
                     style: {whiteSpace: "nowrap", justifyContent: "center"},
                 }),
                 setCellProps: () => ({
-                    style: { whiteSpace: "nowrap", textAlign:"center"},
+                    style: { whiteSpace: "nowrap", textAlign: "center"},
                 }),
             }
         }  
     }
     );
 
-    // if (add_edit_column) {
-    //     new_columns.push({
-    //         name: "Editar",
-    //         options: {
-    //         download: false,
-    //         filter: false,
-    //         sort: false,
-    //         setCellHeaderProps: () => {
-    //             return { style: {minWidth: 150, width: 150 } };
-    //         },
-    //         setCellProps: () => ({
-    //             style: { whiteSpace: "nowrap", textAlign:"center"},
-    //         }),
-    //         customBodyRender: (value, tableMeta, updateValue) => {
-    //             var incident_id = tableMeta.rowData[0];
-    //             return (
-    //             <>
-    //                 <Tooltip title="Editar">
-    //                 <IconButton
-    //                     className={classes.onlyButtonSpacing}
-    //                     color="inherit"
-    //                     aria-label="upload picture"
-    //                     //component="span"
-    //                     size="small"
-    //                     component={Link}
-    //                     to={'/admin' + props.edit_details_path + "/" + incident_id}
-    //                     path >
-    //                     <EditIcon />
-    //                 </IconButton>
-    //                 </Tooltip>
-    //             </>
-    //             );
-    //         },
-    //         },
-    //     });
-
-    // }
-
     if (props.addRestoreColumn === true) {
         new_columns.push({
-            name: "Ver",
+            name: "Restaurar",
             options: {
             download: false,
             filter: false,
             sort: false,
             setCellHeaderProps: () => {
-                return { style: {minWidth: 150, width: 150 } };
+                return {  };
             },
             setCellProps: () => ({
-                style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle" },
+                style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "top"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
                 var object_id = tableMeta.rowData[0];
-                var edit_details_path = props.edit_extra_path ? 
-                                            props.edit_details_path + "/" + props.edit_extra_path + "/" + object_id : 
-                                            props.edit_details_path + "/" + object_id;
                 
                 return (
                 <>
-                    <Tooltip title="Detalles">
+                    <Tooltip title="Restaurar">
                     <IconButton
                         className={classes.onlyButtonSpacing}
                         color="inherit"
-                        aria-label="upload picture"
                         size="small"
                         component={Link}
-                        to={'/admin' + edit_details_path}
+                        onClick={() => props.function(props.request_endpoint, props.button_path, object_id)}
                         path >
                         <RestoreIcon />
                     </IconButton>

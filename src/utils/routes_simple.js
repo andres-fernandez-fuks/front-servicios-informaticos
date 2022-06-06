@@ -4,7 +4,6 @@ const simple_routes = {
     problemCreation: "/admin/problems_create",
     incidents: "/admin/incidents",
     dashboard: "/admin/dashboard",
-    problemCreation: "/admin/problems_create",
     problemDetails: "/admin/problems_details",
     problems: "/admin/problems",
     profile: "/admin/user-profile",

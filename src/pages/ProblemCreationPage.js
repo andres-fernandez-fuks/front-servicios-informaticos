@@ -135,7 +135,7 @@ function ProblemCreation(props) {
               <CardBody>
                   <Grid className = {classes.SmallPaddedGrip} >
                       <h5 className="title">Descripción</h5>
-                      <input size="40"
+                      <input class="heighttext"
                         name="description"
                         required
                         id="description"

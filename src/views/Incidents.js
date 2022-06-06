@@ -190,8 +190,8 @@ function IncidentsTable() {
                 <CardTitle tag="h4">Incidentes &nbsp; &nbsp; &nbsp;
                     <IconButton
                         size="small" 
-                        aria-label="delete"
-                        color="primary"
+                        aria-label="Crear Incidente"
+                        color="info"
                         style={{backgroundColor:"white"}}
                         onClick={() => {RedirectToIncidentCreation();}}
                         >

@@ -22,6 +22,12 @@
     vertical-align: middle;
 }
 
+.heighttext{
+    height:37px;
+    width:500px;
+    color: black;
+  }
+
 .description_input {
     width: 50%;
     height: 100%;
@@ -31,11 +37,12 @@
 .other_input {
     width: 15%;
     color: black;
+    
 }
 
-.col_div {
-    display: flex;
-    flex-direction: row;
+.form_col {
+    align-items: center;
+    text-align: center;
 }
 
 .button_div {

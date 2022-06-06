@@ -39,7 +39,7 @@ import ProblemDetails from "pages/ProblemDetailsPage.js";
 import LoginPage from "pages/LoginPage.js";
 import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage";
 import { SOFTWARE_ITEM_DETAILS_PATH } from "pages/items/SoftwareItemDetailsPage";
-import HardwareItemDetails from "pages/items/practice.js";
+import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
 import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
 
 var ps;

@@ -164,8 +164,8 @@ function ProblemsTable() {
                 tag="h4">Problemas &nbsp; &nbsp; &nbsp;
                 <IconButton
                     size="small" 
-                    aria-label="delete"
-                    color="primary"
+                    aria-label="Crear Problema"
+                    color="info"
                     style={{backgroundColor:"white"}}
                     onClick={() => {RedirectToProblemCreation();}}
                     >

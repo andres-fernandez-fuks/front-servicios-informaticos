@@ -9,20 +9,14 @@
     height: 300px; /* Should be removed. Only for demonstration */
   }
 
-  #container {
-    display: grid;
-    grid-template-columns: fit-content(300px) fit-content(300px) 1fr;
-    grid-gap: 5px;
-    box-sizing: border-box;
-    height: 200px;
-    width: 100%;
-    background-color: #8cffa0;
-    padding: 10px;
-  }
-  
-  #container > div {
-    background-color: #8ca0ff;
-    padding: 5px;
+  .customCss {
+    width: 150px;
+    overflow: scroll;
+    resize: none;
+    background-color: #ffffff;
+    box-shadow: none;
+    border: none;
+    text-align: center;
   }
 
 .row_div {
@@ -44,6 +38,10 @@
 
 }
 
+.yellow_label {
+    color: #fcba03;
+}
+
 .description_input {
     width: 100%;
     height: 100%;
@@ -57,19 +55,16 @@
 }
 
 .other_input {
-    width: 100%;
-    color: black;
-    background-color: white;
-    height: 100%;
-    border: none;
-    padding: 5px;
-    font-size: 14px;
-    text-align: left;
+    text-align: center;
 }
 
-.col_div {
-    display: flex;
-    flex-direction: row;
+.btn.btn-primary[disabled] {
+    background-color: #00ff00;
+}
+
+.form_col {
+    align-items: center;
+    text-align: center;
 }
 
 .button_div {

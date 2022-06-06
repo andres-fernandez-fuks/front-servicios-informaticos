@@ -11109,7 +11109,7 @@ p {
   p.description {
     font-size: 1.14em; }
 
-.title {
+.title { 
   font-weight: 600; }
   .title.title-up {
     text-transform: uppercase; }

@@ -134,7 +134,7 @@ function IncidentCreation(props) {
           <CardBody>
               <Grid className = {classes.SmallPaddedGrip} >
                   <h5 className="title">Descripción</h5>
-                  <input size="40"
+                  <input class="heighttext"
                     name="description"
                     required
                     id="description"
@@ -197,7 +197,7 @@ function IncidentCreation(props) {
             >
             Crear        
           </Button>
-          <Button className="btn-fill"
+          <Button className="btn btn-primary"
             color="warning"
             onClick={() => exitForm()}
             >
