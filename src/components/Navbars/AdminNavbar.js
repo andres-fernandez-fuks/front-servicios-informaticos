@@ -18,7 +18,7 @@
 import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
-
+import simple_routes from "utils/routes_simple.js"
 // reactstrap components
 import {
   Button,
@@ -38,6 +38,7 @@ import {
   NavbarToggler,
   ModalHeader,
 } from "reactstrap";
+import { dbPost } from "utils/backendFetchers";
 
 function AdminNavbar(props) {
   const [collapseOpen, setcollapseOpen] = React.useState(false);
@@ -71,6 +72,14 @@ function AdminNavbar(props) {
   const toggleModalSearch = () => {
     setmodalSearch(!modalSearch);
   };
+
+  function logOut(e){
+    e.preventDefault();
+    localStorage.removeItem("token");
+    localStorage.clear()
+    window.location.pathname = simple_routes.login
+  }
+
   return (
     <>
       <Navbar className={classNames("navbar-absolute", color)} expand="lg">
@@ -104,7 +113,7 @@ function AdminNavbar(props) {
                   <span className="d-lg-none d-md-block">Search</span>
                 </Button>
               </InputGroup>
-              <UncontrolledDropdown nav>
+              {/* <UncontrolledDropdown nav>
                 <DropdownToggle
                   caret
                   color="default"
@@ -121,28 +130,8 @@ function AdminNavbar(props) {
                       Mike John responded to your email
                     </DropdownItem>
                   </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      You have 5 more tasks
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Your friend Michael is in town
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Another notification
-                    </DropdownItem>
-                  </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem className="nav-item">
-                      Another one
-                    </DropdownItem>
-                  </NavLink>
                 </DropdownMenu>
-              </UncontrolledDropdown>
+              </UncontrolledDropdown> */}
               <UncontrolledDropdown nav>
                 <DropdownToggle
                   caret
@@ -153,22 +142,23 @@ function AdminNavbar(props) {
                   <div className="photo">
                     <img
                       alt="..."
-                      src={require("assets/img/anime3.png").default}
+                      src={require("assets/img/user.png").default}
                     />
+                    
                   </div>
                   <b className="caret d-none d-lg-block d-xl-block" />
                   <p className="d-lg-none">Log out</p>
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item">Profile</DropdownItem>
+                    <DropdownItem className="nav-item" href={simple_routes.profile}>Mi perfil</DropdownItem>
                   </NavLink>
                   <NavLink tag="li">
                     <DropdownItem className="nav-item">Settings</DropdownItem>
                   </NavLink>
                   <DropdownItem divider tag="li" />
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item">Log out</DropdownItem>
+                    <DropdownItem className="nav-item" onClick={(e) =>{logOut(e)}}>Cerrar sesión</DropdownItem>
                   </NavLink>
                 </DropdownMenu>
               </UncontrolledDropdown>

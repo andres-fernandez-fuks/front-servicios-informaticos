@@ -24,16 +24,23 @@ import PerfectScrollbar from "perfect-scrollbar";
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
 import routes from "utils/routes.js";
 
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import {INCIDENT_DETAILS_PATH} from "pages/IncidentDetailsPage.js";
+import { PROBLEM_DETAILS_PATH } from "pages/ProblemDetailsPage";
 import IncidentDetails from "pages/IncidentDetailsPage.js";
 import simple_routes from "utils/routes_simple.js";
 import IncidentCreation from "pages/IncidentCreationPage.js";
+import ProblemCreation from "pages/ProblemCreationPage.js";
+import ProblemDetails from "pages/ProblemDetailsPage.js";
+import LoginPage from "pages/LoginPage.js";
+import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage";
+import { SOFTWARE_ITEM_DETAILS_PATH } from "pages/items/SoftwareItemDetailsPage";
+import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
+import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
 
 var ps;
 
@@ -105,6 +112,16 @@ function Admin(props) {
     }
     return "Brand";
   };
+  React.useEffect(
+    function checkIfLoggedIn() {
+      if (window.location.pathname == simple_routes.login) {
+        return
+      } else if (localStorage.getItem("token") === null) {
+        window.location.pathname = simple_routes.login;
+      }
+    }
+  )
+  
   return (
     <BackgroundColorContext.Consumer>
       {({ color, changeColor }) => (
@@ -128,12 +145,32 @@ function Admin(props) {
               <Switch>
                 {getRoutes(routes)}
                 <Route
+                path={'/login'}
+                component={LoginPage}
+                />
+                <Route
+                path={'/admin' + HARDWARE_ITEM_DETAILS_PATH}
+                component={HardwareItemDetails}
+                />
+                <Route
+                path={'/admin' + SOFTWARE_ITEM_DETAILS_PATH}
+                component={SoftwareItemDetails}
+                />
+                <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}
                 component={IncidentDetails}
                 />
                 <Route
                 path={simple_routes.incidentCreation}
                 component={IncidentCreation}
+                />
+                <Route
+                path={'/admin' + PROBLEM_DETAILS_PATH}
+                component={ProblemDetails}
+                />
+                <Route
+                path={simple_routes.problemCreation}
+                component={ProblemCreation}
                 />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>
@@ -143,7 +180,6 @@ function Admin(props) {
               }
             </div>
           </div>
-          <FixedPlugin bgColor={color} handleBgClick={changeColor} />
         </React.Fragment>
       )}
     </BackgroundColorContext.Consumer>

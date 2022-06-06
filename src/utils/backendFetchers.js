@@ -85,7 +85,6 @@ async function Login(userData) {
     };
     const response = await fetch(`${apiUri}/login`, requestData);
     const data = await response.json();
-  
     return await getResponseData(response, data);
 }
 

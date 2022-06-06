@@ -134,7 +134,11 @@ export default function CustomDataTable(props) {
                 style: { whiteSpace: "nowrap", textAlign:"center"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
-                var incident_id = tableMeta.rowData[0];
+                var object_id = tableMeta.rowData[0];
+                var edit_details_path = props.edit_extra_path ? 
+                                            props.edit_details_path + "/" + props.edit_extra_path + "/" + object_id : 
+                                            props.edit_details_path + "/" + object_id;
+                
                 return (
                 <>
                     <Tooltip title="Detalles">
@@ -145,7 +149,7 @@ export default function CustomDataTable(props) {
                         //component="span"
                         size="small"
                         component={Link}
-                        to={'/admin' + props.edit_details_path + "/" + incident_id}
+                        to={'/admin' + edit_details_path}
                         path >
                         <InfoIcon />
                     </IconButton>
@@ -174,30 +178,4 @@ export default function CustomDataTable(props) {
             />
         </ThemeProvider>
     );
-}
-
-function priorities_sort(a, b) {
-    const PRIORITIES = ["Muy Alta", "Alta", "Media", "Baja", "Muy Baja"];
-    var a_index = PRIORITIES.indexOf(a);
-    var b_index = PRIORITIES.indexOf(b);
-    return a_index < b_index;
-}
-
-function getBackgroundColor(priority) {
-    const PRIORITIES = ["Muy Alta", "Alta", "Media", "Baja", "Muy Baja"];
-    var index = PRIORITIES.indexOf(priority);
-    switch (index) {
-        case 0:
-            return "#ff0000";
-        case 1:
-            return "#ffa500";
-        case 2:
-            return "#ffff00";
-        case 3:
-            return "#00ff00";
-        case 4:
-            return "#0000ff";
-        default:
-            return "#ffffff";
-    }
 }

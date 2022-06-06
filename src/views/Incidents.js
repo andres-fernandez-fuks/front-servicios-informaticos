@@ -24,6 +24,8 @@ import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
+import toast, { Toaster } from 'react-hot-toast';
+
 // reactstrap components
 import {
   Button,  
@@ -40,10 +42,34 @@ import {INCIDENT_DETAILS_PATH} from "../pages/IncidentDetailsPage.js";
 
 const tableData = [];
 
-const incidentColumns = [
+const unassignedIncidentColumns = [
     {"name": "id", "label": "ID"},
     {"name": "description", "label": "Descripción"},
-    {"name": "created_by", "label": "Creado por"},
+    {"name": "created_at", "label": "Reportado el"},
+    {"name": "priority", "label": "Prioridad"},
+    {"name": "status", "label": "Estado"},
+]
+
+const assignedIncidentColumns = [
+    {"name": "id", "label": "ID"},
+    {"name": "description", "label": "Descripción"},
+    {"name": "created_at", "label": "Reportado el"},
+    {"name": "taken_by", "label": "Tomado por"},
+    {"name": "priority", "label": "Prioridad"},
+    {"name": "status", "label": "Estado"},
+]
+
+const myIncidentColumns = [
+    {"name": "id", "label": "ID"},
+    {"name": "description", "label": "Descripción"},
+    {"name": "created_at", "label": "Reportado el"},
+    {"name": "priority", "label": "Prioridad"},
+    {"name": "status", "label": "Estado"},
+]
+
+const solvedIncidentColumns = [
+    {"name": "id", "label": "ID"},
+    {"name": "description", "label": "Descripción"},
     {"name": "taken_by", "label": "Tomado por"},
     {"name": "created_at", "label": "Reportado el"},
     {"name": "priority", "label": "Prioridad"},
@@ -57,26 +83,31 @@ function IncidentsTable() {
     const RedirectToIncidentCreation = () => {
         history.push(simple_routes.incidentCreation);
     };
+    const my_incidents_route = "users/" + localStorage.getItem("user_id") + "/incidents" ;
     const [bigChartData, setbigChartData] = useState(tableData);
-    const [columns, setColumns] = useState(incidentColumns);
+    const [columns, setColumns] = useState(myIncidentColumns);
     const [category, setCategory] = useState("Mis incidentes");
     const classes = useStyles();
     useEffect(() => {
-        dbGet("incidents").then(data => {
+        dbGet(my_incidents_route).then(data => {
             setbigChartData(data);
             // setColumns(incidentColumns);
         }).catch(err => {console.log(err)});
     }   , []);
-    function fetchData(event, endpoint) {
+    function fetchData(event, endpoint, columns) {
         const category = event.target.getAttribute("aria-label");
         setCategory(category);
         dbGet(endpoint).then(data => {
             setbigChartData(data);
+            setColumns(columns);
         }).catch(err => {console.log(err)});
     }
+
+  
   return (
     <>
       <div className="content">
+      <Toaster/>
         <Row>
           <Col md="12">
             <Card className={classes.card} style={{paddingTop:5}}>
@@ -93,7 +124,7 @@ function IncidentsTable() {
                 color="info"
                 id="0"
                 size="sm"
-                onClick={(e) => fetchData(e, "incidents/1")}
+                onClick={(e) => fetchData(e, my_incidents_route, myIncidentColumns)}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis incidentes">
                     Mis incidentes
@@ -110,7 +141,7 @@ function IncidentsTable() {
                 className={classNames("btn-simple", {
                     active: category === "No tomados",
                 })}
-                onClick={(e) => fetchData(e, "incidents/not-assigned")}
+                onClick={(e) => fetchData(e, "incidents/not-assigned", unassignedIncidentColumns)}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="No tomados">
                     No tomados
@@ -127,7 +158,7 @@ function IncidentsTable() {
                 className={classNames("btn-simple", {
                     active: category === "Tomados",
                 })}
-                onClick={(e) => fetchData(e, "incidents/assigned")}
+                onClick={(e) => fetchData(e, "incidents/assigned", assignedIncidentColumns)}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Tomados">
                     Tomados
@@ -144,7 +175,7 @@ function IncidentsTable() {
                 className={classNames("btn-simple", {
                     active: category === "Resueltos",
                 })}
-                onClick={(e) => fetchData(e, "incidents/solved")}
+                onClick={(e) => fetchData(e, "incidents/solved", solvedIncidentColumns)}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Resueltos">
                     Resueltos
@@ -159,8 +190,8 @@ function IncidentsTable() {
                 <CardTitle tag="h4">Incidentes &nbsp; &nbsp; &nbsp;
                     <IconButton
                         size="small" 
-                        aria-label="delete"
-                        color="primary"
+                        aria-label="Crear Incidente"
+                        color="info"
                         style={{backgroundColor:"white"}}
                         onClick={() => {RedirectToIncidentCreation();}}
                         >
