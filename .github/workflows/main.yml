@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Preparo la Dockerfile para que funcione con la accion
-        run: mv Dockerfile.dev Dockerfile 
+        run: mv Dockerfile.prod Dockerfile 
+      - name: Piso el .env
+        run: mv .env.staging .env       
       - uses: akhileshns/heroku-deploy@v3.12.12 # Deploy a heroku action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
