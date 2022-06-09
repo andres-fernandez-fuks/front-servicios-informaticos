@@ -155,7 +155,7 @@ export default function App() {
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
-            <Card>
+            <Card className="incident-card">
                 <CardHeader >
                     <h4 className="title">Detalles del ítem</h4>
                 </CardHeader>
@@ -275,7 +275,7 @@ export default function App() {
             </Form>
             </Col>
             <Col md="6">
-              <Card className="card-user">
+              <Card className="incident-card">
                 <CardBody>
                 <div>
                 <h4 className="title">Otras versiones</h4>

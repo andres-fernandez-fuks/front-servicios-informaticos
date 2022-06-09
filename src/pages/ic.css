@@ -14,6 +14,24 @@
     padding: 5px;
   }
 
+.login {
+    background: url("http://web3canvas.com/wp-content/uploads/2014/02/littlevisuals-high-quality-hd-banner-images-stock-photos-free-laptop-topview-download.jpg") no-repeat; 
+    background-size: cover;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+
+.comment-card {
+    min-height: 239px;
+}
+
+.buttons-row {
+    padding-top: 50px;
+    align-items: center;
+    justify-content: center;
+  }
+
 .row_div {
     display: flex;
     flex-direction: row;

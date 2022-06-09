@@ -1,3 +1,253 @@
+// /*!
+
+// =========================================================
+// * Black Dashboard React v1.2.0
+// =========================================================
+
+// * Product Page: https://www.creative-tim.com/product/black-dashboard-react
+// * Copyright 2020 Creative Tim (https://www.creative-tim.com)
+// * Licensed under MIT (https://github.com/creativetimofficial/black-dashboard-react/blob/master/LICENSE.md)
+
+// * Coded by Creative Tim
+
+// =========================================================
+
+// * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+// */
+// import React from "react";
+// import Grid from '@mui/material/Grid';
+// import { dbGet, dbPatch } from 'utils/backendFetchers';
+// import "pages/ic.css";
+// import { useHistory } from "react-router-dom";
+// import simple_routes from "utils/routes_simple.js"
+// import useStyles from "styles"
+// // reactstrap components
+// import {
+//   Button,
+//   Card,
+//   CardHeader,
+//   CardBody,
+//   CardFooter,
+//   Form
+// } from "reactstrap";
+// import toast, { Toaster } from 'react-hot-toast';
+
+// import SimpleTable from "components/Table/SimpleTable";
+// export const PROBLEM_DETAILS_PATH = "/problems_details";
+
+// const tableData = [];
+// const problemColumns = [
+//     {"name": "id", "label": "ID"},
+//     {"name": "description", "label": "Descripción"},
+//     {"name": "status", "label": "Estado"}
+// ]
+
+
+// function ProblemDetails(props) {
+//   var classes = useStyles();
+//   const history = useHistory();
+//   var paths = window.location.pathname.split("/") 
+//   var problem_id = paths[paths.length - 1]
+//   const [problemsData, setProblemsData] = React.useState([]);
+//   const [confItems, setConfItems]  = React.useState([]);
+//   const [values, setValues] = React.useState("");
+//   const [bigChartData, setbigChartData] = React.useState(tableData);
+//   const [columns, setColumns] = React.useState(problemColumns);
+//   const isEditable = false;
+
+//   React.useEffect(() => {
+//     dbGet("problems/" + problem_id).then(data => {
+//         setValues(data);
+//     }).catch(err => {console.log(err)});
+//     }   , []);
+
+//     function fetchProblemsData() {
+//         dbGet("problems/" + problem_id).then(data => {
+//             var problems_data = data["problems"]
+//             setProblemsData(problems_data);
+//         }).catch(err => {console.log(err)});
+//     }
+//   console.log("Values: ", values)
+
+//   function fetchValues() {
+//     dbGet("problems/" + problem_id).then(data => {
+//         setValues(data);
+//     }).catch(err => {console.log(err)});
+// }
+
+//   React.useEffect(() => {
+//     dbGet("configuration-items/names").then(data => {
+//         setConfItems(data["items"]);
+//     }).catch(err => {console.log(err)});
+//     }   , []);
+
+//     const [formFields, setFormFields] = React.useState([{}])
+
+//     function solveProblem() {
+//         var patch_data = {status:"Resuelto"}
+//         dbPatch("problems/" + problem_id, patch_data);
+//         history.push(simple_routes.problems);
+//     }
+
+//     function blockProblem() {
+//         var patch_data = {is_blocked:true}
+//         dbPatch("problems/" + problem_id, patch_data);
+//         // history.push(simple_routes.problems);
+//         window.location.reload(false);
+//     }
+
+//     function unblockProblem() {
+//         var patch_data = {is_blocked:false}
+//         dbPatch("problems/" + problem_id, patch_data);
+//         // history.push(simple_routes.problems);
+//         window.location.reload(false);
+//     }
+
+//   const submitForm = (data) => { 
+//       var patch_data = {taken_by:localStorage.getItem("username")}
+//       dbPatch("problems/" + problem_id, patch_data);
+//       history.push(simple_routes.problems);
+//   }
+
+//   if (!problemsData || problemsData.length === 0) {
+//     fetchProblemsData();
+//   }
+
+//   function addBlockButton() {
+//     if (values.is_blocked === true) {
+//         return (
+//             <Button className="btn-fill" align="left"
+//             color="warning"
+//             type="submit"
+//             onClick={() => unblockProblem()}
+//             >
+//             Desbloquear        
+//             </Button>
+//         )
+//     }
+//     return (
+//         <Button className="btn-fill" align="left"
+//         color="warning"
+//         type="submit"
+//         onClick={() => blockProblem()}
+//         >
+//         Bloquear        
+//         </Button>  
+//     )
+//   }
+
+//   function addButtons() {
+//       if (values === '') {
+//       fetchValues();
+//     }
+//     if (values.status === "Resuelto") {
+//         return;
+//     }
+//     if (!values.taken_by) {
+//         return (
+//         <Button className="btn-fill"
+//         color="primary"
+//         type="submit"
+//         onClick={() => submitForm()}
+//         >
+//         Tomar        
+//         </Button>)
+//     }
+//     if (values.taken_by !== undefined) {
+//     return (
+//         <Grid align="center">
+//         <Button className="btn-fill" align="right"
+//         color="success"
+//         type="submit"
+//         onClick={() => solveProblem()}
+//         >
+//         Resolver        
+//         </Button>
+//         {addBlockButton()}
+//         </Grid>)
+//     }
+//   }
+
+//   return (
+//     <>
+//       <div className="content">
+//         <Toaster />
+//             <Card>
+//               <CardHeader >
+//                 <h4 className="title">Detalles del problema</h4>
+//               </CardHeader>
+//               <CardBody>
+//                 <Form disabled>
+//                   <Grid class = {classes.SmallPaddedGrip} >
+//                       <h5 className="title">Descripción</h5>
+//                         <input className="description_input"
+//                           readOnly
+//                           disabled = {!isEditable}
+//                           value= {values.description}
+//                           id = "description"
+//                           type="text"
+//                         />
+//                   </Grid>
+//                   <Grid class = {classes.SmallPaddedGrip} >
+//                       <h5 className="title">Prioridad</h5>
+//                         <input class = "other_input"
+//                           readOnly
+//                           disabled = {!isEditable}
+//                           value= {values.priority}
+//                           id = "description"
+//                           type="text"
+//                         />
+//                   </Grid>
+//                   <Grid class = {classes.SmallPaddedGrip} >
+//                       <h5 className="title">Estado</h5>
+//                         <input class = "other_input"
+//                           readOnly
+//                           disabled = {!isEditable}
+//                           value= {values.status}
+//                           id = "description"
+//                           type="text"
+//                         />
+//                   </Grid>
+//                   <Grid class = {classes.SmallPaddedGrip} >
+//                       <h5 className="title">Creado por</h5>
+//                         <input class = "other_input"
+//                           readOnly
+//                           disabled = {!isEditable}
+//                           value= {values.created_by}
+//                           id = "description"
+//                           type="text"
+//                         />
+//                   </Grid>
+//                   <Grid class = {classes.SmallPaddedGrip} >
+//                       <h5 className="title">Tomado por</h5>
+//                         <input class = "other_input"
+//                           readOnly
+//                           disabled = {!isEditable}
+//                           placeholder = "Nadie..."
+//                           value= {values.taken_by}
+//                           id = "description"
+//                           type="text"
+//                         />
+//                   </Grid>
+//                     <Grid class = {classes.PaddedGrid} >
+//                     <h5> <b>Problemes</b></h5>
+//                     <SimpleTable data={problemsData} columns={columns} />
+//                     </Grid>
+//                 </Form>
+//               </CardBody>
+//               <CardFooter align="center">
+//                 {addButtons()}
+//               </CardFooter>
+//             </Card>
+//       </div>
+//     </>
+//   );
+// }
+
+// export default ProblemDetails;
+
+
 /*!
 
 =========================================================
@@ -17,72 +267,142 @@
 */
 import React from "react";
 import Grid from '@mui/material/Grid';
-import { dbGet, dbPatch } from 'utils/backendFetchers';
+import { dbGet, dbPatch, dbPost } from 'utils/backendFetchers';
 import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
 // reactstrap components
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Form
-} from "reactstrap";
-import toast, { Toaster } from 'react-hot-toast';
+    Button,
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    CardText,
+    FormGroup,
+    Form,
+    Input,
+    Label,
+    Row,
+    Col,
+  } from "reactstrap";
 
 import SimpleTable from "components/Table/SimpleTable";
-export const PROBLEM_DETAILS_PATH = "/problems_details";
+
+export const PROBLEM_DETAILS_PATH = "/problem_details";
 
 const tableData = [];
 const incidentColumns = [
     {"name": "id", "label": "ID"},
-    {"name": "description", "label": "Descripción"},
-    {"name": "status", "label": "Estado"}
+    {"name": "description", "label": "Descripción"}
 ]
 
 
+
 function ProblemDetails(props) {
-  var classes = useStyles();
-  const history = useHistory();
-  var paths = window.location.pathname.split("/") 
-  var problem_id = paths[paths.length - 1]
-  const [incidentsData, setIncidentsData] = React.useState([]);
-  const [confItems, setConfItems]  = React.useState([]);
-  const [values, setValues] = React.useState("");
-  const [bigChartData, setbigChartData] = React.useState(tableData);
-  const [columns, setColumns] = React.useState(incidentColumns);
-  const isEditable = false;
+    const classes = useStyles();
+    const history = useHistory();
+    var paths = window.location.pathname.split("/") 
+    const [values, setValues] = React.useState("");
+    const [currentValues, setCurrentValues] = React.useState("");
+    const isEditable = false;
+    const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [itemsData, setItemsData] = React.useState([]);
+    var paths = window.location.pathname.split("/") 
+    var problem_id = paths[paths.length - 1]
+    const [bigChartData, setbigChartData] = React.useState(tableData);
+    const [columns, setColumns] = React.useState(incidentColumns);
+    const [formFields, setFormFields] = React.useState([{}])
 
-  React.useEffect(() => {
-    dbGet("problems/" + problem_id).then(data => {
-        setValues(data);
-    }).catch(err => {console.log(err)});
-    }   , []);
+    function getPrice(price_string) {
+        var price = price_string.split(" ")[1]
+        price = parseInt(price.replace(/[^0-9]/g, ''));
+        return price;
+    }
 
-    function fetchIncidentsData() {
+    function updateCurrentValues(field, new_value) {
+        if (field === "price") new_value = getPrice(new_value);
+        currentValues[field] = new_value;
+        if (JSON.stringify(currentValues) !== JSON.stringify(values)) {
+            setEnableCreateButton(true);
+        } else {
+            setEnableCreateButton(false);
+        }
+    }
+
+    function fetchItemsData() {
         dbGet("problems/" + problem_id).then(data => {
             var incidents_data = data["incidents"]
-            setIncidentsData(incidents_data);
+            debugger;
+            setItemsData(incidents_data);
         }).catch(err => {console.log(err)});
     }
-  console.log("Values: ", values)
+
+    React.useEffect(() => {
+        dbGet("problems/" + problem_id).then(data => {
+            setValues(data);
+            setCurrentValues(data);
+            fetchItemsData();
+        }).catch(err => {console.log(err)});
+        }   , []);
+
+    function fetchValues() {
+            dbGet("problems/" + problem_id).then(data => {
+                setValues(data);
+            }).catch(err => {console.log(err)});
+    }
+
+    function restoreVersion(request_path, redirect_path, version_id) {
+        dbPost(request_path, {"version": version_id}).then(data => {
+            redirect_path += "/" + data.id;
+            history.push(redirect_path);
+            window.location.reload();
+            // setValues(data);
+        }).catch(err => {console.log(err)});
+}  
+
+
+    function getRequestValues() {
+        var request_values = {...currentValues};
+        delete request_values.versions;
+        delete request_values.version;
+        delete request_values.created_at;
+        delete request_values.updated_at;
+        delete request_values.id;
+        delete request_values.is_deleted;
+        delete request_values.item_class;
+        return request_values;
+    }
+
+    const handleSubmit = (event) => {
+        // event.preventDefault();
+        // var path = "problems/" + values.id ;
+        // var request_values = getRequestValues();
+        // dbPost(path, request_values).then(data => {
+        //     debugger;
+        //     history.push("/admin" + PROBLEM_DETAILS_PATH + "/" + data.id);
+        //     window.location.reload();
+        // }
+        // ).catch(err => {console.log(err)});
+    }
+
+    function updateType(new_type) {
+        setValues({...values, type:new_type})
+    }
+
+    function currencyFormat(num) {
+        if (!num) return;
+        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+     }
 
   function fetchValues() {
     dbGet("problems/" + problem_id).then(data => {
         setValues(data);
     }).catch(err => {console.log(err)});
-}
+  }
 
-  React.useEffect(() => {
-    dbGet("configuration-items/names").then(data => {
-        setConfItems(data["items"]);
-    }).catch(err => {console.log(err)});
-    }   , []);
-
-    const [formFields, setFormFields] = React.useState([{}])
+    
 
     function solveProblem() {
         var patch_data = {status:"Resuelto"}
@@ -104,15 +424,11 @@ function ProblemDetails(props) {
         window.location.reload(false);
     }
 
-  const submitForm = (data) => { 
-      var patch_data = {taken_by:localStorage.getItem("username")}
-      dbPatch("problems/" + problem_id, patch_data);
-      history.push(simple_routes.problems);
-  }
-
-  if (!incidentsData || incidentsData.length === 0) {
-    fetchIncidentsData();
-  }
+    const submitForm = (data) => { 
+        var patch_data = {taken_by:localStorage.getItem("username")}
+        dbPatch("problems/" + problem_id, patch_data);
+        history.push(simple_routes.problems);
+    }
 
   function addBlockButton() {
     if (values.is_blocked === true) {
@@ -172,74 +488,116 @@ function ProblemDetails(props) {
   return (
     <>
       <div className="content">
-        <Toaster />
-            <Card>
+        <Row>
+          <Col md="5">
+          <Form onSubmit= {handleSubmit}>
+          <Card className="problem-card">
               <CardHeader >
-                <h4 className="title">Detalles del problema</h4>
+                  <h4 className="title">Detalles del problema</h4>
               </CardHeader>
-              <CardBody>
-                <Form disabled>
-                  <Grid class = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Descripción</h5>
-                        <input className="description_input"
-                          readOnly
-                          disabled = {!isEditable}
-                          value= {values.description}
-                          id = "description"
-                          type="text"
-                        />
-                  </Grid>
-                  <Grid class = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Prioridad</h5>
-                        <input class = "other_input"
-                          readOnly
-                          disabled = {!isEditable}
-                          value= {values.priority}
-                          id = "description"
-                          type="text"
-                        />
-                  </Grid>
-                  <Grid class = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Estado</h5>
-                        <input class = "other_input"
-                          readOnly
-                          disabled = {!isEditable}
-                          value= {values.status}
-                          id = "description"
-                          type="text"
-                        />
-                  </Grid>
-                  <Grid class = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Creado por</h5>
-                        <input class = "other_input"
-                          readOnly
-                          disabled = {!isEditable}
-                          value= {values.created_by}
-                          id = "description"
-                          type="text"
-                        />
-                  </Grid>
-                  <Grid class = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Tomado por</h5>
-                        <input class = "other_input"
-                          readOnly
-                          disabled = {!isEditable}
-                          placeholder = "Nadie..."
-                          value= {values.taken_by}
-                          id = "description"
-                          type="text"
-                        />
-                  </Grid>
-                    <Grid class = {classes.PaddedGrid} >
-                    <h5> <b>Ítems de configuración</b></h5>
-                    <SimpleTable data={incidentsData} columns={columns} />
-                    </Grid>
-                </Form>
+              <CardBody >
+                  <Row>
+                      <Col className="pb-md-2" md="12">
+                          <FormGroup>
+                          <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
+                              <Input
+                                  readOnly = {isEditable}
+                                  defaultValue = {currentValues.description}
+                                  onChange = {function(e){debugger;updateCurrentValues("description", e.target.value)}}
+                                  id = "description"
+                                  type="text"
+                          />
+                          </FormGroup>
+                      </Col>
+                  </Row>
+                  <Row>
+                      <Col md="6">
+                          <FormGroup>
+                              <Label style={{ color:"#1788bd" }}>Estado</Label>
+                              <Input className="other_input"
+                                  readOnly = {isEditable}
+                                  defaultValue= {currentValues.status}
+                                  onChange = {function(e){debugger;updateCurrentValues("status", e.target.value)}}
+                                  id = "type"
+                                  type="text"
+                          />
+                          </FormGroup>
+                      </Col>
+                      </Row>
+                      <Row>
+                      <Col md="6">
+                          <FormGroup>
+                          <Label style={{ color:"#1788bd" }}>Prioridad</Label>
+                              <Input className="other_input"
+                                  readOnly = {isEditable}
+                                  defaultValue= {currentValues.priority}
+                                  onChange = {function(e){debugger;updateCurrentValues("priority", e.target.value)}}
+                                  id = "type"
+                                  type="text"
+                              />
+                          </FormGroup>
+                      </Col>
+                  </Row>
+                  <Row>
+                      <Col md="6">
+                          <FormGroup>
+                              <Label style={{ color:"#1788bd" }}>Creado por</Label>
+                              <Input  className="other_input"
+                                  readOnly = {isEditable}
+                                  defaultValue = {currentValues.created_by}
+                                  onChange = {function(e){debugger;updateCurrentValues("created_by", e.target.value)}}
+                                  id = "serial_number"
+                                  type="text"
+                              />
+                          </FormGroup>
+                      </Col>
+                      </Row>
+                      <Row>
+                      <Col md="6">
+                          <FormGroup>
+                          <Label style={{ color:"#1788bd" }}>Tomado por</Label>
+                              <Input  className="other_input"
+                                  readOnly = {isEditable}
+                                  defaultValue = {currentValues.taken_by}
+                                  onChange = {function(e){debugger;updateCurrentValues("taken_by", e.target.value)}}
+                                  id = "serial_number"
+                                  type="text"
+                          />
+                          </FormGroup>
+                      </Col>
+                  </Row>
               </CardBody>
-              <CardFooter align="center">
-                {addButtons()}
+              <CardFooter className="form_col">
+              {addButtons()}
               </CardFooter>
+          </Card>
+          </Form>
+          </Col>
+          <Col md="7">
+          <Row>
+          <Card className="card-user">
+          <CardBody>
+              <div>
+                <h4 className="title">Ítems de configuración</h4>
+                <SimpleTable data={itemsData}
+                             columns={columns}
+                             addWatchColumn={true}
+                             excludeIdColumn={true} 
+                             button_path={"/admin/incidents_details/"}
+                             use_object_type = {false}/>
+             </div>
+            </CardBody>
+          </Card>
+            <Card className="card-user">
+              <CardBody className="comment-card">
+              <div className="comment-card">
+              <h4 className="title">Comentarios</h4>
+              </div>
+              </CardBody>
             </Card>
+            </Row>
+          </Col>
+        </Row>
       </div>
     </>
   );

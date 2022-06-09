@@ -169,7 +169,7 @@ function ProblemCreation(props) {
                                 id={"incident" + index+2}
                                 options={incidents}
                                 value={incidentValues[index]}
-                                onChange={event => handleFormChange(event, index, "incident_name_"+index)}
+                                onChange={event => handleFormChange(event, index, "problem_name_"+index)}
                                 search
                                 filterOptions={fuzzySearch} 
                                 placeholder="Search something"
@@ -187,7 +187,7 @@ function ProblemCreation(props) {
                             </Grid>
                             )
                             })}
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo incidente</Button>
                         </Grid>
               </CardBody>
               <CardFooter align="center">

@@ -38,6 +38,14 @@
 
 }
 
+.incident-card {
+    min-height: 400px;
+}
+
+.comment-card {
+    min-height: 239px;
+}
+
 .yellow_label {
     color: #fcba03;
 }

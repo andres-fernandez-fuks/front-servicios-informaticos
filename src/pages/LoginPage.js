@@ -17,15 +17,42 @@ import { Login } from 'utils/backendFetchers';
 import "pages/login.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
-
+import Background from 'assets/img/background.jpg';
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 const darkTheme = createTheme({
     palette: {
       mode: 'dark',
     },
+    overrides: {
+        MuiCssBaseline: {
+          '@global': {
+            body: {
+              backgroundImage: `url(${Background})`
+            }
+          }
+        }
+    }
   });
 
-const theme = darkTheme;
+  const mui_theme = createMuiTheme({
+    palette: {
+
+    },
+    typography: {
+      useNextVariants: true
+    },
+    overrides: {
+      MuiCssBaseline: {
+        "@global": {
+          body: {
+            backgroundImage:
+              "url(https://designshack.net/wp-content/uploads/gradient-background.jpg)"
+          }
+        }
+      }
+    }
+  });
 
 export default function SignIn() {
     const history = useHistory();
@@ -65,8 +92,19 @@ export default function SignIn() {
       setIncorrectLogin(false);
   }
 
+  var sectionStyle = {
+    backgroundImage: `url(${Background})`,
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    width: '100vw',
+    height: '100vh'
+  };
+
   return (
-    <ThemeProvider theme={theme}>
+    <div className="Container">
+    <ThemeProvider theme={darkTheme}> 
+    <CssBaseline />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -121,5 +159,6 @@ export default function SignIn() {
         </Box>
       </Container>
     </ThemeProvider>
+    </div>
   );
 }

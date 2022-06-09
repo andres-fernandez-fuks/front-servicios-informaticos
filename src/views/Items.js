@@ -76,9 +76,8 @@ function ItemsTable() {
             // setColumns(columns);
         }).catch(err => {console.log(err)});
     }   , []);
-    function fetchData(event, endpoint, columns=hardwareItemColumns) {
-        const category = event.target.getAttribute("aria-label");
-        setCategory(category);
+    function fetchData(event, endpoint, columns=hardwareItemColumns, item_category) {
+        setCategory(item_category);
         dbGet(endpoint).then(data => {
             setbigChartData(data);
             setColumns(columns);
@@ -103,7 +102,7 @@ function ItemsTable() {
                 color="info"
                 id="0"
                 size="sm"
-                onClick={(e) => fetchData(e, "/configuration-items/hardware")}
+                onClick={(e) => fetchData(e, "/configuration-items/hardware", "Hardware")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Hardware">
                 Hardware
@@ -120,7 +119,7 @@ function ItemsTable() {
                 className={classNames("btn-simple", {
                     active: category === "Software",
                 })}
-                onClick={(e) => fetchData(e, "/configuration-items/software", softwareItemColumns)}
+                onClick={(e) => fetchData(e, "/configuration-items/software", softwareItemColumns, "Software")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Software">
                    Software
@@ -137,7 +136,7 @@ function ItemsTable() {
                 className={classNames("btn-simple", {
                     active: category === "SLA",
                 })}
-                onClick={(e) => fetchData(e, "/configuration-items/sla", SLAItemColumns)}
+                onClick={(e) => fetchData(e, "/configuration-items/sla", SLAItemColumns, "SLA")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="SLA">
                     SLA
@@ -156,7 +155,7 @@ function ItemsTable() {
                 data={bigChartData}
                 columns={columns}
                 edit_details_path = {ITEM_DETAILS_PATH}
-                edit_extra_path = {category.toLowerCase()}
+                edit_extra_path = {category ? category.toLowerCase() : "hardware"}
                 />
               </CardBody>
             </Card>
