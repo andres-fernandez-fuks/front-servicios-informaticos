@@ -124,7 +124,7 @@ export default function SLADetailsPage() {
         var path = "configuration-items/sla/" + values.id + "/version";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            debugger;
+            
             history.push("/admin" + SLA_ITEM_DETAILS_PATH + "/" + data.id);
             window.location.reload();
         }
@@ -166,7 +166,7 @@ export default function SLADetailsPage() {
                                 <Input
                                     readOnly = {isEditable}
                                     defaultValue= {currentValues.name}
-                                    onChange = {function(e){debugger;updateCurrentValues("name", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
                                     type="text"
                             />
@@ -190,7 +190,7 @@ export default function SLADetailsPage() {
                                 <Input
                                     readOnly = {isEditable}
                                     defaultValue = {currentValues.description}
-                                    onChange = {function(e){debugger;updateCurrentValues("description", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
                                     type="text"
                             />
@@ -204,7 +204,7 @@ export default function SLADetailsPage() {
                                 <Input className="other_input"
                                     readOnly = {isEditable}
                                     defaultValue= {currentValues.service_type}
-                                    onChange = {function(e){debugger;updateCurrentValues("service_type", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
                                     id = "type"
                                     type="text"
                                 />
@@ -216,7 +216,7 @@ export default function SLADetailsPage() {
                                 <Input className="other_input"
                                     readOnly = {isEditable}
                                     defaultValue= {currentValues.service_manager}
-                                    onChange = {function(e){debugger;updateCurrentValues("manager", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
                                     id = "type"
                                     type="text"
                                 />
@@ -230,7 +230,7 @@ export default function SLADetailsPage() {
                                 <Input  className="other_input"
                                     readOnly = {isEditable}
                                     defaultValue = {currentValues.starting_date}
-                                    onChange = {function(e){debugger;updateCurrentValues("starting_date", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
                                     id = "serial_number"
                                     type="text"
                                 />
@@ -242,7 +242,7 @@ export default function SLADetailsPage() {
                                 <Input  className="other_input"
                                     readOnly = {isEditable}
                                     defaultValue = {currentValues.ending_date}
-                                    onChange = {function(e){debugger;updateCurrentValues("ending_date", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
                                     id = "serial_number"
                                     type="text"
                             />

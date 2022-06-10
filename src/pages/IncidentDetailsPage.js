@@ -56,7 +56,7 @@ function IncidentDetails(props) {
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
     const [values, setValues] = React.useState("");
-    const [currentValues, setCurrentValues] = React.useState("");
+    const [currentValues, setCurrentValues] = React.useState({});
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
@@ -82,7 +82,6 @@ function IncidentDetails(props) {
     function fetchItemsData() {
         dbGet("incidents/" + incident_id).then(data => {
             var items_data = data["configuration_items"]
-            debugger;
             setItemsData(items_data);
         }).catch(err => {console.log(err)});
     }
@@ -148,7 +147,6 @@ function IncidentDetails(props) {
         var path = "configuration-items/hardware/" + values.id + "/version";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            debugger;
             history.push("/admin" + INCIDENT_DETAILS_PATH + "/" + data.id);
             window.location.reload();
         }
@@ -284,7 +282,7 @@ function IncidentDetails(props) {
                               <Input
                                   readOnly = {isEditable}
                                   defaultValue = {currentValues.description}
-                                  onChange = {function(e){debugger;updateCurrentValues("description", e.target.value)}}
+                                  onChange = {(e) => {updateCurrentValues("description", e.target.value)}}
                                   id = "description"
                                   type="text"
                           />
@@ -298,7 +296,7 @@ function IncidentDetails(props) {
                               <Input className="other_input"
                                   readOnly = {isEditable}
                                   defaultValue= {currentValues.status}
-                                  onChange = {function(e){debugger;updateCurrentValues("status", e.target.value)}}
+                                  onChange = {(e) => {updateCurrentValues("status", e.target.value)}}
                                   id = "type"
                                   type="text"
                           />
@@ -310,7 +308,7 @@ function IncidentDetails(props) {
                               <Input className="other_input"
                                   readOnly = {isEditable}
                                   defaultValue= {currentValues.priority}
-                                  onChange = {function(e){debugger;updateCurrentValues("priority", e.target.value)}}
+                                  onChange = {(e) => {updateCurrentValues("priority", e.target.value)}}
                                   id = "type"
                                   type="text"
                               />
@@ -324,7 +322,7 @@ function IncidentDetails(props) {
                               <Input  className="other_input"
                                   readOnly = {isEditable}
                                   defaultValue = {currentValues.created_by}
-                                  onChange = {function(e){debugger;updateCurrentValues("created_by", e.target.value)}}
+                                  onChange = {(e) => {updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
                                   type="text"
                               />
@@ -336,7 +334,7 @@ function IncidentDetails(props) {
                               <Input  className="other_input"
                                   readOnly = {isEditable}
                                   defaultValue = {currentValues.taken_by}
-                                  onChange = {function(e){debugger;updateCurrentValues("taken_by", e.target.value)}}
+                                  onChange = { (e) => {updateCurrentValues("taken_by", e.target.value)}}
                                   id = "serial_number"
                                   type="text"
                           />
