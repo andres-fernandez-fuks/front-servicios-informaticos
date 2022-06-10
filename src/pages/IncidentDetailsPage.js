@@ -39,6 +39,7 @@ import {
   } from "reactstrap";
 
 import SimpleTable from "components/Table/SimpleTable";
+import classNames from "classnames";
 
 export const INCIDENT_DETAILS_PATH = "/incidents_details";
 
@@ -256,11 +257,20 @@ function IncidentDetails(props) {
     }
   }
 
+  const sendComment = () => { 
+    var comment = document.getElementById("comment").value;
+    if (!comment) return;
+    var post_data = {comment:document.getElementById("comment").value}
+    debugger;
+    dbPost("incidents/" + incident_id + "/comments", post_data);
+    history.push(simple_routes.incidents);
+ }
+
   return (
     <>
       <div className="content">
         <Row>
-          <Col md="5">
+          <Col md="6">
           <Form onSubmit= {handleSubmit}>
           <Card className="incident-card">
               <CardHeader >
@@ -294,8 +304,6 @@ function IncidentDetails(props) {
                           />
                           </FormGroup>
                       </Col>
-                      </Row>
-                      <Row>
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
@@ -322,8 +330,6 @@ function IncidentDetails(props) {
                               />
                           </FormGroup>
                       </Col>
-                      </Row>
-                      <Row>
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Tomado por</Label>
@@ -337,6 +343,15 @@ function IncidentDetails(props) {
                           </FormGroup>
                       </Col>
                   </Row>
+              <div class="items-div">
+                <h4 className="title">Ítems de configuración</h4>
+                <SimpleTable data={itemsData}
+                             columns={columns}
+                             addWatchColumn={true}
+                             excludeIdColumn={true}
+                             use_object_type={true}
+                             button_path={"/admin/item_details/"}/>
+             </div>
               </CardBody>
               <CardFooter className="form_col">
               {addButtons()}
@@ -344,30 +359,28 @@ function IncidentDetails(props) {
           </Card>
           </Form>
           </Col>
-          <Col md="7">
+          <Col md="6">
           <Row>
-          <Card className="card-user">
-          <CardBody>
-              <div>
-                <h4 className="title">Ítems de configuración</h4>
-                <SimpleTable data={itemsData}
-                             columns={columns}
-                             addWatchColumn={true}
-                             excludeIdColumn={true} 
-                             button_path={"/admin/item_details/"}/>
-             </div>
-            </CardBody>
-          </Card>
-            <Card className="card-user">
-              <CardBody className="comment-card">
-              <div className="comment-card">
+            <Col md="11">
               <h4 className="title">Comentarios</h4>
-                  <div className="versions">
-                      {getVersions()}
-                  </div>
-              </div>
-              </CardBody>
-            </Card>
+                <div>
+                  <Input 
+                        placeholder="Ingrese un comentario..."
+                        id = "comment"
+                        type="text"
+                    />
+                </div>
+                <div className="comments-button-div">
+                    <Button
+                    size="sm"
+                    color="primary"
+                    type="submit"
+                    onClick={() => sendComment()}
+                    >
+                    Comentar        
+                    </Button>
+                </div>
+          </Col>
             </Row>
           </Col>
         </Row>

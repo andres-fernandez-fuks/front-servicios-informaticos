@@ -6,7 +6,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import datatableTextLabels from "components/Table/textLabels";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
-import useStyles from "styles";
+import useStyles from "pages/control/styles";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import RestoreIcon from '@mui/icons-material/Restore';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -129,7 +129,7 @@ export default function SimpleTable(props) {
                 return {  };
             },
             setCellProps: () => ({
-                style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "top"},
+                style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
                 var object_id = tableMeta.rowData[0];
@@ -137,6 +137,7 @@ export default function SimpleTable(props) {
 
                 if (props.use_object_type) {
                     var object_type = tableMeta.rowData[2].toLowerCase();
+                    console.log("OBJECT TYPE: ", object_type);
                     var path;
                     path = props.button_path + object_type + "/" + object_id;
                 } else {
@@ -164,6 +165,7 @@ export default function SimpleTable(props) {
     }
 
     const table_options = {
+        elevation: 0,
         pagination:false,
         viewColumns: false,
         download:false,

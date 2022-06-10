@@ -21,6 +21,25 @@
     min-height: 100%;
 }
 
+.items-div {
+    padding-top: 25px;
+}
+
+.comments-button-div {
+    padding-top: 10px;
+}
+
+.center-div {
+    display: flex;
+    justify-content:center;
+    align-items:center
+ }
+
+.creation-card {
+    height: 500px;
+    align-self: center
+}
+
 
 .comment-card {
     min-height: 239px;
@@ -41,10 +60,17 @@
 }
 
 .heighttext{
+    font-size:13px;
     height:37px;
     width:500px;
     color: black;
   }
+
+.priorities-select {
+    width: 50%;
+    height: 100%;
+    background: #525f7f;
+}
 
 .description_input {
     width: 50%;

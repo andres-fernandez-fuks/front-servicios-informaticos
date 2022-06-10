@@ -24,7 +24,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
-import useStyles from "styles"
+import useStyles from "styles";
 // reactstrap components
 import {
   Button,
@@ -125,9 +125,10 @@ function IncidentCreation(props) {
   return (
     <>
       <div className="content">
+          <div className={classes.centeredDiv}>
       <Toaster/>
-      <Form onSubmit="return false">
-        <Card>
+      <Form onSubmit="return false" className="center-div">
+        <Card style={{ width: '40rem' }} className="creation-card">
           <CardHeader >
             <h4 className="title">Creación de Incidente</h4>
           </CardHeader>
@@ -144,7 +145,7 @@ function IncidentCreation(props) {
                     placeholder="Ingrese una descripción"
                   />
               </Grid>
-              <Grid className = {classes.SmallPaddedGrip}>
+              <Grid className = {classes.MediumPaddedGrip}>
                 <Col className="px-md-1" md="3">
                   <FormGroup>
                   <h5 className="title">Prioridad</h5>
@@ -158,7 +159,7 @@ function IncidentCreation(props) {
                   </FormGroup>
                 </Col>
               </Grid>
-                <Grid className = {classes.PaddedGrip}>
+                <Grid className = {classes.MediumPaddedGrip}>
                 <h5> <b>Ítems de configuración</b></h5>
                     {formFields.map((form, index) => {
                         return (
@@ -175,9 +176,10 @@ function IncidentCreation(props) {
                         />
                         &nbsp; &nbsp; &nbsp;
                         <IconButton
+                                className={classes.onlyButtonNoSpacing}
                                 size="medium" 
                                 aria-label="delete"
-                                color="primary"
+                                color="inherit"
                                 onClick={() => removeFields(index)}
                                 >
                                 <DeleteIcon/>
@@ -207,6 +209,7 @@ function IncidentCreation(props) {
           
         </Card>
         </Form>
+        </div>
       </div>
     </>
   );

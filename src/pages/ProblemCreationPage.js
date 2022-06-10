@@ -125,17 +125,18 @@ function ProblemCreation(props) {
 
   return (
     <>
-      <div className="content">
+        <div className="content">
+            <div className={classes.centeredDiv}>
         <Toaster/>
-          <Form onSubmit={submitForm}>
-            <Card>
-              <CardHeader >
+        <Form onSubmit="return false" className="center-div">
+            <Card style={{ width: '40rem' }} className="creation-card">
+            <CardHeader >
                 <h4 className="title">Creación de Problema</h4>
-              </CardHeader>
-              <CardBody>
-                  <Grid className = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Descripción</h5>
-                      <input class="heighttext"
+            </CardHeader>
+            <CardBody>
+                <Grid className = {classes.SmallPaddedGrip} >
+                    <h5 className="title">Descripción</h5>
+                    <input class="heighttext"
                         name="description"
                         required
                         id="description"
@@ -143,12 +144,12 @@ function ProblemCreation(props) {
                         autoFocus
                         autoComplete="off"
                         placeholder="Ingrese una descripción"
-                      />
-                  </Grid>
-                  <Grid className = {classes.SmallPaddedGrip}>
+                    />
+                </Grid>
+                <Grid className = {classes.MediumPaddedGrip}>
                     <Col className="px-md-1" md="3">
-                      <FormGroup>
-                      <h5 className="title">Prioridad</h5>
+                    <FormGroup>
+                    <h5 className="title">Prioridad</h5>
                         <Select styles={selectStyles}
                             id="priority"
                             value={{ value: values.priority, label: values.priority }}
@@ -156,9 +157,9 @@ function ProblemCreation(props) {
                             options={priorities}
                             autoFocus
                         />
-                      </FormGroup>
+                    </FormGroup>
                     </Col>
-                  </Grid>
+                </Grid>
                     <Grid className = {classes.PaddedGrip}>
                     <h5> <b>Incidentes</b></h5>
                         {formFields.map((form, index) => {
@@ -208,6 +209,7 @@ function ProblemCreation(props) {
               
             </Card>
             </Form>
+          </div>
       </div>
     </>
   );

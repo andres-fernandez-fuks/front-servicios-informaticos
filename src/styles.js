@@ -8,6 +8,10 @@ export default makeStyles((theme) => ({
     marginTop: 10,
     alignItems: "left"
   },
+  MediumPaddedGrip: {
+    marginTop: 17,
+    alignItems: "left"
+  },
   LeftPaddedForm: {
     marginLeft: 2
   },
@@ -162,5 +166,20 @@ export default makeStyles((theme) => ({
     alignSelf: "center",
     marginTop: "1%",
     height: 40,
+  },
+  onlyButtonNoSpacing: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    height: 10,
+    marginTop:5
+  },
+  centeredDiv: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  commentInput: {
+    width: 150,
   }
 }));
