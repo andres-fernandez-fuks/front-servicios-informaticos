@@ -20,6 +20,8 @@ import classNames from "classnames";
 import CustomDataTable from "../components/Table/DynamicTable.js";
 import useStyles from "../styles";
 import {dbGet} from "../utils/backendFetchers";
+import simple_routes from "utils/routes_simple.js"
+import { useHistory } from "react-router-dom";
 
 // reactstrap components
 import {
@@ -32,6 +34,8 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 // import { Component } from "react/cjs/react.development";
 
 import {ITEM_DETAILS_PATH} from "../pages/items/HardwareItemDetailsPage.js";
@@ -66,6 +70,8 @@ const SLAItemColumns = [
 ]
 
 function ItemsTable() {
+    const history = useHistory();
+
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(hardwareItemColumns);
     const [category, setCategory] = useState("Hardware");
@@ -83,6 +89,9 @@ function ItemsTable() {
             setColumns(columns);
         }).catch(err => {console.log(err)});
     }
+    function RedirectToHardwareItemCreation(){
+      history.push(simple_routes.hardware_creation);
+  }
   return (
     <>
       <div className="content">
@@ -148,7 +157,19 @@ function ItemsTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Items</CardTitle>
+                <CardTitle tag="h4">Items &nbsp; &nbsp; &nbsp;
+                <Button
+                  size="small" 
+                  aria-label="Crear ítem"
+                  variant="contained" 
+                  color="secondary"
+                  style={{border: "2px solid black"}}
+                  onClick={() => {RedirectToHardwareItemCreation();}}
+                  >
+                  <AddIcon />
+                  Hardware
+                </Button>
+                </CardTitle>
               </CardHeader>
               <CardBody>
               <CustomDataTable
