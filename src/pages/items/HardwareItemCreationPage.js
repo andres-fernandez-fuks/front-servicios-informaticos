@@ -77,9 +77,8 @@ export default function HardwareItemCreation() {
         var path = "configuration-items/hardware";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            history.push("/admin" + HARDWARE_ITEM_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
             toast.success("Item de hardware creado correctamente")
+            history.push("/admin" + HARDWARE_ITEM_DETAILS_PATH + "/" + data.id);
         }
         ).catch(err => {console.log(err)});
     }
