@@ -22,6 +22,7 @@ import useStyles from "../styles";
 import {dbGet} from "../utils/backendFetchers";
 import simple_routes from "utils/routes_simple.js"
 import { useHistory } from "react-router-dom";
+import toast, { Toaster } from 'react-hot-toast';
 
 // reactstrap components
 import {
@@ -95,6 +96,8 @@ function ItemsTable() {
   return (
     <>
       <div className="content">
+      <Toaster/>
+
         <Row>
           <Col md="12">
             <Card className={classes.card} style={{paddingTop:5}}>

@@ -9,6 +9,7 @@ import useStyles from "styles"
 import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 // reactstrap components
@@ -72,21 +73,41 @@ export default function HardwareItemCreation() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (!check_required_fields()) return
         var path = "configuration-items/hardware";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             history.push("/admin" + HARDWARE_ITEM_DETAILS_PATH + "/" + data.id);
             window.location.reload();
+            toast.success("Item de hardware creado correctamente")
         }
         ).catch(err => {console.log(err)});
     }
 
-    const submitForm = (e) => {
-        //formData["created_by"] = localStorage.getItem("username");
-        //formData["description"] = document.getElementById('description').value;
-        //formData["priority"] = values.priority;
-        //dbPost("incidents", formData);
-        //history.push(simple_routes.incidents);
+    function check_required_fields(){
+        if (!currentValues.name) {
+            toast.error("Debe escribir un nombre")
+            return false
+        } else if (!currentValues.type){
+            toast.error("Debe escribir un tipo")
+            return false
+        } else if (!currentValues.description){
+            toast.error("Debe escribir una descripción")
+            return false
+        } else if (!currentValues.manufacturer){
+            toast.error("Debe explicitar un proveedor")
+            return false
+        } else if (!currentValues.serial_number){
+            toast.error("Debe explicitar un número de serie")
+            return false
+        } else if (!currentValues.purchase_date){
+            toast.error("Debe explicitar una fecha de compra")
+            return false
+        } else if (!currentValues.price){
+            toast.error("Debe explicitar un precio")
+            return false
+        }
+        return true  
     }
 
 
@@ -99,6 +120,7 @@ export default function HardwareItemCreation() {
     return (
       <>
         <div className="content">
+        <Toaster/>
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>

@@ -26,6 +26,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import toast, { Toaster } from 'react-hot-toast';
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
@@ -152,6 +153,7 @@ export default function App() {
     return (
       <>
         <div className="content">
+        <Toaster />
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
