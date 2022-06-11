@@ -103,81 +103,29 @@ function ProblemDetails(props) {
             }).catch(err => {console.log(err)});
     }
 
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
-        }).catch(err => {console.log(err)});
-}  
-
-
-    function getRequestValues() {
-        var request_values = {...currentValues};
-        delete request_values.versions;
-        delete request_values.version;
-        delete request_values.created_at;
-        delete request_values.updated_at;
-        delete request_values.id;
-        delete request_values.is_deleted;
-        delete request_values.item_class;
-        return request_values;
-    }
-
-    const handleSubmit = (event) => {
-        // event.preventDefault();
-        // var path = "problems/" + values.id ;
-        // var request_values = getRequestValues();
-        // dbPost(path, request_values).then(data => {
-        //     
-        //     history.push("/admin" + PROBLEM_DETAILS_PATH + "/" + data.id);
-        //     window.location.reload();
-        // }
-        // ).catch(err => {console.log(err)});
-    }
-
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
-    }
-
-    function currencyFormat(num) {
-        if (!num) return;
-        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-     }
-
-  function fetchValues() {
-    dbGet("problems/" + problem_id).then(data => {
-        setValues(data);
-    }).catch(err => {console.log(err)});
-  }
-
-    
-
     function solveProblem() {
         var patch_data = {status:"Resuelto"}
         dbPatch("problems/" + problem_id, patch_data);
         history.push(simple_routes.problems);
+        sendComment("Problema resuelto");
     }
 
     function blockProblem() {
         var patch_data = {is_blocked:true}
         dbPatch("problems/" + problem_id, patch_data);
-        // history.push(simple_routes.problems);
-        window.location.reload(false);
+        sendComment("Problema bloqueado");
     }
 
     function unblockProblem() {
         var patch_data = {is_blocked:false}
         dbPatch("problems/" + problem_id, patch_data);
-        // history.push(simple_routes.problems);
-        window.location.reload(false);
+        sendComment("Problema desbloqueado");
     }
 
     const submitForm = (data) => { 
         var patch_data = {taken_by:localStorage.getItem("username")}
         dbPatch("problems/" + problem_id, patch_data);
-        history.push(simple_routes.problems);
+        sendComment("Problema tomado");
     }
 
   function addBlockButton() {
@@ -235,12 +183,49 @@ function ProblemDetails(props) {
     }
   }
 
+  const sendComment = (comment) => {
+    if (!comment) comment = document.getElementById("comment").value;  
+    if (!comment) return;
+    
+    var created_by = localStorage.getItem("username");
+    var post_data = {
+        comment:comment,
+        created_by:created_by
+    }
+    dbPost("problems/" + problem_id + "/comments", post_data);
+    window.location.reload();
+ }
+
+ const showComments = () => {
+    if (values === '') {
+      fetchValues();
+    }
+    if (values.comments === undefined) {
+        return;
+    }
+    if (values.comments.length === 0) {
+        return;
+    }
+    return (
+        <div>
+        {values.comments.map(comment => {
+            return (
+                <div class="comment-div">
+                <div class="comment-header-div">{comment.created_at} - {comment.created_by}</div>
+                <div class="comment-text-div"> {comment.text} </div>
+                </div>
+            )
+        })}
+        </div>
+    )
+ }
+
   return (
     <>
       <div className="content">
         <Row>
           <Col md="6">
-          <Form onSubmit= {handleSubmit}>
+          <Form>
           <Card className="problem-card">
               <CardHeader >
                   <h4 className="title">Detalles del problema</h4>
@@ -332,13 +317,28 @@ function ProblemDetails(props) {
           </Col>
           <Col md="6">
           <Row>
-            <Card className="card-user">
-              <CardBody className="comment-card">
-              <div className="comment-card">
-              <h4 className="title">Comentarios</h4>
-              </div>
-              </CardBody>
-            </Card>
+          <Col md="11">
+              <h4 className="title">Tracking</h4>
+                <div>
+                  <Input 
+                        placeholder="Ingrese un comentario..."
+                        id = "comment"
+                        type="text"
+                    />
+                </div>
+                <div className="comments-button-div">
+                    <Button 
+                    size="sm"
+                    color="info"
+                    onClick={() => sendComment()}
+                    >
+                    Comentar        
+                    </Button>
+                </div>
+                <div>
+                    {showComments()}
+                </div>
+          </Col>
             </Row>
           </Col>
         </Row>

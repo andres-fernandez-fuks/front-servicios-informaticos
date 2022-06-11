@@ -62,6 +62,7 @@ function IncidentDetails(props) {
     const [itemsData, setItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
     var incident_id = paths[paths.length - 1]
+    const [columns, setColumns] = React.useState(ciItemColumns);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -115,21 +116,6 @@ function IncidentDetails(props) {
     //     fetchValues();
     // }
 
-    function getVersions() {
-        if (values.versions && values.versions.length > 0) {
-            return <SimpleTable
-                        data={values.versions}
-                        columns={columns}
-                        addRestoreColumn={true}
-                        function={restoreVersion}
-                        button_path={"/admin" + INCIDENT_DETAILS_PATH}
-                        request_endpoint={"configuration-items/software/" + values.id + "/restore"}/>
-        }
-        else if (values.versions && values.versions.length === 0) {
-            return <div className="version_row">No hay otras versiones del ítem</div>
-        }
-    }
-
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.versions;
@@ -153,51 +139,32 @@ function IncidentDetails(props) {
         ).catch(err => {console.log(err)});
     }
 
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
-    }
-
-    function currencyFormat(num) {
-        if (!num) return;
-        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-     }
-
-
-  const [bigChartData, setbigChartData] = React.useState(tableData);
-  const [columns, setColumns] = React.useState(ciItemColumns);
-
-  function fetchValues() {
-    dbGet("incidents/" + incident_id).then(data => {
-        setValues(data);
-    }).catch(err => {console.log(err)});
-  }
-
-    const [formFields, setFormFields] = React.useState([{}])
-
     function solveIncident() {
         var patch_data = {status:"Resuelto"}
         dbPatch("incidents/" + incident_id, patch_data);
         history.push(simple_routes.incidents);
+        sendComment("Incidente resuelto");
     }
 
     function blockIncident() {
         var patch_data = {is_blocked:true}
         dbPatch("incidents/" + incident_id, patch_data);
         // history.push(simple_routes.incidents);
-        window.location.reload(false);
+        sendComment("Incidente bloqueado");
     }
 
     function unblockIncident() {
         var patch_data = {is_blocked:false}
         dbPatch("incidents/" + incident_id, patch_data);
         // history.push(simple_routes.incidents);
-        window.location.reload(false);
+        sendComment("Incidente desbloqueado");
     }
 
   const submitForm = (data) => { 
       var patch_data = {taken_by:localStorage.getItem("username")}
       dbPatch("incidents/" + incident_id, patch_data);
-      history.push(simple_routes.incidents);
+      // history.push(simple_routes.incidents);
+      sendComment("Incidente tomado");
   }
 
   function addBlockButton() {
@@ -255,13 +222,41 @@ function IncidentDetails(props) {
     }
   }
 
-  const sendComment = () => { 
-    var comment = document.getElementById("comment").value;
+  const sendComment = (comment) => {
+    if (!comment) comment = document.getElementById("comment").value;  
     if (!comment) return;
-    var post_data = {comment:document.getElementById("comment").value}
-    debugger;
+    
+    var created_by = localStorage.getItem("username");
+    var post_data = {
+        comment:comment,
+        created_by:created_by
+    }
     dbPost("incidents/" + incident_id + "/comments", post_data);
-    history.push(simple_routes.incidents);
+    window.location.reload();
+ }
+
+ const showComments = () => {
+    if (values === '') {
+      fetchValues();
+    }
+    if (values.comments === undefined) {
+        return;
+    }
+    if (values.comments.length === 0) {
+        return;
+    }
+    return (
+        <div>
+        {values.comments.map(comment => {
+            return (
+                <div class="comment-div">
+                <div class="comment-header-div">{comment.created_at} - {comment.created_by}</div>
+                <div class="comment-text-div"> {comment.text} </div>
+                </div>
+            )
+        })}
+        </div>
+    )
  }
 
   return (
@@ -357,10 +352,10 @@ function IncidentDetails(props) {
           </Card>
           </Form>
           </Col>
-          <Col md="6">
+          <Col md="6" className="comment-section">
           <Row>
             <Col md="11">
-              <h4 className="title">Comentarios</h4>
+              <h4 className="title">Tracking</h4>
                 <div>
                   <Input 
                         placeholder="Ingrese un comentario..."
@@ -369,14 +364,16 @@ function IncidentDetails(props) {
                     />
                 </div>
                 <div className="comments-button-div">
-                    <Button
+                    <Button 
                     size="sm"
-                    color="primary"
-                    type="submit"
+                    color="info"
                     onClick={() => sendComment()}
                     >
                     Comentar        
                     </Button>
+                </div>
+                <div>
+                    {showComments()}
                 </div>
           </Col>
             </Row>
