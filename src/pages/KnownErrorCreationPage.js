@@ -178,7 +178,7 @@ function ErrorCreation(props) {
                             </Grid>
                             )
                             })}
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo incidente</Button>
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo Error</Button>
                         </Grid>
               </CardBody>
               <CardFooter align="center">
