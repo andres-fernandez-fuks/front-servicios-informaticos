@@ -20,6 +20,10 @@ import classNames from "classnames";
 import CustomDataTable from "../components/Table/DynamicTable.js";
 import useStyles from "../styles";
 import {dbGet} from "../utils/backendFetchers";
+import { IconButton } from '@mui/material';
+import { useHistory } from "react-router-dom";
+import simple_routes from "utils/routes_simple.js"
+import AddIcon from '@mui/icons-material/Add';
 
 // reactstrap components
 import {
@@ -47,10 +51,15 @@ const changeColumns = [
 
 
 function ChangesTable() {
+    const history = useHistory();
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(changeColumns);
-    const [category, setCategory] = useState("Mis changeas");
+    const [category, setCategory] = useState("Mis cambios");
     const classes = useStyles();
+
+    const RedirectToProblemCreation = () => {
+        history.push(simple_routes.changeCreation);
+    };
     useEffect(() => {
         dbGet("changes").then(data => {
             setbigChartData(data);
@@ -146,7 +155,17 @@ function ChangesTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Problemas</CardTitle>
+                <CardTitle tag="h4">Cambios &nbsp; &nbsp; &nbsp;
+                <IconButton
+                    size="small" 
+                    aria-label="Crear Cambio"
+                    color="info"
+                    style={{backgroundColor:"white"}}
+                    onClick={() => {RedirectToProblemCreation();}}
+                    >
+                    <AddIcon />
+                </IconButton>
+                </CardTitle>
               </CardHeader>
               <CardBody>
               <CustomDataTable data={bigChartData} columns={columns}/>

@@ -50,18 +50,24 @@ const priorities = [
 const formData = {};
 
 
-function ProblemCreation(props) {
+function ChangeCreation(props) {
   var classes = useStyles();
   const history = useHistory();
 
   const [incidents, setIncidents]  = React.useState([]);
+  const [problems, setProblems]  = React.useState([]);
   const [values, setValues] = React.useState("");
   const [formFields, setFormFields] = React.useState([{}])
+  const [formProblemFields, setFormProblemFields] = React.useState([{}])
   const [incidentValues, setIncidentValues] = React.useState([])
+  const [problemValues, setProblemValues] = React.useState([])
 
   React.useEffect(() => {
     dbGet("incidents/names").then(data => {
         setIncidents(data["incidents"]);
+    }).catch(err => {console.log(err)});
+    dbGet("problems/names").then(data => {
+        setProblems(data["problems"]);
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -72,11 +78,17 @@ function ProblemCreation(props) {
         value = event.target.value;
         data[index] = value;
     }
-    else {
+    else if (field.lastIndexOf("incident", 0) === 0) {
         value = event;
         data[index] = value;
         setFormFields(data);
         setIncidentValues([...incidentValues, value]);
+    } else {
+        value = event;
+        data = [...formProblemFields]
+        data[index] = value;
+        setFormProblemFields(data);
+        setProblemValues([...problemValues, value]);
     }
     formData[field] = value;
   }
@@ -92,6 +104,17 @@ function ProblemCreation(props) {
     setFormFields([...formFields, object])
   }
 
+  const removeProblemFields = (index) => {
+    let data = [...formProblemFields];
+    data.splice(index, 1)
+    setFormProblemFields(data)
+  }
+
+  const addProblemFields = () => {
+    let object = {};
+    setFormProblemFields([...formProblemFields, object])
+  }
+
   function updatePriority(new_priority){
     //Llama al actualizador del values pasandole todos los datos
     //anteriores pero actualiza la prioridad
@@ -99,43 +122,44 @@ function ProblemCreation(props) {
   }
 
   const exitForm = () => { 
-    history.push(simple_routes.problems);
+    history.push(simple_routes.changes);
     }
 
   const submitForm = (e) => {
       if (!document.getElementById('description').value){
-        toast.error("Debe escribir una descripción para el problema")
+        toast.error("Debe escribir una descripción para el cambios")
         return
       } else if (!values.priority) {
         toast.error("Debe seleccionar una prioridad")
         return
-      } else if(incidentValues.length === 0){
-        toast.error("Debe relacionar por lo menos un incidente")
+      } else if(incidentValues.length === 0 && problemValues.length === 0){
+        toast.error("Debe relacionar por lo menos un incidente o un problema")
         return
       }
       formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
-      dbPost("problems", formData);
-      history.push(simple_routes.problems);
-      toast.success("Problema creado correctamente")
+      dbPost("changes", formData);
+      history.push(simple_routes.changes);
+      toast.success("Cambios creado correctamente")
   }
 
   const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
 
   return (
     <>
-      <div className="content">
+        <div className="content">
+            <div className={classes.centeredDiv}>
         <Toaster/>
-          <Form onSubmit={submitForm}>
+        <Form>
             <Card>
-              <CardHeader >
-                <h4 className="title">Creación de Problema</h4>
-              </CardHeader>
-              <CardBody>
-                  <Grid className = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Descripción</h5>
-                      <input class="heighttext"
+            <CardHeader >
+                <h4 className="title">Creación de Cambios</h4>
+            </CardHeader>
+            <CardBody>
+                <Grid className = {classes.SmallPaddedGrip} >
+                    <h5 className="title">Descripción</h5>
+                    <input class="heighttext"
                         name="description"
                         required
                         id="description"
@@ -143,12 +167,12 @@ function ProblemCreation(props) {
                         autoFocus
                         autoComplete="off"
                         placeholder="Ingrese una descripción"
-                      />
-                  </Grid>
-                  <Grid className = {classes.SmallPaddedGrip}>
+                    />
+                </Grid>
+                <Grid className = {classes.MediumPaddedGrip}>
                     <Col className="px-md-1" md="3">
-                      <FormGroup>
-                      <h5 className="title">Prioridad</h5>
+                    <FormGroup>
+                    <h5 className="title">Prioridad</h5>
                         <Select styles={selectStyles}
                             id="priority"
                             value={{ value: values.priority, label: values.priority }}
@@ -156,9 +180,9 @@ function ProblemCreation(props) {
                             options={priorities}
                             autoFocus
                         />
-                      </FormGroup>
+                    </FormGroup>
                     </Col>
-                  </Grid>
+                </Grid>
                     <Grid className = {classes.PaddedGrip}>
                     <h5> <b>Incidentes</b></h5>
                         {formFields.map((form, index) => {
@@ -187,30 +211,64 @@ function ProblemCreation(props) {
                             </Grid>
                             )
                             })}
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo incidente</Button>
+                            <CardHeader >
+            </CardHeader>
+            <h4 className="title"></h4>
+                        <h5> <b>Problemas</b></h5>
+                        {formProblemFields.map((form, index) => {
+                            return (
+                            <Grid item xs={12}>
+                            <div key={index} className="row_div">
+                            <SelectSearch
+                                id={"problem" + index+2}
+                                options={problems}
+                                value={problemValues[index]}
+                                onChange={event => handleFormChange(event, index, "problem_name_"+index)}
+                                search
+                                filterOptions={fuzzySearch} 
+                                placeholder="Search something"
+                            />
+                            &nbsp; &nbsp; &nbsp;
+                            <IconButton
+                                    size="medium" 
+                                    aria-label="delete"
+                                    color="primary"
+                                    onClick={() => removeProblemFields(index)}
+                                    >
+                                    <DeleteIcon/>
+                                </IconButton>
+                            </div>
+                            </Grid>
+                            )
+                            })}
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addProblemFields}>Nuevo problema</Button>
+
+                            <CardFooter align="center">
+                                <Button className="btn-fill"
+                                    color="success"
+                                    type="submit"
+                                    onClick={(e) => {e.preventDefault(); submitForm()}}
+                                    >
+                                    Crear        
+                                </Button>
+                                <Button className="btn-fill"
+                                    color="warning"
+                                    onClick={() => exitForm()}
+                                    >
+                                    Volver        
+                                </Button>
+                            </CardFooter>
                         </Grid>
               </CardBody>
-              <CardFooter align="center">
-              <Button className="btn-fill"
-                color="success"
-                type="submit"
-                onClick={(e) => {e.preventDefault(); submitForm()}}
-                >
-                Crear        
-              </Button>
-              <Button className="btn-fill"
-                color="warning"
-                onClick={() => exitForm()}
-                >
-                Volver        
-              </Button>
-              </CardFooter>
+              
               
             </Card>
             </Form>
+          </div>
       </div>
     </>
   );
 }
 
-export default ProblemCreation;
+export default ChangeCreation;

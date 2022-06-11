@@ -5,6 +5,7 @@ const simple_routes = {
     incidentCreation: "/admin/incidents_create",
     problemCreation: "/admin/problems_create",
     ErrorCreation: "/admin/errors_create",
+    changeCreation: "/admin/changes_create",
     incidents: "/admin/incidents",
     dashboard: "/admin/dashboard",
     problemDetails: "/admin/problems_details",

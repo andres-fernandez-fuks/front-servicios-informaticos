@@ -36,6 +36,7 @@ import simple_routes from "utils/routes_simple.js";
 import IncidentCreation from "pages/IncidentCreationPage.js";
 import ProblemCreation from "pages/ProblemCreationPage.js";
 import KnownErrorCreation from "pages/KnownErrorCreationPage.js";
+import ChangeCreation from "pages/ChangeCreationPage.js";
 import ProblemDetails from "pages/ProblemDetailsPage.js";
 import LoginPage from "pages/LoginPage.js";
 import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage";
@@ -190,6 +191,10 @@ function Admin(props) {
                 <Route
                 path={simple_routes.KnownErrorCreation}
                 component={KnownErrorCreation}
+                />
+                <Route
+                path={simple_routes.changeCreation}
+                component={ChangeCreation}
                 />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>
