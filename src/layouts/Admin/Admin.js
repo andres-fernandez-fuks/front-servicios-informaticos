@@ -36,6 +36,7 @@ import IncidentDetails from "pages/IncidentDetailsPage.js";
 import simple_routes from "utils/routes_simple.js";
 import IncidentCreation from "pages/IncidentCreationPage.js";
 import ProblemCreation from "pages/ProblemCreationPage.js";
+import KnownErrorCreation from "pages/KnownErrorCreationPage.js";
 import ChangeCreation from "pages/ChangeCreationPage.js";
 import ProblemDetails from "pages/ProblemDetailsPage.js";
 import ChangeDetails from "pages/ChangeDetailsPage.js";
@@ -192,6 +193,10 @@ function Admin(props) {
                 <Route
                 path={simple_routes.problemCreation}
                 component={ProblemCreation}
+                />
+                <Route
+                path={simple_routes.KnownErrorCreation}
+                component={KnownErrorCreation}
                 />
                 <Route
                 path={simple_routes.changeCreation}
