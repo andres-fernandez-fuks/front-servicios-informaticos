@@ -40,7 +40,7 @@ import {
 
 import SimpleTable from "components/Table/SimpleTable";
 
-export const PROBLEM_DETAILS_PATH = "/change_details";
+export const CHANGE_DETAILS_PATH = "/change_details";
 
 const tableData = [];
 const incidentColumns = [
@@ -50,7 +50,7 @@ const incidentColumns = [
 
 
 
-function ProblemDetails(props) {
+function ChangeDetails(props) {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -59,8 +59,9 @@ function ProblemDetails(props) {
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
+    const [problemItemsData, setProblemItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
-    var problem_id = paths[paths.length - 1]
+    var change_id = paths[paths.length - 1]
     const [bigChartData, setbigChartData] = React.useState(tableData);
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
@@ -82,15 +83,17 @@ function ProblemDetails(props) {
     }
 
     function fetchItemsData() {
-        dbGet("problems/" + problem_id).then(data => {
+        dbGet("changes/" + change_id).then(data => {
             var incidents_data = data["incidents"]
+            var problems_data = data["problems"]
             
             setItemsData(incidents_data);
+            setProblemItemsData(problems_data);
         }).catch(err => {console.log(err)});
     }
 
     React.useEffect(() => {
-        dbGet("problems/" + problem_id).then(data => {
+        dbGet("changes/" + change_id).then(data => {
             setValues(data);
             setCurrentValues(data);
             fetchItemsData();
@@ -98,7 +101,7 @@ function ProblemDetails(props) {
         }   , []);
 
     function fetchValues() {
-            dbGet("problems/" + problem_id).then(data => {
+            dbGet("changes/" + change_id).then(data => {
                 setValues(data);
             }).catch(err => {console.log(err)});
     }
@@ -127,11 +130,11 @@ function ProblemDetails(props) {
 
     const handleSubmit = (event) => {
         // event.preventDefault();
-        // var path = "problems/" + values.id ;
+        // var path = "changes/" + values.id ;
         // var request_values = getRequestValues();
         // dbPost(path, request_values).then(data => {
         //     
-        //     history.push("/admin" + PROBLEM_DETAILS_PATH + "/" + data.id);
+        //     history.push("/admin" + CHANGE_DETAILS_PATH + "/" + data.id);
         //     window.location.reload();
         // }
         // ).catch(err => {console.log(err)});
@@ -147,37 +150,37 @@ function ProblemDetails(props) {
      }
 
   function fetchValues() {
-    dbGet("problems/" + problem_id).then(data => {
+    dbGet("changes/" + change_id).then(data => {
         setValues(data);
     }).catch(err => {console.log(err)});
   }
 
     
 
-    function solveProblem() {
+    function solveChange() {
         var patch_data = {status:"Resuelto"}
-        dbPatch("problems/" + problem_id, patch_data);
-        history.push(simple_routes.problems);
+        dbPatch("changes/" + change_id, patch_data);
+        history.push(simple_routes.changes);
     }
 
-    function blockProblem() {
+    function blockChange() {
         var patch_data = {is_blocked:true}
-        dbPatch("problems/" + problem_id, patch_data);
-        // history.push(simple_routes.problems);
+        dbPatch("changes/" + change_id, patch_data);
+        // history.push(simple_routes.changes);
         window.location.reload(false);
     }
 
-    function unblockProblem() {
+    function unblockChange() {
         var patch_data = {is_blocked:false}
-        dbPatch("problems/" + problem_id, patch_data);
-        // history.push(simple_routes.problems);
+        dbPatch("changes/" + change_id, patch_data);
+        // history.push(simple_routes.changes);
         window.location.reload(false);
     }
 
     const submitForm = (data) => { 
         var patch_data = {taken_by:localStorage.getItem("username")}
-        dbPatch("problems/" + problem_id, patch_data);
-        history.push(simple_routes.problems);
+        dbPatch("changes/" + change_id, patch_data);
+        history.push(simple_routes.changes);
     }
 
   function addBlockButton() {
@@ -186,7 +189,7 @@ function ProblemDetails(props) {
             <Button className="btn-fill" align="left"
             color="warning"
             type="submit"
-            onClick={() => unblockProblem()}
+            onClick={() => unblockChange()}
             >
             Desbloquear        
             </Button>
@@ -196,7 +199,7 @@ function ProblemDetails(props) {
         <Button className="btn-fill" align="left"
         color="warning"
         type="submit"
-        onClick={() => blockProblem()}
+        onClick={() => blockChange()}
         >
         Bloquear        
         </Button>  
@@ -226,7 +229,7 @@ function ProblemDetails(props) {
         <Button className="btn-fill" align="right"
         color="success"
         type="submit"
-        onClick={() => solveProblem()}
+        onClick={() => solveChange()}
         >
         Resolver        
         </Button>
@@ -347,4 +350,4 @@ function ProblemDetails(props) {
   );
 }
 
-export default ProblemDetails;
+export default ChangeDetails;
