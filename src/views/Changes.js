@@ -24,6 +24,7 @@ import { IconButton } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import AddIcon from '@mui/icons-material/Add';
+import { CHANGE_DETAILS_PATH } from "pages/ChangeDetailsPage";
 
 // reactstrap components
 import {
@@ -168,7 +169,7 @@ function ChangesTable() {
                 </CardTitle>
               </CardHeader>
               <CardBody>
-              <CustomDataTable data={bigChartData} columns={columns}/>
+              <CustomDataTable data={bigChartData} columns={columns} edit_details_path = {CHANGE_DETAILS_PATH}/>
               </CardBody>
             </Card>
           </Col>

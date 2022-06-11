@@ -30,6 +30,7 @@ import routes from "utils/routes.js";
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import {INCIDENT_DETAILS_PATH} from "pages/IncidentDetailsPage.js";
+import {CHANGE_DETAILS_PATH} from "pages/ChangeDetailsPage.js";
 import { PROBLEM_DETAILS_PATH } from "pages/ProblemDetailsPage";
 import IncidentDetails from "pages/IncidentDetailsPage.js";
 import simple_routes from "utils/routes_simple.js";
@@ -37,6 +38,7 @@ import IncidentCreation from "pages/IncidentCreationPage.js";
 import ProblemCreation from "pages/ProblemCreationPage.js";
 import ChangeCreation from "pages/ChangeCreationPage.js";
 import ProblemDetails from "pages/ProblemDetailsPage.js";
+import ChangeDetails from "pages/ChangeDetailsPage.js";
 import LoginPage from "pages/LoginPage.js";
 import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage";
 import { SOFTWARE_ITEM_DETAILS_PATH } from "pages/items/SoftwareItemDetailsPage";
@@ -174,6 +176,10 @@ function Admin(props) {
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}
                 component={IncidentDetails}
+                />
+                <Route
+                path={'/admin' + CHANGE_DETAILS_PATH}
+                component={ChangeDetails}
                 />
                 <Route
                 path={simple_routes.incidentCreation}
