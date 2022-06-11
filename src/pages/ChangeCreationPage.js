@@ -151,8 +151,8 @@ function ChangeCreation(props) {
         <div className="content">
             <div className={classes.centeredDiv}>
         <Toaster/>
-        <Form onSubmit="return false" className="center-div">
-            <Card style={{ width: '40rem', height: '45rem' }} className="creation-card">
+        <Form>
+            <Card>
             <CardHeader >
                 <h4 className="title">Creación de Cambios</h4>
             </CardHeader>
