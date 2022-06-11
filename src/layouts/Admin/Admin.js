@@ -195,12 +195,12 @@ function Admin(props) {
                 component={ProblemCreation}
                 />
                 <Route
-                path={simple_routes.KnownErrorCreation}
-                component={KnownErrorCreation}
-                />
-                <Route
                 path={simple_routes.changeCreation}
                 component={ChangeCreation}
+                />
+                <Route
+                path={simple_routes.KnownErrorCreation}
+                component={KnownErrorCreation}
                 />
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>
