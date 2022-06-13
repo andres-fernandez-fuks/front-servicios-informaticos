@@ -24,6 +24,7 @@ import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import AddIcon from '@mui/icons-material/Add';
 import { IconButton } from '@mui/material';
+import { KNOWN_ERROR_DETAILS_PATH } from "pages/KnownErrorDetailsPage";
 
 // reactstrap components
 import {
@@ -176,6 +177,7 @@ function ErrorsTable() {
                 data={bigChartData}
                 columns={columns}
                 addEditColumn={true}
+                edit_details_path = {KNOWN_ERROR_DETAILS_PATH}
               />
               </CardBody>
             </Card>
