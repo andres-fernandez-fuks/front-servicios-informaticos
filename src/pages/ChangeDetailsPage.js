@@ -45,8 +45,9 @@ export const CHANGE_DETAILS_PATH = "/change_details";
 const tableData = [];
 const incidentColumns = [
     {"name": "id", "label": "ID"},
-    {"name": "description", "label": "Descripción"},
-    {"name": "type", "label": "Tipo"}
+    {"name": "type", "label": "Tipo"},
+    {"name": "description", "label": "Descripción"}
+    
 ]
 
 
@@ -327,11 +328,11 @@ function ChangeDetails(props) {
                   </Row>
                 </div>
             <div class="items-div">
-                <h4 className="title">Ítems asociados</h4>
+                <h4 className="title"></h4>
                 <SimpleTable data={itemsData}
                              columns={columns}
                              //addWatchColumn={true}
-                             excludeIdColumn={false} 
+                             excludeIdColumn={true} 
                              //button_path={"/admin/incidents_details/"}
                              use_object_type = {false}/>
             </div>
