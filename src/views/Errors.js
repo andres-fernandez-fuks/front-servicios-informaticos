@@ -176,7 +176,7 @@ function ErrorsTable() {
                 data={bigChartData}
                 columns={columns}
                 addEditColumn={true}
-                center_all_columns={true}/>
+              />
               </CardBody>
             </Card>
           </Col>
