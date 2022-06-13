@@ -45,7 +45,8 @@ export const CHANGE_DETAILS_PATH = "/change_details";
 const tableData = [];
 const incidentColumns = [
     {"name": "id", "label": "ID"},
-    {"name": "description", "label": "Descripción"}
+    {"name": "description", "label": "Descripción"},
+    {"name": "type", "label": "Tipo"}
 ]
 
 
@@ -86,8 +87,16 @@ function ChangeDetails(props) {
         dbGet("changes/" + change_id).then(data => {
             var incidents_data = data["incidents"]
             var problems_data = data["problems"]
+
+            incidents_data.map(i => {
+                i['type'] = "Incidente"
+            })
+            problems_data.map(i => {
+                i['type'] = "Problema"
+            })
             
-            setItemsData(incidents_data);
+            
+            setItemsData([...incidents_data, ...problems_data]);
             setProblemItemsData(problems_data);
         }).catch(err => {console.log(err)});
     }
@@ -178,7 +187,7 @@ function ChangeDetails(props) {
     }
 
     const submitForm = (data) => { 
-        var patch_data = {taken_by:localStorage.getItem("username")}
+        var patch_data = {taken_by:localStorage.getItem("username"), status:"Resuelto"}
         dbPatch("changes/" + change_id, patch_data);
         history.push(simple_routes.changes);
     }
@@ -220,7 +229,7 @@ function ChangeDetails(props) {
         type="submit"
         onClick={() => submitForm()}
         >
-        Tomar        
+        Resolver        
         </Button>)
     }
     if (values.taken_by !== undefined) {
@@ -293,7 +302,7 @@ function ChangeDetails(props) {
                   <Row>
                       <Col md="6">
                           <FormGroup>
-                              <Label style={{ color:"#1788bd" }}>Creado por</Label>
+                              <Label style={{ color:"#1788bd" }}>Pedido por</Label>
                               <Input  className="other_input"
                                   readOnly = {isEditable}
                                   defaultValue = {currentValues.created_by}
@@ -305,7 +314,7 @@ function ChangeDetails(props) {
                       </Col>
                       <Col md="6">
                           <FormGroup>
-                          <Label style={{ color:"#1788bd" }}>Tomado por</Label>
+                          <Label style={{ color:"#1788bd" }}>Resuelto por</Label>
                               <Input  className="other_input"
                                   readOnly = {isEditable}
                                   defaultValue = {currentValues.taken_by}
@@ -321,9 +330,9 @@ function ChangeDetails(props) {
                 <h4 className="title">Ítems asociados</h4>
                 <SimpleTable data={itemsData}
                              columns={columns}
-                             addWatchColumn={true}
-                             excludeIdColumn={true} 
-                             button_path={"/admin/incidents_details/"}
+                             //addWatchColumn={true}
+                             excludeIdColumn={false} 
+                             //button_path={"/admin/incidents_details/"}
                              use_object_type = {false}/>
             </div>
               </CardBody>

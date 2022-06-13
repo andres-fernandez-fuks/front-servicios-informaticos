@@ -44,8 +44,8 @@ const tableData = [];
 const changeColumns = [
     {"name": "id", "label": "id"},
     {"name": "description", "label": "Descripción"},
-    {"name": "created_by", "label": "Creado por"},
-    {"name": "created_at", "label": "Reportado el"},
+    {"name": "created_by", "label": "Pedido por"},
+    {"name": "created_at", "label": "Creado el"},
     {"name": "priority", "label": "Prioridad"},
     {"name": "status", "label": "Estado"},
 ]
