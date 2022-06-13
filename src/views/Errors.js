@@ -36,6 +36,8 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { ConstructionOutlined } from "@mui/icons-material";
+import { CommonAxisSettingsConstantLineStyleLabel } from "devextreme-react/chart.js";
 // import { Component } from "react/cjs/react.development";
 
 const tableData = [];
@@ -170,7 +172,11 @@ function ErrorsTable() {
                 </CardTitle>
               </CardHeader>
               <CardBody>
-              <CustomDataTable data={bigChartData} columns={columns} addEditColumn={false} center_all_columns={true}/>
+              <CustomDataTable
+                data={bigChartData}
+                columns={columns}
+                addEditColumn={true}
+                center_all_columns={true}/>
               </CardBody>
             </Card>
           </Col>

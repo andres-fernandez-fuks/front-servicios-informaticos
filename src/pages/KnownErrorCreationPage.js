@@ -160,7 +160,7 @@ function ErrorCreation(props) {
                                 id={"incident" + index+2}
                                 options={incidents}
                                 value={incidentValues[index]}
-                                onChange={event => handleFormChange(event, index, "error_name_"+index)}
+                                onChange={event => handleFormChange(event, index, "incident_name_"+index)}
                                 search
                                 filterOptions={fuzzySearch} 
                                 placeholder="Search something"
