@@ -10,8 +10,10 @@ import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
 import toast, { Toaster } from 'react-hot-toast';
-
-
+import MomentUtils from '@date-io/moment';
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import moment from "moment";
+import "moment/locale/es";
 // reactstrap components
 import {
   Button,
@@ -198,12 +200,19 @@ export default function HardwareItemCreation() {
                         <Col className="pb-md-2" md="5">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
+                                {/* <MuiPickersUtilsProvider utils={MomentUtils} locale={moment.locale("es")}>
+                                    <KeyboardDatePicker
+                                        onChange = {function(e){updateCurrentValues("purchase_date", moment(e.toDate()).format("DD/MM/YYYY"))}}
+                                        id = "purchase_date"
+                                        format="DD/MM/yyyy"                              
+                                    />
+                                </MuiPickersUtilsProvider> */}
                                 <Input className="other_input"
                                     readOnly = {!isEditable}
                                     //defaultValue = {currentValues.purchase_date}
                                     onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
                                     id = "description"
-                                    type="text"
+                                    type="date"
                         />
                             </FormGroup>
                         </Col>
