@@ -1,4 +1,5 @@
 import { HARDWARE_ITEM_CREATION_PATH } from "pages/items/HardwareItemCreationPage";
+import { SLA_ITEM_CREATION_PATH } from "pages/items/SLAItemCreationPage";
 
 const simple_routes = {
     incidentDetails: "/admin/incident_details",
@@ -14,6 +15,8 @@ const simple_routes = {
     profile: "/admin/user-profile",
     login: "/login",
     hardware_creation: "/admin" + HARDWARE_ITEM_CREATION_PATH,
+    sla_creation: "/admin" +    SLA_ITEM_CREATION_PATH,
+
 }
 
 export default simple_routes;

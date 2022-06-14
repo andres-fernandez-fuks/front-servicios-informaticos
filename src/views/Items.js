@@ -93,6 +93,9 @@ function ItemsTable() {
     function RedirectToHardwareItemCreation(){
       history.push(simple_routes.hardware_creation);
   }
+  function RedirectToSLAItemCreation(){
+    history.push(simple_routes.sla_creation);
+}
   return (
     <>
       <div className="content">
@@ -171,6 +174,17 @@ function ItemsTable() {
                   >
                   <AddIcon />
                   Hardware
+                </Button>
+                <Button
+                  size="small" 
+                  aria-label="Crear ítem"
+                  variant="contained" 
+                  color="secondary"
+                  style={{border: "2px solid black"}}
+                  onClick={() => {RedirectToSLAItemCreation();}}
+                  >
+                  <AddIcon />
+                  SLA
                 </Button>
                 </CardTitle>
               </CardHeader>

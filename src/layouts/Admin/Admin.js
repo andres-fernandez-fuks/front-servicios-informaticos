@@ -40,12 +40,14 @@ import KnownErrorCreation from "pages/KnownErrorCreationPage.js";
 import KnownErrorDetails from "pages/KnownErrorDetailsPage.js";
 import { KNOWN_ERROR_DETAILS_PATH } from "pages/KnownErrorDetailsPage";
 import ChangeCreation from "pages/ChangeCreationPage.js";
+import SLACreationPage from "pages/items/SLAItemCreationPage";
 import ProblemDetails from "pages/ProblemDetailsPage.js";
 import ChangeDetails from "pages/ChangeDetailsPage.js";
 import LoginPage from "pages/LoginPage.js";
 import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage";
 import { SOFTWARE_ITEM_DETAILS_PATH } from "pages/items/SoftwareItemDetailsPage";
 import { HARDWARE_ITEM_CREATION_PATH } from "pages/items/HardwareItemCreationPage";
+import { SLA_ITEM_CREATION_PATH } from "pages/items/SLAItemCreationPage";
 
 import { SLA_ITEM_DETAILS_PATH } from "pages/items/SLAItemDetailsPage";
 import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
@@ -161,6 +163,14 @@ function Admin(props) {
                 component={LoginPage}
                 />
                 <Route
+                path={'/admin' + SLA_ITEM_DETAILS_PATH}
+                component={SLAItemDetails}
+                />
+                <Route
+                path={'/admin' + SLA_ITEM_CREATION_PATH}
+                component={SLACreationPage}
+                />
+                <Route
                 path={'/admin' + HARDWARE_ITEM_DETAILS_PATH}
                 component={HardwareItemDetails}
                 />
@@ -172,10 +182,7 @@ function Admin(props) {
                 path={'/admin' + SOFTWARE_ITEM_DETAILS_PATH}
                 component={SoftwareItemDetails}
                 />
-                <Route
-                path={'/admin' + SLA_ITEM_DETAILS_PATH}
-                component={SLAItemDetails}
-                />
+
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}
                 component={IncidentDetails}
