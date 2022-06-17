@@ -49,7 +49,7 @@ export default function SLACreationPage() {
     var paths = window.location.pathname.split("/") 
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState({});
-    const [currentValues, setCurrentValues] = React.useState("");
+    const [currentValues, setCurrentValues] = React.useState({});
     const [enableCreateButton, setEnableCreateButton] = React.useState(true);
 
     const selectStyles = { 
@@ -216,12 +216,6 @@ export default function SLACreationPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
-                                {/* <Input className="other_input"
-                                    defaultValue= {currentValues.measurement_unit}
-                                    onChange = {function(e){updateCurrentValues("measurement_unit", e.target.value)}}
-                                    id = "type"
-                                    type="text"
-                                /> */}
                                 <Select styles={selectStyles}
                                     id="measurement_unit"
                                     //value={{value: currentValues.measurement_unit, label: currentValues.measurement_unit }}
@@ -233,10 +227,15 @@ export default function SLACreationPage() {
                         </Col>
                         <Col md="6">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="type">Valor de la medida</Label>
+                            <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
                                 <Input className="other_input"
                                     defaultValue= {currentValues.service_manager}
                                     onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
+                                    onKeyPress={(event) => {
+                                        if (!/[0-9]/.test(event.key)) {
+                                          event.preventDefault();
+                                        }
+                                      }}
                                     id = "type"
                                     type="number"
                                 />
