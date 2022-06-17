@@ -37,10 +37,11 @@ const columns = [
     {"name": "version", "label": "Versión"},
     {"name": "name", "label": "Nombre"},
 ]
-const priorities = [
-    { value: 'Alta', label: 'Alta' },
-    { value: 'Media', label: 'Media' },
-    { value: 'Baja', label: 'Baja' }
+const units = [
+    { value: 'Horas', label: 'Horas' },
+    { value: 'Días', label: 'Días' },
+    { value: 'Semanas', label: 'Semanas' },
+    { value: 'Meses', label: 'Meses' }
   ]
 export default function SLACreationPage() {
     const classes = useStyles();
@@ -48,7 +49,7 @@ export default function SLACreationPage() {
     var paths = window.location.pathname.split("/") 
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState({});
-    const [currentValues, setCurrentValues] = React.useState({});
+    const [currentValues, setCurrentValues] = React.useState("");
     const [enableCreateButton, setEnableCreateButton] = React.useState(true);
 
     const selectStyles = { 
@@ -57,30 +58,40 @@ export default function SLACreationPage() {
             zIndex: 999,
             borderBottom: '1px dotted pink',
             color: "white",
-            backgroundColor: "#27293d"
+            backgroundColor: "#27293d",
+            text:"orange"
         }),
         control: styles => ({
             ...styles,
-            backgroundColor: "#27293d"
+            backgroundColor: "#27293d",
+            borderColor: "#2b3553",
+            boxShadow: "none",
+            ':hover': {
+              borderColor: "#e14eca"
+            }
         }),
-        input: styles => ({
-            ...styles,
-            backgroundColor: "#27293d"
-        }),
+        singleValue: styles => ({
+          ...styles,
+          color:"white"
+      }),
         option: (styles, {isFocused}) => ({
             ...styles,
-            backgroundColor: isFocused ? "#1d253b" : "#27293d"
+            backgroundColor: isFocused ? "#1d253b" : "#27293d",
         })};
 
     function updateMeasurementUnit(new_measurement_unit){
         //Llama al actualizador del values pasandole todos los datos
         //anteriores pero actualiza la prioridad
-        setCurrentValues({...currentValues, measurement_unit:new_measurement_unit})
-        debugger
+        setCurrentValues(currentValues => (
+            {...currentValues, measurement_unit:new_measurement_unit}
+            ))
       }
     function updateCurrentValues(field, new_value) {
-        debugger
-        currentValues[field] = new_value;
+        //currentValues[field] = new_value;
+
+        setCurrentValues(currentValues => (
+            {...currentValues, [field]:new_value}
+        ))
     }
 
 
@@ -205,18 +216,18 @@ export default function SLACreationPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
-                                <Input className="other_input"
-                                    defaultValue= {currentValues.service_type}
+                                {/* <Input className="other_input"
+                                    defaultValue= {currentValues.measurement_unit}
                                     onChange = {function(e){updateCurrentValues("measurement_unit", e.target.value)}}
                                     id = "type"
                                     type="text"
-                                />
+                                /> */}
                                 <Select styles={selectStyles}
-                                    id="priority"
-                                    value={{value: currentValues.measurement_unit, label: currentValues.measurement_unit }}
-                                    onChange={function(new_option){updateMeasurementUnit("measurement_unit", new_option.value)}}
-                                    options={priorities}
-                                    autoFocus
+                                    id="measurement_unit"
+                                    //value={{value: currentValues.measurement_unit, label: currentValues.measurement_unit }}
+                                    onChange={function(new_option){updateMeasurementUnit(new_option.value)}}
+                                    options={units}
+                                    //autoFocus
                     />
                             </FormGroup>
                         </Col>
