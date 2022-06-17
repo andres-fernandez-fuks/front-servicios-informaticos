@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
 import { SOFTWARE_ITEM_DETAILS_PATH } from "./SoftwareItemDetailsPage";
+import toast, { Toaster } from 'react-hot-toast';
 
 // reactstrap components
 import {
@@ -71,15 +72,36 @@ export default function SoftwareCreation() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (!check_required_fields()) return
         var path = "configuration-items/software";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
+            toast.success("Item de Software creado correctamente")
             history.push("/admin" + SOFTWARE_ITEM_DETAILS_PATH + "/" + data.id);
             window.location.reload();
         }
         ).catch(err => {console.log(err)});
     }
 
+    function check_required_fields(){
+        if (!currentValues.name) {
+            toast.error("Debe escribir un nombre")
+            return false
+        } else if (!currentValues.type){
+            toast.error("Debe escribir un tipo")
+            return false
+        } else if (!currentValues.description){
+            toast.error("Debe escribir una descripción")
+            return false
+        } else if (!currentValues.provider){
+            toast.error("Debe explicitar un proveedor")
+            return false
+        } else if (!currentValues.software_version){
+            toast.error("Debe explicitar un número de versión del software")
+            return false
+        }
+        return true  
+    }
     function updateType(new_type) {
         setValues({...values, type:new_type})
     }
@@ -92,6 +114,7 @@ export default function SoftwareCreation() {
     return (
       <>
         <div className="content">
+          <Toaster />  
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
@@ -153,19 +176,20 @@ export default function SoftwareCreation() {
                                 />
                             </FormGroup>
                         </Col>
-                        <Col md="4">
+                        <Col md="5">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }}>Software</Label>
+                            <Label style={{ color:"#1788bd" }}>Versión del Software</Label>
                                 <Input  className="other_input"
                                     readOnly = {!isEditable}
                                     defaultValue = {currentValues.software_version}
                                     onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
-                                    id = "software"
+                                    placeholder = "3.0.1"
+                                    id = "software_version"
                                     type="text"
                             />
                             </FormGroup>
                         </Col>
-                        <Col md="3">
+                        <Col md="">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
                                 <Input
