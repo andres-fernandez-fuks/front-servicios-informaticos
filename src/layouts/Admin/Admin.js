@@ -48,12 +48,13 @@ import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage"
 import { SOFTWARE_ITEM_DETAILS_PATH } from "pages/items/SoftwareItemDetailsPage";
 import { HARDWARE_ITEM_CREATION_PATH } from "pages/items/HardwareItemCreationPage";
 import { SLA_ITEM_CREATION_PATH } from "pages/items/SLAItemCreationPage";
-
+import { SOFTWARE_ITEM_CREATION_PATH } from "pages/items/SoftwareItemCreationPage";
 import { SLA_ITEM_DETAILS_PATH } from "pages/items/SLAItemDetailsPage";
 import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
 import HardwareItemCreation from "pages/items/HardwareItemCreationPage.js";
 
 import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
+import SoftwareCreation from "pages/items/SoftwareItemCreationPage";
 import SLAItemDetails from "pages/items/SLAItemDetailsPage.js";
 
 var ps;
@@ -182,7 +183,10 @@ function Admin(props) {
                 path={'/admin' + SOFTWARE_ITEM_DETAILS_PATH}
                 component={SoftwareItemDetails}
                 />
-
+                <Route
+                path={'/admin' + SOFTWARE_ITEM_CREATION_PATH}
+                component={SoftwareCreation}
+                />
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}
                 component={IncidentDetails}
