@@ -119,7 +119,7 @@ function ItemsTable() {
                 color="info"
                 id="0"
                 size="sm"
-                onClick={(e) => fetchData(e, "/configuration-items/hardware", "Hardware")}
+                onClick={(e) => fetchData(e, "/configuration-items/hardware", hardwareItemColumns, "Hardware")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Hardware">
                 Hardware
