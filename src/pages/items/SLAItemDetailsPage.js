@@ -142,7 +142,6 @@ export default function SLADetailsPage() {
         if (!num) return;
         return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
      }
-
     return (
       <>
         <div className="content">
@@ -183,11 +182,13 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >¿Crucial?</Label>
+                            <br></br> &nbsp; &nbsp; &nbsp;
                                 <Input
-                                    readOnly
-                                    defaultValue = {currentValues.is_crucial ? "Sí" : "No"}
-                                    id = "description"
-                                    type="text"/>
+                                    id = "is_crucial"
+                                    disabled = {!isEditable}
+                                    onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
+                                    checked = {currentValues.is_crucial}
+                                    type="checkbox"/>
                             </FormGroup>
                         </Col>  
                     </Row>
