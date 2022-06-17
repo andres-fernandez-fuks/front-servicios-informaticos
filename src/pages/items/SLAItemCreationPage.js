@@ -10,6 +10,7 @@ import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
 import Select from 'react-select'
+import toast, { Toaster } from 'react-hot-toast';
 
 
 // reactstrap components
@@ -111,10 +112,11 @@ export default function SLACreationPage() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (!check_required_fields()) return
         var path = "configuration-items/sla";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            
+            toast.success("SLA creado correctamente")
             history.push("/admin" + SLA_ITEM_DETAILS_PATH + "/" + data.id);
             window.location.reload();
         }
@@ -129,10 +131,41 @@ export default function SLACreationPage() {
         if (!num) return;
         return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
      }
-
+    function check_required_fields(){
+        if (!currentValues.name) {
+            toast.error("Debe escribir un nombre")
+            return false
+        } else if (!currentValues.client){
+            toast.error("Debe especificar un cliente")
+            return false
+        } else if (!currentValues.description){
+            toast.error("Debe escribir una descripción")
+            return false
+        } else if (!currentValues.service_type){
+            toast.error("Debe explicitar un tipo de servicio")
+            return false
+        } else if (!currentValues.service_manager){
+            toast.error("Debe explicitar un gerente")
+            return false
+        } else if (!currentValues.measurement_unit){
+            toast.error("Debe explicitar una unidad de medida")
+            return false
+        } else if (!currentValues.measurement_value){
+            toast.error("Debe explicitar un valor para la unidad de medida")
+            return false
+        } else if (!currentValues.starting_date){
+            toast.error("Debe explicitar una fecha de inicio")
+            return false
+        } else if (!currentValues.ending_date){
+            toast.error("Debe explicitar una fecha de finalización")
+            return false
+        }
+        return true 
+    }
     return (
       <>
         <div className="content">
+          <Toaster />
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
@@ -157,9 +190,9 @@ export default function SLACreationPage() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Cliente</Label>
                                 <Input
-                                    defaultValue= {currentValues.name}
+                                    defaultValue= {currentValues.client}
                                     onChange = {function(e){updateCurrentValues("client", e.target.value)}}
-                                    id = "type"
+                                    id = "client"
                                     type="text"
                             />
                             </FormGroup>
@@ -216,13 +249,12 @@ export default function SLACreationPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
-                                <Select styles={selectStyles}
+                                <Select 
+                                    styles={selectStyles}
                                     id="measurement_unit"
-                                    //value={{value: currentValues.measurement_unit, label: currentValues.measurement_unit }}
                                     onChange={function(new_option){updateMeasurementUnit(new_option.value)}}
                                     options={units}
-                                    //autoFocus
-                    />
+                                />
                             </FormGroup>
                         </Col>
                         <Col md="6">
