@@ -9,8 +9,9 @@ import useStyles from "styles"
 import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
-
-
+import {units, selectStyles} from './SLAItemCreationPage';
+import Select from 'react-select'
+import toast, { Toaster } from 'react-hot-toast';
 // reactstrap components
 import {
   Button,
@@ -63,6 +64,13 @@ export default function SLADetailsPage() {
         }
     }
 
+    function updateMeasurementUnit(new_measurement_unit){
+        //Llama al actualizador del values pasandole todos los datos
+        //anteriores pero actualiza la prioridad
+        setCurrentValues(currentValues => (
+            {...currentValues, measurement_unit:new_measurement_unit}
+            ))
+      }
   React.useEffect(() => {
     dbGet("configuration-items/sla/" + item_id).then(data => {
         setValues({...data});
@@ -85,12 +93,6 @@ export default function SLADetailsPage() {
             // setValues(data);
         }).catch(err => {console.log(err)});
 }  
-
-    console.log("Values: ", values)
-
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
 
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
@@ -131,13 +133,6 @@ export default function SLADetailsPage() {
         ).catch(err => {console.log(err)});
     }
 
-    const submitForm = (e) => {
-        //formData["created_by"] = localStorage.getItem("username");
-        //formData["description"] = document.getElementById('description').value;
-        //formData["priority"] = values.priority;
-        //dbPost("incidents", formData);
-        //history.push(simple_routes.incidents);
-    }
 
     function updateType(new_type) {
         setValues({...values, type:new_type})
@@ -151,20 +146,21 @@ export default function SLADetailsPage() {
     return (
       <>
         <div className="content">
+          <Toaster />
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
             <Card>
                 <CardHeader >
-                    <h4 className="title">Detalles del ítem</h4>
+                    <h4 className="title">Detalles del SLA</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
-                        <Col md="9">
+                        <Col md="4">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Nombre</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -172,7 +168,19 @@ export default function SLADetailsPage() {
                             />
                             </FormGroup>
                         </Col>
-                        <Col md="3">
+                        <Col md="4">
+                            <FormGroup>
+                                <Label style={{ color:"#1788bd" }}>Cliente</Label>
+                                <Input
+                                    readOnly = {!isEditable}
+                                    defaultValue= {currentValues.client}
+                                    onChange = {function(e){updateCurrentValues("client", e.target.value)}}
+                                    id = "client"
+                                    type="text"
+                            />
+                            </FormGroup>
+                        </Col>
+                        <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >¿Crucial?</Label>
                                 <Input
@@ -188,7 +196,7 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -202,10 +210,10 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo de servicio</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.service_type}
                                     onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
-                                    id = "type"
+                                    id = "service_type"
                                     type="text"
                                 />
                             </FormGroup>
@@ -214,11 +222,42 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Gerente</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.service_manager}
                                     onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
-                                    id = "type"
+                                    id = "service_manager"
                                     type="text"
+                                />
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md="6">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
+                                <Select 
+                                    styles={selectStyles}
+                                    isDisabled = {!isEditable}
+                                    id="measurement_unit"
+                                    onChange={function(new_option){updateMeasurementUnit(new_option.value)}}
+                                    options={units}
+                                />
+                            </FormGroup>
+                        </Col>
+                        <Col md="6">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
+                                <Input className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue= {currentValues.measurement_value}
+                                    onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
+                                    onKeyPress={(event) => {
+                                        if (!/[0-9]/.test(event.key)) {
+                                          event.preventDefault();
+                                        }
+                                      }}
+                                    id = "measurement_value"
+                                    type="number"
                                 />
                             </FormGroup>
                         </Col>
@@ -228,11 +267,11 @@ export default function SLADetailsPage() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Fecha de inicio</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.starting_date}
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
-                                    id = "serial_number"
-                                    type="text"
+                                    id = "starting_date"
+                                    type="date"
                                 />
                             </FormGroup>
                         </Col>
@@ -240,10 +279,10 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }}>Fecha de fin</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.ending_date}
                                     onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
-                                    id = "serial_number"
+                                    id = "ending_date"
                                     type="text"
                             />
                             </FormGroup>

@@ -38,12 +38,39 @@ const columns = [
     {"name": "version", "label": "Versión"},
     {"name": "name", "label": "Nombre"},
 ]
-const units = [
+export const units = [
     { value: 'Horas', label: 'Horas' },
     { value: 'Días', label: 'Días' },
     { value: 'Semanas', label: 'Semanas' },
     { value: 'Meses', label: 'Meses' }
   ]
+
+export const selectStyles = { 
+    menu: styles => ({
+        ...styles,
+        zIndex: 999,
+        borderBottom: '1px dotted pink',
+        color: "white",
+        backgroundColor: "#27293d",
+        text:"orange"
+    }),
+    control: styles => ({
+        ...styles,
+        backgroundColor: "#27293d",
+        borderColor: "#2b3553",
+        boxShadow: "none",
+        ':hover': {
+          borderColor: "#e14eca"
+        }
+    }),
+    singleValue: styles => ({
+      ...styles,
+      color:"white"
+  }),
+    option: (styles, {isFocused}) => ({
+        ...styles,
+        backgroundColor: isFocused ? "#1d253b" : "#27293d",
+    })};
 export default function SLACreationPage() {
     const classes = useStyles();
     const history = useHistory();
@@ -53,32 +80,7 @@ export default function SLACreationPage() {
     const [currentValues, setCurrentValues] = React.useState({});
     const [enableCreateButton, setEnableCreateButton] = React.useState(true);
 
-    const selectStyles = { 
-        menu: styles => ({
-            ...styles,
-            zIndex: 999,
-            borderBottom: '1px dotted pink',
-            color: "white",
-            backgroundColor: "#27293d",
-            text:"orange"
-        }),
-        control: styles => ({
-            ...styles,
-            backgroundColor: "#27293d",
-            borderColor: "#2b3553",
-            boxShadow: "none",
-            ':hover': {
-              borderColor: "#e14eca"
-            }
-        }),
-        singleValue: styles => ({
-          ...styles,
-          color:"white"
-      }),
-        option: (styles, {isFocused}) => ({
-            ...styles,
-            backgroundColor: isFocused ? "#1d253b" : "#27293d",
-        })};
+    
 
     function updateMeasurementUnit(new_measurement_unit){
         //Llama al actualizador del values pasandole todos los datos
@@ -94,9 +96,6 @@ export default function SLACreationPage() {
             {...currentValues, [field]:new_value}
         ))
     }
-
-
-
 
     function getRequestValues() {
         var request_values = {...currentValues};
@@ -228,7 +227,7 @@ export default function SLACreationPage() {
                                 <Input className="other_input"
                                     defaultValue= {currentValues.service_type}
                                     onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
-                                    id = "type"
+                                    id = "service_type"
                                     type="text"
                                 />
                             </FormGroup>
@@ -239,7 +238,7 @@ export default function SLACreationPage() {
                                 <Input className="other_input"
                                     defaultValue= {currentValues.service_manager}
                                     onChange = {function(e){updateCurrentValues("service_manager", e.target.value)}}
-                                    id = "type"
+                                    id = "service_manager"
                                     type="text"
                                 />
                             </FormGroup>
@@ -261,14 +260,14 @@ export default function SLACreationPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
                                 <Input className="other_input"
-                                    defaultValue= {currentValues.service_manager}
+                                    defaultValue= {currentValues.measurement_value}
                                     onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
                                     onKeyPress={(event) => {
                                         if (!/[0-9]/.test(event.key)) {
                                           event.preventDefault();
                                         }
                                       }}
-                                    id = "type"
+                                    id = "measurement_value"
                                     type="number"
                                 />
                             </FormGroup>
@@ -281,7 +280,7 @@ export default function SLACreationPage() {
                                 <Input  className="other_input"
                                     defaultValue = {currentValues.starting_date}
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
-                                    id = "serial_number"
+                                    id = "starting_date"
                                     type="date"
                                 />
                             </FormGroup>
@@ -292,7 +291,7 @@ export default function SLACreationPage() {
                                 <Input  className="other_input"
                                     defaultValue = {currentValues.ending_date}
                                     onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
-                                    id = "serial_number"
+                                    id = "ending_date"
                                     type="date"
                             />
                             </FormGroup>
