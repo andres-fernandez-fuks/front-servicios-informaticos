@@ -36,7 +36,6 @@ export default function SoftwareCreation() {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
-    var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState({});
     const isEditable = true;
@@ -58,21 +57,6 @@ export default function SoftwareCreation() {
         }
     }
 
-  React.useEffect(() => {
-    dbGet("configuration-items/software/" + item_id).then(data => {
-        setValues({...data});
-        setCurrentValues({...data});
-    }).catch(err => {console.log(err)});
-    }   , []);
-
-    function fetchValues() {
-            dbGet("configuration-items/software/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
-
-
-
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.versions;
@@ -87,10 +71,9 @@ export default function SoftwareCreation() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/hardware/" + values.id + "/version";
+        var path = "configuration-items/software";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            
             history.push("/admin" + SOFTWARE_ITEM_DETAILS_PATH + "/" + data.id);
             window.location.reload();
         }
