@@ -4,6 +4,7 @@ import { dbGet, dbPatch } from 'utils/backendFetchers';
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
+import toast, { Toaster } from 'react-hot-toast';
 
 
 // reactstrap components
@@ -133,6 +134,7 @@ export default function SoftwareItemDetails() {
     return (
       <>
         <div className="content">
+          <Toaster/>
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>

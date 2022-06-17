@@ -103,7 +103,6 @@ function ItemsTable() {
     <>
       <div className="content">
       <Toaster/>
-
         <Row>
           <Col md="12">
             <Card className={classes.card} style={{paddingTop:5}}>

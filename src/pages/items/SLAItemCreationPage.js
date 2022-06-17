@@ -117,7 +117,6 @@ export default function SLACreationPage() {
         dbPost(path, request_values).then(data => {
             toast.success("SLA creado correctamente")
             history.push("/admin" + SLA_ITEM_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
         }
         ).catch(err => {console.log(err)});
     }

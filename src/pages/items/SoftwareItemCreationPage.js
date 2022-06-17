@@ -78,7 +78,6 @@ export default function SoftwareCreation() {
         dbPost(path, request_values).then(data => {
             toast.success("Item de Software creado correctamente")
             history.push("/admin" + SOFTWARE_ITEM_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
         }
         ).catch(err => {console.log(err)});
     }
