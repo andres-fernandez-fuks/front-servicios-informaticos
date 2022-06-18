@@ -187,8 +187,8 @@ function ChangeDetails(props) {
         window.location.reload(false);
     }
 
-    const submitForm = (data) => { 
-        var patch_data = {taken_by:localStorage.getItem("username"), status:"Resuelto"}
+    const submitForm = (status) => { 
+        var patch_data = {taken_by:localStorage.getItem("username"), status: status}
         dbPatch("changes/" + change_id, patch_data);
         history.push(simple_routes.changes);
     }
@@ -220,18 +220,28 @@ function ChangeDetails(props) {
       if (values === '') {
       fetchValues();
     }
-    if (values.status === "Resuelto") {
+    if (values.status === "Resuelto" || values.status == "Rechazado") {
         return;
     }
     if (!values.taken_by) {
         return (
+        <Grid align="center">
         <Button className="btn-fill"
         color="primary"
         type="submit"
-        onClick={() => submitForm()}
+        onClick={() => submitForm("Resuelto")}
         >
-        Resolver        
-        </Button>)
+        Aplicar        
+        </Button>
+        <Button className="btn-fill"
+        color="secondary"
+        type="submit"
+        onClick={() => submitForm("Rechazado")}
+        >
+        Rechazar        
+        </Button>
+        </Grid>
+        )
     }
     if (values.taken_by !== undefined) {
     return (
@@ -241,7 +251,7 @@ function ChangeDetails(props) {
         type="submit"
         onClick={() => solveChange()}
         >
-        Resolver        
+        Aplicar        
         </Button>
         {addBlockButton()}
         </Grid>)
