@@ -9,9 +9,10 @@ import useStyles from "styles"
 import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
-import {units, selectStyles} from './SLAItemCreationPage';
 import Select from 'react-select'
 import toast, { Toaster } from 'react-hot-toast';
+
+
 // reactstrap components
 import {
   Button,
@@ -32,37 +33,54 @@ import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
 export const SLA_ITEM_DETAILS_PATH = "/item_details/sla";
-
+export const SLA_ITEM_CREATION_PATH = "/item_creation/sla";
 const columns = [
     {"name": "version", "label": "Versión"},
     {"name": "name", "label": "Nombre"},
 ]
+export const units = [
+    { value: 'Horas', label: 'Horas' },
+    { value: 'Días', label: 'Días' },
+    { value: 'Semanas', label: 'Semanas' },
+    { value: 'Meses', label: 'Meses' }
+  ]
 
-export default function SLADetailsPage() {
+export const selectStyles = { 
+    menu: styles => ({
+        ...styles,
+        zIndex: 999,
+        borderBottom: '1px dotted pink',
+        color: "white",
+        backgroundColor: "#27293d",
+        text:"orange"
+    }),
+    control: styles => ({
+        ...styles,
+        backgroundColor: "#27293d",
+        borderColor: "#2b3553",
+        boxShadow: "none",
+        ':hover': {
+          borderColor: "#e14eca"
+        }
+    }),
+    singleValue: styles => ({
+      ...styles,
+      color:"white"
+  }),
+    option: (styles, {isFocused}) => ({
+        ...styles,
+        backgroundColor: isFocused ? "#1d253b" : "#27293d",
+    })};
+export default function SLACreationPage() {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
     var item_id = paths[paths.length - 1]
-    const [values, setValues] = React.useState("");
-    const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = false;
-    const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [values, setValues] = React.useState({});
+    const [currentValues, setCurrentValues] = React.useState({});
+    const [enableCreateButton, setEnableCreateButton] = React.useState(true);
 
-    function getPrice(price_string) {
-        var price = price_string.split(" ")[1]
-        price = parseInt(price.replace(/[^0-9]/g, ''));
-        return price;
-    }
-
-    function updateCurrentValues(field, new_value) {
-        if (field === "price") new_value = getPrice(new_value);
-        currentValues[field] = new_value;
-        if (JSON.stringify(currentValues) !== JSON.stringify(values)) {
-            setEnableCreateButton(true);
-        } else {
-            setEnableCreateButton(false);
-        }
-    }
+    
 
     function updateMeasurementUnit(new_measurement_unit){
         //Llama al actualizador del values pasandole todos los datos
@@ -71,42 +89,12 @@ export default function SLADetailsPage() {
             {...currentValues, measurement_unit:new_measurement_unit}
             ))
       }
-  React.useEffect(() => {
-    dbGet("configuration-items/sla/" + item_id).then(data => {
-        setValues({...data});
-        setCurrentValues({...data});
-        getVersions();
-    }).catch(err => {console.log(err)});
-    }   , []);
+    function updateCurrentValues(field, new_value) {
+        //currentValues[field] = new_value;
 
-    function fetchValues() {
-            dbGet("configuration-items/sla/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
-
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
-        }).catch(err => {console.log(err)});
-}  
-
-    function getVersions() {
-        if (values.versions && values.versions.length > 0) {
-            return <SimpleTable
-                        data={values.versions}
-                        columns={columns}
-                        addRestoreColumn={true}
-                        function={restoreVersion}
-                        button_path={"/admin" + SLA_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/sla/" + values.id + "/restore"}/>
-        }
-        else if (values.versions && values.versions.length === 0) {
-            return <div className="version_row">No hay otras versiones del ítem</div>
-        }
+        setCurrentValues(currentValues => (
+            {...currentValues, [field]:new_value}
+        ))
     }
 
     function getRequestValues() {
@@ -123,16 +111,15 @@ export default function SLADetailsPage() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/sla/" + values.id + "/version";
+        if (!check_required_fields()) return
+        var path = "configuration-items/sla";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            
+            toast.success("SLA creado correctamente")
             history.push("/admin" + SLA_ITEM_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
         }
         ).catch(err => {console.log(err)});
     }
-
 
     function updateType(new_type) {
         setValues({...values, type:new_type})
@@ -142,6 +129,37 @@ export default function SLADetailsPage() {
         if (!num) return;
         return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
      }
+    function check_required_fields(){
+        if (!currentValues.name) {
+            toast.error("Debe escribir un nombre")
+            return false
+        } else if (!currentValues.client){
+            toast.error("Debe especificar un cliente")
+            return false
+        } else if (!currentValues.description){
+            toast.error("Debe escribir una descripción")
+            return false
+        } else if (!currentValues.service_type){
+            toast.error("Debe explicitar un tipo de servicio")
+            return false
+        } else if (!currentValues.service_manager){
+            toast.error("Debe explicitar un gerente")
+            return false
+        } else if (!currentValues.measurement_unit){
+            toast.error("Debe explicitar una unidad de medida")
+            return false
+        } else if (!currentValues.measurement_value){
+            toast.error("Debe explicitar un valor para la unidad de medida")
+            return false
+        } else if (!currentValues.starting_date){
+            toast.error("Debe explicitar una fecha de inicio")
+            return false
+        } else if (!currentValues.ending_date){
+            toast.error("Debe explicitar una fecha de finalización")
+            return false
+        }
+        return true 
+    }
     return (
       <>
         <div className="content">
@@ -151,7 +169,7 @@ export default function SLADetailsPage() {
             <Form onSubmit= {handleSubmit}>
             <Card>
                 <CardHeader >
-                    <h4 className="title">Detalles del SLA</h4>
+                    <h4 className="title">Crear un SLA</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
@@ -159,7 +177,6 @@ export default function SLADetailsPage() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Nombre</Label>
                                 <Input
-                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -171,7 +188,6 @@ export default function SLADetailsPage() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Cliente</Label>
                                 <Input
-                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.client}
                                     onChange = {function(e){updateCurrentValues("client", e.target.value)}}
                                     id = "client"
@@ -185,9 +201,7 @@ export default function SLADetailsPage() {
                             <br></br> &nbsp; &nbsp; &nbsp;
                                 <Input
                                     id = "is_crucial"
-                                    disabled = {!isEditable}
                                     onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
-                                    checked = {currentValues.is_crucial}
                                     type="checkbox"/>
                             </FormGroup>
                         </Col>  
@@ -197,7 +211,6 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <Input
-                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -211,7 +224,6 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo de servicio</Label>
                                 <Input className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.service_type}
                                     onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
                                     id = "service_type"
@@ -223,9 +235,8 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Gerente</Label>
                                 <Input className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.service_manager}
-                                    onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("service_manager", e.target.value)}}
                                     id = "service_manager"
                                     type="text"
                                 />
@@ -238,7 +249,6 @@ export default function SLADetailsPage() {
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
                                 <Select 
                                     styles={selectStyles}
-                                    isDisabled = {!isEditable}
                                     id="measurement_unit"
                                     onChange={function(new_option){updateMeasurementUnit(new_option.value)}}
                                     options={units}
@@ -249,7 +259,6 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
                                 <Input className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.measurement_value}
                                     onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
                                     onKeyPress={(event) => {
@@ -268,7 +277,6 @@ export default function SLADetailsPage() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Fecha de inicio</Label>
                                 <Input  className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.starting_date}
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
                                     id = "starting_date"
@@ -280,11 +288,10 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }}>Fecha de fin</Label>
                                 <Input  className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.ending_date}
                                     onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
                                     id = "ending_date"
-                                    type="text"
+                                    type="date"
                             />
                             </FormGroup>
                         </Col>
@@ -293,8 +300,8 @@ export default function SLADetailsPage() {
                             <Label style={{ color:"#1788bd" }} >Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.version}
-                                    id = "description"
+                                    defaultValue = {1}
+                                    id = "version"
                                     type="text"/>
                             </FormGroup>
                         </Col>  
@@ -311,18 +318,6 @@ export default function SLADetailsPage() {
                 </CardFooter>
             </Card>
             </Form>
-            </Col>
-            <Col md="6">
-              <Card className="card-user">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
             </Col>
           </Row>
         </div>

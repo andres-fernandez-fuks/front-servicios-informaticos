@@ -93,11 +93,16 @@ function ItemsTable() {
     function RedirectToHardwareItemCreation(){
       history.push(simple_routes.hardware_creation);
   }
+    function RedirectToSLAItemCreation(){
+        history.push(simple_routes.sla_creation);
+    }
+    function RedirectToSoftwareItemCreation(){
+        history.push(simple_routes.software_creation);
+    }
   return (
     <>
       <div className="content">
       <Toaster/>
-
         <Row>
           <Col md="12">
             <Card className={classes.card} style={{paddingTop:5}}>
@@ -114,7 +119,7 @@ function ItemsTable() {
                 color="info"
                 id="0"
                 size="sm"
-                onClick={(e) => fetchData(e, "/configuration-items/hardware", "Hardware")}
+                onClick={(e) => fetchData(e, "/configuration-items/hardware", hardwareItemColumns, "Hardware")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Hardware">
                 Hardware
@@ -172,6 +177,28 @@ function ItemsTable() {
                   <AddIcon />
                   Hardware
                 </Button>
+                <Button
+                  size="small" 
+                  aria-label="Crear ítem"
+                  variant="contained" 
+                  color="secondary"
+                  style={{border: "2px solid black"}}
+                  onClick={() => {RedirectToSLAItemCreation();}}
+                  >
+                  <AddIcon />
+                  SLA
+                </Button>
+                <Button
+                  size="small" 
+                  aria-label="Crear ítem"
+                  variant="contained" 
+                  color="secondary"
+                  style={{border: "2px solid black"}}
+                  onClick={() => {RedirectToSoftwareItemCreation();}}
+                  >
+                  <AddIcon />
+                  Software
+                </Button>                
                 </CardTitle>
               </CardHeader>
               <CardBody>

@@ -40,7 +40,7 @@ import {
 
 import SimpleTable from "components/Table/SimpleTable";
 import classNames from "classnames";
-
+import CommentsTracking from "components/Form/comment_tracking";
 export const INCIDENT_DETAILS_PATH = "/incidents_details";
 
 const tableData = [];
@@ -112,10 +112,6 @@ function IncidentDetails(props) {
 
     console.log("Values: ", values)
 
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
-
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.versions;
@@ -149,14 +145,12 @@ function IncidentDetails(props) {
     function blockIncident() {
         var patch_data = {is_blocked:true}
         dbPatch("incidents/" + incident_id, patch_data);
-        // history.push(simple_routes.incidents);
         sendComment("Incidente bloqueado");
     }
 
     function unblockIncident() {
         var patch_data = {is_blocked:false}
         dbPatch("incidents/" + incident_id, patch_data);
-        // history.push(simple_routes.incidents);
         sendComment("Incidente desbloqueado");
     }
 
@@ -231,10 +225,16 @@ function IncidentDetails(props) {
         comment:comment,
         created_by:created_by
     }
-    dbPost("incidents/" + incident_id + "/comments", post_data);
-    window.location.reload();
+    dbPost("incidents/" + incident_id + "/comments", post_data).then(data => {
+        fetchValues();
+    });
+    
  }
 
+ function reloadComments(){
+    fetchValues()
+
+ }
  const showComments = () => {
     if (values === '') {
       fetchValues();
@@ -357,7 +357,7 @@ function IncidentDetails(props) {
             <Col md="11">
               <h4 className="title">Tracking</h4>
                 <div>
-                  <Input 
+                  {/* <Input 
                         placeholder="Ingrese un comentario..."
                         id = "comment"
                         type="text"
@@ -373,7 +373,10 @@ function IncidentDetails(props) {
                     </Button>
                 </div>
                 <div>
-                    {showComments()}
+                    {showComments()} */}
+                    <CommentsTracking 
+                        comments={values.comments} 
+                        commentCreationUrl={"incidents/" + incident_id + "/comments"}/>
                 </div>
           </Col>
             </Row>
