@@ -40,7 +40,7 @@ import {
 
 import SimpleTable from "components/Table/SimpleTable";
 import classNames from "classnames";
-
+import CommentsTracking from "components/Form/comment_tracking";
 export const INCIDENT_DETAILS_PATH = "/incidents_details";
 
 const tableData = [];
@@ -111,10 +111,6 @@ function IncidentDetails(props) {
 }  
 
     console.log("Values: ", values)
-
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
@@ -232,9 +228,14 @@ function IncidentDetails(props) {
         created_by:created_by
     }
     dbPost("incidents/" + incident_id + "/comments", post_data);
-    window.location.reload();
+    //reloadComments()
+    //window.location.reload();
  }
 
+ function reloadComments(){
+    fetchValues()
+
+ }
  const showComments = () => {
     if (values === '') {
       fetchValues();
@@ -357,7 +358,7 @@ function IncidentDetails(props) {
             <Col md="11">
               <h4 className="title">Tracking</h4>
                 <div>
-                  <Input 
+                  {/* <Input 
                         placeholder="Ingrese un comentario..."
                         id = "comment"
                         type="text"
@@ -373,7 +374,8 @@ function IncidentDetails(props) {
                     </Button>
                 </div>
                 <div>
-                    {showComments()}
+                    {showComments()} */}
+                    <CommentsTracking comments={values.comments} id={incident_id}/>
                 </div>
           </Col>
             </Row>
