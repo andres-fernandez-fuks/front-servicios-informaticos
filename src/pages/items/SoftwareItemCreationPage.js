@@ -194,7 +194,7 @@ export default function SoftwareCreation() {
                                 <Input
                                     readOnly
                                     defaultValue = {1}
-                                    id = "version"
+                                    id = "version_number"
                                     type="text"/>
                             </FormGroup>
                         </Col>

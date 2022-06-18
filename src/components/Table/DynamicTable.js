@@ -7,7 +7,7 @@ import datatableTextLabels from "components/Table/textLabels";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import InfoIcon from '@mui/icons-material/Info';
-import useStyles from "../../styles";
+import useStyles from "pages/control/styles";
 import { NavLink, Link, useLocation } from "react-router-dom";
 
 function choosePriorityColor(priority) {
@@ -144,7 +144,7 @@ export default function CustomDataTable(props) {
                 <>
                     <Tooltip title="Detalles">
                     <IconButton
-                        className={classes.onlyButtonSpacing}
+                        className={classes.onlyButton}
                         color="inherit"
                         aria-label="upload picture"
                         //component="span"

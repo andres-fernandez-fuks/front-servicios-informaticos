@@ -112,7 +112,7 @@ export default function SLADetailsPage() {
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.versions;
-        delete request_values.version;
+        delete request_values.version_number;
         delete request_values.created_at;
         delete request_values.updated_at;
         delete request_values.id;

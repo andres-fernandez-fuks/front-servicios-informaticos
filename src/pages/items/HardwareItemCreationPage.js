@@ -38,7 +38,7 @@ export const ITEM_DETAILS_PATH = "/item_details";
 export const HARDWARE_ITEM_CREATION_PATH = "/item_creation/hardware";
 
 const columns = [
-    {"name": "version", "label": "Versión"},
+    {"name": "version_number", "label": "Versión"},
     {"name": "name", "label": "Nombre"},
 ]
 
@@ -233,7 +233,7 @@ export default function HardwareItemCreation() {
                                 <Input
                                     readOnly
                                     defaultValue = {1}
-                                    id = "version"
+                                    id = "version_number"
                                     type="text"/>
                             </FormGroup>
                         </Col>

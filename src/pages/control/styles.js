@@ -80,6 +80,14 @@ export default makeStyles((theme) => ({
     height: 15,
     alignItem: "center",
   },
+  onlyButton: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    height: 12,
+    marginTop:4,
+    alignItem: "center",
+  },
   onlyButtonNoSpacing: {
     "& > *": {
       margin: theme.spacing(1),

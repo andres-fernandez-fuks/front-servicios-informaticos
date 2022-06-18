@@ -35,7 +35,7 @@ export const ITEM_DETAILS_PATH = "/item_details";
 export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
 
 const columns = [
-    {"name": "version", "label": "Versión"},
+    {"name": "version_number", "label": "Versión"},
     {"name": "name", "label": "Nombre"},
 ]
 
@@ -257,7 +257,7 @@ export default function App() {
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.version}
+                                    defaultValue = {currentValues.current_version_number}
                                     id = "description"
                                     type="text"/>
                             </FormGroup>
