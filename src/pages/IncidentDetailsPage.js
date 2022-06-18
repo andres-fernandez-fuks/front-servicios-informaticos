@@ -145,14 +145,12 @@ function IncidentDetails(props) {
     function blockIncident() {
         var patch_data = {is_blocked:true}
         dbPatch("incidents/" + incident_id, patch_data);
-        // history.push(simple_routes.incidents);
         sendComment("Incidente bloqueado");
     }
 
     function unblockIncident() {
         var patch_data = {is_blocked:false}
         dbPatch("incidents/" + incident_id, patch_data);
-        // history.push(simple_routes.incidents);
         sendComment("Incidente desbloqueado");
     }
 
@@ -227,9 +225,10 @@ function IncidentDetails(props) {
         comment:comment,
         created_by:created_by
     }
-    dbPost("incidents/" + incident_id + "/comments", post_data);
-    //reloadComments()
-    //window.location.reload();
+    dbPost("incidents/" + incident_id + "/comments", post_data).then(data => {
+        fetchValues();
+    });
+    
  }
 
  function reloadComments(){
@@ -375,7 +374,9 @@ function IncidentDetails(props) {
                 </div>
                 <div>
                     {showComments()} */}
-                    <CommentsTracking comments={values.comments} id={incident_id}/>
+                    <CommentsTracking 
+                        comments={values.comments} 
+                        commentCreationUrl={"incidents/" + incident_id + "/comments"}/>
                 </div>
           </Col>
             </Row>

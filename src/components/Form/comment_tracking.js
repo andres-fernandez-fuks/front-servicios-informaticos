@@ -33,7 +33,7 @@ export default function CommentsTracking(props) {
             comment:comment,
             created_by:created_by
         }
-        dbPost("incidents/" + incident_id + "/comments", post_data);
+        dbPost(props.commentCreationUrl, post_data);
         
         var comment_data = {
             created_at: moment(new Date()).format("DD/MM/YYYY HH:mm"),
@@ -57,7 +57,7 @@ export default function CommentsTracking(props) {
             <Button 
                 size="sm"
                 color="info"
-                onClick={() => sendComment()}
+                onClick={() => sendComment(document.getElementById("comment").value)}
             >
             Comentar        
             </Button>
