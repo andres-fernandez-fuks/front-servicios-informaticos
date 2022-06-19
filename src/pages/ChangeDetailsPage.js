@@ -53,7 +53,6 @@ const incidentColumns = [
 
 
 function ChangeDetails(props) {
-    const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
     const [values, setValues] = React.useState("");
@@ -61,10 +60,10 @@ function ChangeDetails(props) {
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
+    const [itemsCiData, setItemsCiData] = React.useState([]);
     const [problemItemsData, setProblemItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
     var change_id = paths[paths.length - 1]
-    const [bigChartData, setbigChartData] = React.useState(tableData);
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
 
@@ -88,6 +87,7 @@ function ChangeDetails(props) {
         dbGet("changes/" + change_id).then(data => {
             var incidents_data = data["incidents"]
             var problems_data = data["problems"]
+            var ci = []
 
             incidents_data.map(i => {
                 i['type'] = "Incidente"
@@ -96,6 +96,25 @@ function ChangeDetails(props) {
                 i['type'] = "Problema"
             })
             
+            data["hardware_configuration_items"].map(i => {
+                i['type'] = "Hardware CI"
+                ci.push(i)
+                console.log(i)
+            })
+
+            data["software_configuration_items"].map(i => {
+                i['type'] = "Software CI"
+                ci.push(i)
+                console.log(i)
+            })
+
+            data["sla_configuration_items"].map(i => {
+                i['type'] = "SLA CI"
+                ci.push(i)
+                console.log(i)
+            })
+
+            setItemsCiData(ci)
             
             setItemsData([...incidents_data, ...problems_data]);
             setProblemItemsData(problems_data);
@@ -338,13 +357,23 @@ function ChangeDetails(props) {
                   </Row>
                 </div>
             <div class="items-div">
-                <h4 className="title"></h4>
+                <Grid>
+                <h4 className="title">Items relacionados</h4>
+                <SimpleTable data={itemsCiData}
+                             columns={columns}
+                             addWatchColumn={true}
+                             excludeIdColumn={true} 
+                             button_path={"/admin/incidents_details/"}
+                             use_object_type = {false}/>
+                <h3/>
+                <h4 className="title">Incidentes y problemas</h4>
                 <SimpleTable data={itemsData}
                              columns={columns}
                              //addWatchColumn={true}
                              excludeIdColumn={true} 
                              //button_path={"/admin/incidents_details/"}
                              use_object_type = {false}/>
+                </Grid>
             </div>
               </CardBody>
               <CardFooter className="form_col">

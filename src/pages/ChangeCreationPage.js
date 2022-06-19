@@ -140,8 +140,8 @@ function ChangeCreation(props) {
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
       dbPost("changes", formData);
-      history.push(simple_routes.changes);
       toast.success("Cambios creado correctamente")
+      exitForm()
   }
 
   const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
