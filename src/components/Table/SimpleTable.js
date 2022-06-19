@@ -136,7 +136,7 @@ export default function SimpleTable(props) {
                 console.log("ID DE OBJETO: " + object_id);
 
                 if (props.use_object_type) {
-                    var object_type = tableMeta.rowData[2].toLowerCase();
+                    var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
                     console.log("OBJECT TYPE: ", object_type);
                     var path;
                     path = props.button_path + object_type + "/" + object_id;

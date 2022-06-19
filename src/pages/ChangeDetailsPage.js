@@ -45,7 +45,7 @@ export const CHANGE_DETAILS_PATH = "/change_details";
 const tableData = [];
 const incidentColumns = [
     {"name": "id", "label": "ID"},
-    {"name": "type", "label": "Tipo"},
+    {"name": "type_show", "label": "Tipo"},
     {"name": "description", "label": "Descripción"}
     
 ]
@@ -90,26 +90,29 @@ function ChangeDetails(props) {
             var ci = []
 
             incidents_data.map(i => {
-                i['type'] = "Incidente"
+                i['type_show'] = "Incidente"
             })
             problems_data.map(i => {
-                i['type'] = "Problema"
+                i['type_show'] = "Problema"
             })
             
             data["hardware_configuration_items"].map(i => {
-                i['type'] = "Hardware CI"
+                i['type_show'] = "Hardware"
+                i['type'] = "hardware"
                 ci.push(i)
                 console.log(i)
             })
 
             data["software_configuration_items"].map(i => {
-                i['type'] = "Software CI"
+                i['type_show'] = "Software"
+                i['type'] = "software"
                 ci.push(i)
                 console.log(i)
             })
 
             data["sla_configuration_items"].map(i => {
-                i['type'] = "SLA CI"
+                i['type_show'] = "SLA"
+                i['type'] = "sla"
                 ci.push(i)
                 console.log(i)
             })
@@ -363,8 +366,9 @@ function ChangeDetails(props) {
                              columns={columns}
                              addWatchColumn={true}
                              excludeIdColumn={true} 
-                             button_path={"/admin/incidents_details/"}
-                             use_object_type = {false}/>
+                             button_path={"/admin/item_details/"}
+                             type_row = {1}
+                             use_object_type = {true}/>
                 <h3/>
                 <h4 className="title">Incidentes y problemas</h4>
                 <SimpleTable data={itemsData}
