@@ -144,6 +144,10 @@ export default function SimpleTable(props) {
                     path = props.button_path + object_id;
                 }
 
+                if (props.change_callback_id) {
+                    path = path + "/" + props.change_callback_id;
+                }
+
                 return (
                 <>
                     <Tooltip title="Detalles">

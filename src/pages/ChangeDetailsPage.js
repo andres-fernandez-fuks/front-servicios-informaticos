@@ -368,6 +368,7 @@ function ChangeDetails(props) {
                              excludeIdColumn={true} 
                              button_path={"/admin/item_details/"}
                              type_row = {1}
+                             change_callback_id = {change_id}
                              use_object_type = {true}/>
                 <h3/>
                 <h4 className="title">Incidentes y problemas</h4>
