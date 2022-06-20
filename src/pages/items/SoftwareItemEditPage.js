@@ -1,14 +1,10 @@
 import React from "react";
 import Grid from '@mui/material/Grid';
-
 import { dbGet, dbPatch } from 'utils/backendFetchers';
-import "pages/items/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
-import clsx from "clsx";
-import CurrencyInput from "react-currency-input-field";
-import { formatValue } from 'react-currency-input-field';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 // reactstrap components
@@ -26,20 +22,18 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import toast, { Toaster } from 'react-hot-toast';
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
-export const ITEM_DETAILS_PATH = "/item_details";
-export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
+export const SOFTWARE_ITEM_DETAILS_PATH = "/item_details/software";
 
 const columns = [
-    {"name": "version_number", "label": "Versión"},
-    {"name": "name", "label": "Nombre"},
+{"name": "version", "label": "Versión"},
+{"name": "name", "label": "Nombre"},
 ]
 
-export default function App() {
+export default function SoftwareItemDetails() {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -66,7 +60,7 @@ export default function App() {
     }
 
   React.useEffect(() => {
-    dbGet("configuration-items/hardware/" + item_id).then(data => {
+    dbGet("configuration-items/software/" + item_id).then(data => {
         setValues({...data});
         setCurrentValues({...data});
         getVersions();
@@ -74,7 +68,7 @@ export default function App() {
     }   , []);
 
     function fetchValues() {
-            dbGet("configuration-items/hardware/" + item_id).then(data => {
+            dbGet("configuration-items/software/" + item_id).then(data => {
                 setValues(data);
             }).catch(err => {console.log(err)});
     }
@@ -88,11 +82,6 @@ export default function App() {
         }).catch(err => {console.log(err)});
 }  
 
-    console.log("Values: ", values)
-
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
 
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
@@ -101,8 +90,8 @@ export default function App() {
                         columns={columns}
                         addRestoreColumn={true}
                         function={restoreVersion}
-                        button_path={"/admin" + HARDWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/hardware/" + values.id + "/restore"}/>
+                        button_path={"/admin" + SOFTWARE_ITEM_DETAILS_PATH}
+                        request_endpoint={"configuration-items/software/" + values.id + "/restore"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>
@@ -126,18 +115,11 @@ export default function App() {
         var path = "configuration-items/hardware/" + values.id + "/version";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            history.push("/admin" + HARDWARE_ITEM_DETAILS_PATH + "/" + data.id);
+            
+            history.push("/admin" + SOFTWARE_ITEM_DETAILS_PATH + "/" + data.id);
             window.location.reload();
         }
         ).catch(err => {console.log(err)});
-    }
-
-    const submitForm = (e) => {
-        //formData["created_by"] = localStorage.getItem("username");
-        //formData["description"] = document.getElementById('description').value;
-        //formData["priority"] = values.priority;
-        //dbPost("incidents", formData);
-        //history.push(simple_routes.incidents);
     }
 
     function updateType(new_type) {
@@ -152,7 +134,7 @@ export default function App() {
     return (
       <>
         <div className="content">
-        <Toaster />
+          <Toaster/>
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
@@ -166,10 +148,10 @@ export default function App() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
-                                    id = "type"
+                                    id = "name"
                                     type="text"
                             />
                             </FormGroup>
@@ -178,7 +160,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -192,7 +174,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -202,62 +184,37 @@ export default function App() {
                         </Col>
                     </Row>
                     <Row>
-                        <Col md="6">
+                        <Col md="5">
                             <FormGroup>
-                                <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
+                                <Label style={{ color:"#1788bd" }}>Proveedor</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
-                                    defaultValue = {currentValues.manufacturer}
-                                    onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
-                                    id = "serial_number"
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currentValues.provider}
+                                    onChange = {function(e){updateCurrentValues("provider", e.target.value)}}
+                                    id = "provider"
                                     type="text"
                                 />
                             </FormGroup>
                         </Col>
-                        <Col md="6">
+                        <Col md="5">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
+                            <Label style={{ color:"#1788bd" }}>Versión del Software</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
-                                    defaultValue = {currentValues.serial_number}
-                                    onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
-                                    id = "serial_number"
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currentValues.software_version}
+                                    onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
+                                    id = "software_version"
                                     type="text"
                             />
                             </FormGroup>
                         </Col>
-                    </Row>
-                    <Row>
-                        <Col className="pb-md-2" md="5">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
-                                <Input className="other_input"
-                                    readOnly = {isEditable}
-                                    defaultValue = {currentValues.purchase_date}
-                                    onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
-                                    id = "description"
-                                    type="text"
-                        />
-                            </FormGroup>
-                        </Col>
-                        <Col md="4">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
-                                <Input
-                                    readOnly = {isEditable}
-                                    defaultValue = {currencyFormat(currentValues.price)}
-                                    onChange = {function(e){updateCurrentValues("price", e.target.value)}}
-                                    id = "description"
-                                    type="text" />
-                            </FormGroup>
-                        </Col>
-                        <Col md="3">
+                        <Col md="2">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.current_version_number}
-                                    id = "description"
+                                    defaultValue = {currentValues.version}
+                                    id = "version"
                                     type="text"/>
                             </FormGroup>
                         </Col>

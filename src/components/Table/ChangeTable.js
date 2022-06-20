@@ -118,7 +118,6 @@ export default function SimpleTable(props) {
         });
     }
 
-    if (props.addWatchColumn === true) {
         new_columns.push({
             name: "Detalles",
             options: {
@@ -135,14 +134,9 @@ export default function SimpleTable(props) {
                 var object_id = tableMeta.rowData[0];
                 console.log("ID DE OBJETO: " + object_id);
 
-                if (props.use_object_type) {
-                    var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
-                    console.log("OBJECT TYPE: ", object_type);
-                    var path;
-                    path = props.button_path + object_type + "/" + object_id;
-                } else {
-                    path = props.button_path + object_id;
-                }
+                var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
+                var details_path = props.details_button_path + object_type + "/" + object_id;
+                var edit_path = props.edit_button_path + object_type + "/" + object_id;
 
                 // if (props.change_callback_id) {
                 //     path = path + "/" + props.change_callback_id;
@@ -156,9 +150,20 @@ export default function SimpleTable(props) {
                         color="inherit"
                         size="small"
                         component={Link}
-                        to={path}
+                        to={details_path}
                         path >
                         <VisibilityIcon />
+                    </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Editar">
+                    <IconButton
+                        className={classes.onlyButtonSpacing}
+                        color="inherit"
+                        size="small"
+                        component={Link}
+                        to={edit_path}
+                        path >
+                        <EditIcon />
                     </IconButton>
                     </Tooltip>
                 </>
@@ -166,7 +171,6 @@ export default function SimpleTable(props) {
             },
             },
         });
-    }
 
     const table_options = {
         elevation: 0,

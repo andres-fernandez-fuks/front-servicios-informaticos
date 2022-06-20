@@ -50,8 +50,10 @@ import { HARDWARE_ITEM_CREATION_PATH } from "pages/items/HardwareItemCreationPag
 import { SLA_ITEM_CREATION_PATH } from "pages/items/SLAItemCreationPage";
 import { SOFTWARE_ITEM_CREATION_PATH } from "pages/items/SoftwareItemCreationPage";
 import { SLA_ITEM_DETAILS_PATH } from "pages/items/SLAItemDetailsPage";
+import { HARDWARE_ITEM_EDIT_PATH } from "pages/items/HardwareItemEditPage";
 import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
 import HardwareItemCreation from "pages/items/HardwareItemCreationPage.js";
+import HardwareItemEdit from "pages/items/HardwareItemEditPage.js";
 
 import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
 import SoftwareCreation from "pages/items/SoftwareItemCreationPage";
@@ -178,6 +180,10 @@ function Admin(props) {
                 <Route
                 path={'/admin' + HARDWARE_ITEM_CREATION_PATH}
                 component={HardwareItemCreation}
+                />
+                <Route
+                path={'/admin' + HARDWARE_ITEM_EDIT_PATH}
+                component={HardwareItemEdit}
                 />
                 <Route
                 path={'/admin' + SOFTWARE_ITEM_DETAILS_PATH}

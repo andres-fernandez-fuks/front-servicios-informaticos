@@ -39,10 +39,18 @@ import {
   } from "reactstrap";
 
 import SimpleTable from "components/Table/SimpleTable";
+import ChangeTable from "components/Table/ChangeTable";
 
 export const CHANGE_DETAILS_PATH = "/change_details";
 
 const tableData = [];
+const itemsColumns = [
+    {"name": "id", "label": "ID"},
+    {"name": "type_show", "label": "Tipo"},
+    {"name": "name", "label": "Nombre"}
+    
+]
+
 const incidentColumns = [
     {"name": "id", "label": "ID"},
     {"name": "type_show", "label": "Tipo"},
@@ -129,6 +137,7 @@ function ChangeDetails(props) {
             setValues(data);
             setCurrentValues(data);
             fetchItemsData();
+            localStorage.setItem("change_id", change_id);
         }).catch(err => {console.log(err)});
         }   , []);
 
@@ -136,28 +145,6 @@ function ChangeDetails(props) {
             dbGet("changes/" + change_id).then(data => {
                 setValues(data);
             }).catch(err => {console.log(err)});
-    }
-
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
-        }).catch(err => {console.log(err)});
-}  
-
-
-    function getRequestValues() {
-        var request_values = {...currentValues};
-        delete request_values.versions;
-        delete request_values.version;
-        delete request_values.created_at;
-        delete request_values.updated_at;
-        delete request_values.id;
-        delete request_values.is_deleted;
-        delete request_values.item_class;
-        return request_values;
     }
 
     const handleSubmit = (event) => {
@@ -186,8 +173,6 @@ function ChangeDetails(props) {
         setValues(data);
     }).catch(err => {console.log(err)});
   }
-
-    
 
     function solveChange() {
         var patch_data = {status:"Resuelto"}
@@ -362,18 +347,18 @@ function ChangeDetails(props) {
             <div class="items-div">
                 <Grid>
                 <h4 className="title">Items relacionados</h4>
-                <SimpleTable data={itemsCiData}
-                             columns={columns}
+                <ChangeTable data={itemsCiData}
+                             columns={itemsColumns}
                              addWatchColumn={true}
                              excludeIdColumn={true} 
-                             button_path={"/admin/item_details/"}
+                             details_button_path={"/admin/item_details/"}
+                             edit_button_path={"/admin/item_edit/"}
                              type_row = {1}
                              change_callback_id = {change_id}
                              use_object_type = {true}/>
-                <h3/>
                 <h4 className="title">Incidentes y problemas</h4>
                 <SimpleTable data={itemsData}
-                             columns={columns}
+                             columns={incidentColumns}
                              //addWatchColumn={true}
                              excludeIdColumn={true} 
                              //button_path={"/admin/incidents_details/"}

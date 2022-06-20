@@ -9,8 +9,9 @@ import useStyles from "styles"
 import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
-
-
+import {units, selectStyles} from './SLAItemCreationPage';
+import Select from 'react-select'
+import toast, { Toaster } from 'react-hot-toast';
 // reactstrap components
 import {
   Button,
@@ -26,20 +27,18 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import toast, { Toaster } from 'react-hot-toast';
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
-export const ITEM_DETAILS_PATH = "/item_details";
-export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
+export const SLA_ITEM_EDIT_PATH = "/item_edit/sla";
 
 const columns = [
-    {"name": "version_number", "label": "Versión"},
+    {"name": "version", "label": "Versión"},
     {"name": "name", "label": "Nombre"},
 ]
 
-export default function App() {
+export default function SLADetailsPage() {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -65,8 +64,15 @@ export default function App() {
         }
     }
 
+    function updateMeasurementUnit(new_measurement_unit){
+        //Llama al actualizador del values pasandole todos los datos
+        //anteriores pero actualiza la prioridad
+        setCurrentValues(currentValues => (
+            {...currentValues, measurement_unit:new_measurement_unit}
+            ))
+      }
   React.useEffect(() => {
-    dbGet("configuration-items/hardware/" + item_id).then(data => {
+    dbGet("configuration-items/sla/" + item_id).then(data => {
         setValues({...data});
         setCurrentValues({...data});
         getVersions();
@@ -74,7 +80,7 @@ export default function App() {
     }   , []);
 
     function fetchValues() {
-            dbGet("configuration-items/hardware/" + item_id).then(data => {
+            dbGet("configuration-items/sla/" + item_id).then(data => {
                 setValues(data);
             }).catch(err => {console.log(err)});
     }
@@ -88,12 +94,6 @@ export default function App() {
         }).catch(err => {console.log(err)});
 }  
 
-    console.log("Values: ", values)
-
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
-
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable
@@ -101,8 +101,8 @@ export default function App() {
                         columns={columns}
                         addRestoreColumn={true}
                         function={restoreVersion}
-                        button_path={"/admin" + HARDWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/hardware/" + values.id + "/restore"}/>
+                        button_path={"/admin" + SLA_ITEM_DETAILS_PATH}
+                        request_endpoint={"configuration-items/sla/" + values.id + "/restore"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>
@@ -112,7 +112,7 @@ export default function App() {
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.versions;
-        delete request_values.version;
+        delete request_values.version_number;
         delete request_values.created_at;
         delete request_values.updated_at;
         delete request_values.id;
@@ -123,22 +123,16 @@ export default function App() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/hardware/" + values.id + "/version";
+        var path = "configuration-items/sla/" + values.id + "/draft";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            history.push("/admin" + HARDWARE_ITEM_DETAILS_PATH + "/" + data.id);
+            
+            history.push("/admin" + SLA_ITEM_DETAILS_PATH + "/" + data.id);
             window.location.reload();
         }
         ).catch(err => {console.log(err)});
     }
 
-    const submitForm = (e) => {
-        //formData["created_by"] = localStorage.getItem("username");
-        //formData["description"] = document.getElementById('description').value;
-        //formData["priority"] = values.priority;
-        //dbPost("incidents", formData);
-        //history.push(simple_routes.incidents);
-    }
 
     function updateType(new_type) {
         setValues({...values, type:new_type})
@@ -148,25 +142,24 @@ export default function App() {
         if (!num) return;
         return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
      }
-
     return (
       <>
         <div className="content">
-        <Toaster />
+          <Toaster />
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
-            <Card className="incident-card">
+            <Card>
                 <CardHeader >
-                    <h4 className="title">Detalles del ítem</h4>
+                    <h4 className="title">Detalles del SLA</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
-                        <Col md="6">
+                        <Col md="4">
                             <FormGroup>
-                                <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
-                                <Input className="other_input"
-                                    readOnly = {isEditable}
+                                <Label style={{ color:"#1788bd" }}>Nombre</Label>
+                                <Input
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -174,25 +167,37 @@ export default function App() {
                             />
                             </FormGroup>
                         </Col>
-                        <Col md="6">
+                        <Col md="4">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
-                                <Input className="other_input"
-                                    readOnly = {isEditable}
-                                    defaultValue= {currentValues.type}
-                                    onChange = {function(e){updateCurrentValues("type", e.target.value)}}
-                                    id = "type"
+                                <Label style={{ color:"#1788bd" }}>Cliente</Label>
+                                <Input
+                                    readOnly = {!isEditable}
+                                    defaultValue= {currentValues.client}
+                                    onChange = {function(e){updateCurrentValues("client", e.target.value)}}
+                                    id = "client"
                                     type="text"
-                                />
+                            />
                             </FormGroup>
                         </Col>
+                        <Col md="4">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} >¿Crucial?</Label>
+                            <br></br> &nbsp; &nbsp; &nbsp;
+                                <Input
+                                    id = "is_crucial"
+                                    disabled = {!isEditable}
+                                    onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
+                                    checked = {currentValues.is_crucial}
+                                    type="checkbox"/>
+                            </FormGroup>
+                        </Col>  
                     </Row>
                     <Row>
                         <Col className="pb-md-2" md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -204,63 +209,95 @@ export default function App() {
                     <Row>
                         <Col md="6">
                             <FormGroup>
-                                <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
-                                <Input  className="other_input"
-                                    readOnly = {isEditable}
-                                    defaultValue = {currentValues.manufacturer}
-                                    onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
-                                    id = "serial_number"
+                            <Label style={{ color:"#1788bd" }} for="type">Tipo de servicio</Label>
+                                <Input className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue= {currentValues.service_type}
+                                    onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
+                                    id = "service_type"
                                     type="text"
                                 />
                             </FormGroup>
                         </Col>
                         <Col md="6">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
-                                <Input  className="other_input"
-                                    readOnly = {isEditable}
-                                    defaultValue = {currentValues.serial_number}
-                                    onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
-                                    id = "serial_number"
+                            <Label style={{ color:"#1788bd" }} for="type">Gerente</Label>
+                                <Input className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue= {currentValues.service_manager}
+                                    onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
+                                    id = "service_manager"
                                     type="text"
-                            />
+                                />
                             </FormGroup>
                         </Col>
                     </Row>
                     <Row>
-                        <Col className="pb-md-2" md="5">
+                        <Col md="6">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
+                            <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
+                                <Select 
+                                    styles={selectStyles}
+                                    isDisabled = {!isEditable}
+                                    id="measurement_unit"
+                                    onChange={function(new_option){updateMeasurementUnit(new_option.value)}}
+                                    options={units}
+                                />
+                            </FormGroup>
+                        </Col>
+                        <Col md="6">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
-                                    defaultValue = {currentValues.purchase_date}
-                                    onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
-                                    id = "description"
-                                    type="text"
-                        />
+                                    readOnly = {!isEditable}
+                                    defaultValue= {currentValues.measurement_value}
+                                    onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
+                                    onKeyPress={(event) => {
+                                        if (!/[0-9]/.test(event.key)) {
+                                          event.preventDefault();
+                                        }
+                                      }}
+                                    id = "measurement_value"
+                                    type="number"
+                                />
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md="4">
+                            <FormGroup>
+                                <Label style={{ color:"#1788bd" }}>Fecha de inicio</Label>
+                                <Input  className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currentValues.starting_date}
+                                    onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
+                                    id = "starting_date"
+                                    type="date"
+                                />
                             </FormGroup>
                         </Col>
                         <Col md="4">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
-                                <Input
-                                    readOnly = {isEditable}
-                                    defaultValue = {currencyFormat(currentValues.price)}
-                                    onChange = {function(e){updateCurrentValues("price", e.target.value)}}
-                                    id = "description"
-                                    type="text" />
+                            <Label style={{ color:"#1788bd" }}>Fecha de fin</Label>
+                                <Input  className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currentValues.ending_date}
+                                    onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
+                                    id = "ending_date"
+                                    type="text"
+                            />
                             </FormGroup>
                         </Col>
-                        <Col md="3">
+                        <Col md="4">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
+                            <Label style={{ color:"#1788bd" }} >Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.current_version_number}
+                                    defaultValue = {currentValues.version}
                                     id = "description"
                                     type="text"/>
                             </FormGroup>
-                        </Col>
+                        </Col>  
                     </Row>
                 </CardBody>
                 <CardFooter className="form_col">
@@ -276,7 +313,7 @@ export default function App() {
             </Form>
             </Col>
             <Col md="6">
-              <Card className="incident-card">
+              <Card className="card-user">
                 <CardBody>
                 <div>
                 <h4 className="title">Otras versiones</h4>

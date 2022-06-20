@@ -5,7 +5,6 @@ import Chip from "@material-ui/core/Chip";
 import Tooltip from "@material-ui/core/Tooltip";
 import datatableTextLabels from "components/Table/textLabels";
 import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
 import InfoIcon from '@mui/icons-material/Info';
 import useStyles from "pages/control/styles";
 import { NavLink, Link, useLocation } from "react-router-dom";

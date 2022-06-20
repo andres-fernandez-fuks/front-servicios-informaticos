@@ -31,8 +31,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
-export const ITEM_DETAILS_PATH = "/item_details";
-export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
+export const ITEM_EDIT_PATH = "/item_edit";
+export const HARDWARE_ITEM_EDIT_PATH = "/item_edit/hardware";
 
 const columns = [
     {"name": "version_number", "label": "Versión"},
@@ -66,10 +66,10 @@ export default function App() {
     }
 
   React.useEffect(() => {
-    dbGet("configuration-items/hardware/" + item_id).then(data => {
+    var change_id = localStorage.getItem("change_id");
+    dbGet("configuration-items/hardware/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
         setValues({...data});
         setCurrentValues({...data});
-        getVersions();
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -79,38 +79,19 @@ export default function App() {
             }).catch(err => {console.log(err)});
     }
 
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
-        }).catch(err => {console.log(err)});
-}  
-
     console.log("Values: ", values)
 
     // if (values === '' || values === undefined) {
     //     fetchValues();
     // }
 
-    function getVersions() {
-        if (values.versions && values.versions.length > 0) {
-            return <SimpleTable
-                        data={values.versions}
-                        columns={columns}
-                        addRestoreColumn={true}
-                        function={restoreVersion}
-                        button_path={"/admin" + HARDWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/hardware/" + values.id + "/restore"}/>
-        }
-        else if (values.versions && values.versions.length === 0) {
-            return <div className="version_row">No hay otras versiones del ítem</div>
-        }
-    }
-
     function getRequestValues() {
         var request_values = {...currentValues};
+        request_values["change_id"] = localStorage.getItem("change_id");
+        delete request_values.last_version;
+        delete request_values.item_type;
+        delete request_values.current_version_number;
+        delete request_values.current_version_id;
         delete request_values.versions;
         delete request_values.version;
         delete request_values.created_at;
@@ -123,25 +104,13 @@ export default function App() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/hardware/" + values.id + "/version";
+        var path = "configuration-items/hardware/" + values.id + "/draft";
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            history.push("/admin" + HARDWARE_ITEM_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
+            toast.success("Borrador guardado correctamente");
+            history.goBack();
         }
         ).catch(err => {console.log(err)});
-    }
-
-    const submitForm = (e) => {
-        //formData["created_by"] = localStorage.getItem("username");
-        //formData["description"] = document.getElementById('description').value;
-        //formData["priority"] = values.priority;
-        //dbPost("incidents", formData);
-        //history.push(simple_routes.incidents);
-    }
-
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
     }
 
     function currencyFormat(num) {
@@ -158,7 +127,7 @@ export default function App() {
             <Form onSubmit= {handleSubmit}>
             <Card className="incident-card">
                 <CardHeader >
-                    <h4 className="title">Detalles del ítem</h4>
+                    <h4 className="title">Crear borrador</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
@@ -256,7 +225,7 @@ export default function App() {
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.current_version_number}
+                                    defaultValue = "Borrador"
                                     id = "description"
                                     type="text"/>
                             </FormGroup>
@@ -276,16 +245,6 @@ export default function App() {
             </Form>
             </Col>
             <Col md="6">
-              <Card className="incident-card">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
             </Col>
           </Row>
         </div>
