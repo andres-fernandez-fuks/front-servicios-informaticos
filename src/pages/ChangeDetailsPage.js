@@ -149,33 +149,6 @@ function ChangeDetails(props) {
             }).catch(err => {console.log(err)});
     }
 
-    const handleSubmit = (event) => {
-        // event.preventDefault();
-        // var path = "changes/" + values.id ;
-        // var request_values = getRequestValues();
-        // dbPost(path, request_values).then(data => {
-        //     
-        //     history.push("/admin" + CHANGE_DETAILS_PATH + "/" + data.id);
-        //     window.location.reload();
-        // }
-        // ).catch(err => {console.log(err)});
-    }
-
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
-    }
-
-    function currencyFormat(num) {
-        if (!num) return;
-        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-     }
-
-  function fetchValues() {
-    dbGet("changes/" + change_id).then(data => {
-        setValues(data);
-    }).catch(err => {console.log(err)});
-  }
-
     function solveChange() {
         var patch_data = {status:"Resuelto"}
         dbPatch("changes/" + change_id, patch_data);
@@ -196,8 +169,17 @@ function ChangeDetails(props) {
         window.location.reload(false);
     }
 
-    const submitForm = (status) => { 
-        var patch_data = {taken_by:localStorage.getItem("username"), status: status}
+    const applyChange = () => { 
+        dbPost("changes/" + change_id + "/apply", {}).then(data => {
+        } ).catch(err => {console.log(err)});
+        var patch_data = {taken_by:localStorage.getItem("username"), status: "Resuelto"}
+        dbPatch("changes/" + change_id, patch_data).then(data => {
+            history.push(simple_routes.changes);
+        }).catch(err => {console.log(err)});
+    }
+
+    const rejectChange = () => { 
+        var patch_data = {taken_by:localStorage.getItem("username"), status: "Rechazado"}
         dbPatch("changes/" + change_id, patch_data);
         history.push(simple_routes.changes);
     }
@@ -229,7 +211,7 @@ function ChangeDetails(props) {
       if (values === '') {
       fetchValues();
     }
-    if (values.status === "Resuelto" || values.status == "Rechazado") {
+    if (values.status === "Resuelto" || values.status === "Rechazado") {
         return;
     }
     if (!values.taken_by) {
@@ -237,15 +219,13 @@ function ChangeDetails(props) {
         <Grid align="center">
         <Button className="btn-fill"
         color="primary"
-        type="submit"
-        onClick={() => submitForm("Resuelto")}
+        onClick={() => applyChange()}
         >
         Aplicar        
         </Button>
         <Button className="btn-fill"
         color="secondary"
-        type="submit"
-        onClick={() => submitForm("Rechazado")}
+        onClick={() => rejectChange()}
         >
         Rechazar        
         </Button>
@@ -257,8 +237,7 @@ function ChangeDetails(props) {
         <Grid align="center">
         <Button className="btn-fill" align="right"
         color="success"
-        type="submit"
-        onClick={() => solveChange()}
+        onClick={() => applyChange()}
         >
         Aplicar        
         </Button>
@@ -272,7 +251,7 @@ function ChangeDetails(props) {
       <div className="content">
         <Row>
           <Col md="6">
-          <Form onSubmit= {handleSubmit}>
+          <Form>
           <Card className="change-card">
               <CardHeader >
                   <h4 className="title">Detalles del cambio</h4>
@@ -358,6 +337,10 @@ function ChangeDetails(props) {
                              type_row = {2}
                              change_callback_id = {change_id}
                              use_object_type = {true}/>
+                </Grid>
+                </div>
+                <div class="items-div">
+                <Grid>
                 <h4 className="title">Incidentes y problemas</h4>
                 <SimpleTable data={itemsData}
                              columns={incidentColumns}
