@@ -99,6 +99,7 @@ export default function App() {
         delete request_values.id;
         delete request_values.is_deleted;
         delete request_values.item_class;
+        delete request_values.draft_id;
         return request_values;
     }
 

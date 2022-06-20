@@ -46,8 +46,9 @@ export const CHANGE_DETAILS_PATH = "/change_details";
 const tableData = [];
 const itemsColumns = [
     {"name": "id", "label": "ID"},
+    {"name": "draft_id", "label": "draft_id"},
     {"name": "type_show", "label": "Tipo"},
-    {"name": "name", "label": "Nombre"}
+    {"name": "name", "label": "Nombre"},
     
 ]
 
@@ -107,6 +108,7 @@ function ChangeDetails(props) {
             data["hardware_configuration_items"].map(i => {
                 i['type_show'] = "Hardware"
                 i['type'] = "hardware"
+                i['draft_id'] = i['draft'] && i['draft']['change_id']
                 ci.push(i)
                 console.log(i)
             })
@@ -353,7 +355,7 @@ function ChangeDetails(props) {
                              excludeIdColumn={true} 
                              details_button_path={"/admin/item_details/"}
                              edit_button_path={"/admin/item_edit/"}
-                             type_row = {1}
+                             type_row = {2}
                              change_callback_id = {change_id}
                              use_object_type = {true}/>
                 <h4 className="title">Incidentes y problemas</h4>
