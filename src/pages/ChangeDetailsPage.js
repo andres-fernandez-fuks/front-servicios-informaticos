@@ -75,6 +75,7 @@ function ChangeDetails(props) {
     var change_id = paths[paths.length - 1]
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
+    localStorage.setItem("wasInChange", true)
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]

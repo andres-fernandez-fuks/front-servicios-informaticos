@@ -88,7 +88,7 @@ export default function SoftwareItemDetails() {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={true}
+                        addRestoreColumn={!localStorage.getItem("wasInChange")}
                         function={restoreVersion}
                         button_path={"/admin" + SOFTWARE_ITEM_DETAILS_PATH}
                         request_endpoint={"configuration-items/software/" + values.id + "/restore"}/>

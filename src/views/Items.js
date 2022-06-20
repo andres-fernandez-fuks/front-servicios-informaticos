@@ -72,6 +72,7 @@ const SLAItemColumns = [
 
 function ItemsTable() {
     const history = useHistory();
+    localStorage.removeItem("wasInChange")
 
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(hardwareItemColumns);

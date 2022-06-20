@@ -99,7 +99,7 @@ export default function App() {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={true}
+                        addRestoreColumn={!localStorage.getItem("wasInChange")}
                         function={restoreVersion}
                         button_path={"/admin" + HARDWARE_ITEM_DETAILS_PATH}
                         request_endpoint={"configuration-items/hardware/" + values.id + "/restore"}/>

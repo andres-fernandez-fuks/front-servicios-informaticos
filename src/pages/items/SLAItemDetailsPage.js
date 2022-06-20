@@ -99,7 +99,7 @@ export default function SLADetailsPage() {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={true}
+                        addRestoreColumn={!localStorage.getItem("wasInChange")}
                         function={restoreVersion}
                         button_path={"/admin" + SLA_ITEM_DETAILS_PATH}
                         request_endpoint={"configuration-items/sla/" + values.id + "/restore"}/>
