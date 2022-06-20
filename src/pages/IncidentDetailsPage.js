@@ -59,6 +59,7 @@ function IncidentDetails(props) {
     const [currentValues, setCurrentValues] = React.useState({});
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
     var incident_id = paths[paths.length - 1]
@@ -227,6 +228,8 @@ function IncidentDetails(props) {
     }
     dbPost("incidents/" + incident_id + "/comments", post_data).then(data => {
         fetchValues();
+        setFlushLocalComments(true);
+        setFlushLocalComments(false);
     });
     
  }
@@ -376,7 +379,8 @@ function IncidentDetails(props) {
                     {showComments()} */}
                     <CommentsTracking 
                         comments={values.comments} 
-                        commentCreationUrl={"incidents/" + incident_id + "/comments"}/>
+                        commentCreationUrl={"incidents/" + incident_id + "/comments"}
+                        flushLocalComments={flushLocalComments}/>
                 </div>
           </Col>
             </Row>

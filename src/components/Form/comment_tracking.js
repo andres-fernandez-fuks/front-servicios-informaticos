@@ -19,10 +19,17 @@ function CommentHistory(props) {
     )
 }
 export default function CommentsTracking(props) {
-    var incident_id = props.id;
     const [comments, setComments] = React.useState(props.comments ? props.comments: []);
     const [newComments, setNewComments] = React.useState([]);
-    React.useEffect(() => {setComments(props.comments)})
+    const [flushNewComments, setFlushNewComments] = React.useState(false);
+    React.useEffect(() => {
+        setComments(props.comments)
+        setFlushNewComments(props.flushLocalComments)
+        if (flushNewComments) {
+            setNewComments([])
+            setFlushNewComments(false)
+        }
+    })
     
     const sendComment = (comment) => {
         if (!comment) comment = document.getElementById("comment").value;  
