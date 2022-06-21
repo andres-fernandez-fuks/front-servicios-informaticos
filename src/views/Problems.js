@@ -26,6 +26,7 @@ import simple_routes from "utils/routes_simple.js"
 import AddIcon from '@mui/icons-material/Add';
 import { PROBLEM_DETAILS_PATH } from "pages/ProblemDetailsPage";
 import toast, { Toaster } from 'react-hot-toast';
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 // reactstrap components
 import {
@@ -168,6 +169,7 @@ function ProblemsTable() {
                     color="info"
                     style={{backgroundColor:"white"}}
                     onClick={() => {RedirectToProblemCreation();}}
+                    hidden={!checkPermissions(TABLES.PROBLEM, PERMISSIONS.CREATE)}
                     >
                     <AddIcon />
                 </IconButton>

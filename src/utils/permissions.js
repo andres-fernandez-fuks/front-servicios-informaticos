@@ -2,7 +2,10 @@
 export const TABLES = {
     SLA_ITEM: "SLA",
     HARDWARE_ITEM: "hardware",
-    SOFTWARE_ITEM: "software"
+    SOFTWARE_ITEM: "software",
+    PROBLEM: "problems",
+    INCIDENT: "incidents",
+    KNOWN_ERROR: "known_errors"
 }
 export const PERMISSIONS = {
     SEE: "see",
@@ -15,9 +18,9 @@ const TOTAL_ACCESS_PERMISSION = "total_access"
 
 export function checkPermissions(table_name, permission){
     var user_permissions = JSON.parse(localStorage.getItem("permissions"))
-    if (TOTAL_ACCESS_PERMISSION in user_permissions) return true
+    if (user_permissions.includes(TOTAL_ACCESS_PERMISSION)) return true
     
     var permission_name = `${table_name}_${permission}`
-    return permission_name in user_permissions
+    return user_permissions.includes(permission_name)
 } 
 
