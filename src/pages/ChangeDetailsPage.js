@@ -46,7 +46,6 @@ export const CHANGE_DETAILS_PATH = "/change_details";
 const tableData = [];
 const itemsColumns = [
     {"name": "id", "label": "ID"},
-    {"name": "draft_id", "label": "draft_id"},
     {"name": "type_show", "label": "Tipo"},
     {"name": "name", "label": "Nombre"},
     {"name": "draft_change_id", "label": "draft_change_id"},
@@ -109,7 +108,7 @@ function ChangeDetails(props) {
             data["hardware_configuration_items"].map(i => {
                 i['type_show'] = "Hardware"
                 i['type'] = "hardware"
-                i['draft_id'] = i['draft'] && i['draft']['change_id']
+                i['draft_change_id'] = i['draft'] && i['draft']['change_id']
                 ci.push(i)
                 console.log(i)
             })
@@ -117,6 +116,7 @@ function ChangeDetails(props) {
             data["software_configuration_items"].map(i => {
                 i['type_show'] = "Software"
                 i['type'] = "software"
+                i['draft_change_id'] = i['draft'] && i['draft']['change_id']
                 ci.push(i)
                 console.log(i)
             })
@@ -124,6 +124,7 @@ function ChangeDetails(props) {
             data["sla_configuration_items"].map(i => {
                 i['type_show'] = "SLA"
                 i['type'] = "sla"
+                i['draft_change_id'] = i['draft'] && i['draft']['change_id']
                 ci.push(i)
                 console.log(i)
             })
@@ -180,9 +181,12 @@ function ChangeDetails(props) {
     }
 
     const rejectChange = () => { 
+        dbPost("changes/" + change_id + "/discard", {}).then(data => {
+        } ).catch(err => {console.log(err)});
         var patch_data = {taken_by:localStorage.getItem("username"), status: "Rechazado"}
-        dbPatch("changes/" + change_id, patch_data);
-        history.push(simple_routes.changes);
+        dbPatch("changes/" + change_id, patch_data).then(data => {
+            history.push(simple_routes.changes);
+        }).catch(err => {console.log(err)});
     }
 
   function addBlockButton() {
@@ -332,10 +336,10 @@ function ChangeDetails(props) {
                 <ChangeTable data={itemsCiData}
                              columns={itemsColumns}
                              addWatchColumn={true}
-                             excludeColumns={["id", "draft_id", "draft_change_id"]}
+                             excludeColumns={["id", "draft_change_id"]}
                              details_button_path={"/admin/item_details/"}
                              edit_button_path={"/admin/item_edit/"}
-                             type_row = {2}
+                             type_row = {1}
                              change_callback_id = {change_id}
                              use_object_type = {true}/>
                 </Grid>
