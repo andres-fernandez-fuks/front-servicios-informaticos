@@ -112,7 +112,8 @@ export default function SoftwareItemDetails() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/hardware/" + values.id + "/version";
+        var change_id = localStorage.getItem("change_id");
+        var path = "configuration-items/software/" + values.id  + "/draft?change_id=" + change_id;
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             

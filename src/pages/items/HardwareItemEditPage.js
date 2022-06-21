@@ -105,7 +105,8 @@ export default function App() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/hardware/" + values.id + "/draft";
+        var change_id = localStorage.getItem("change_id");
+        var path = "configuration-items/hardware/" + values.id + "/draft?change_id=" + change_id;
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             toast.success("Borrador guardado correctamente");

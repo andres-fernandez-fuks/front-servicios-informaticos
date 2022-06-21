@@ -123,7 +123,8 @@ export default function SLADetailsPage() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/sla/" + values.id + "/draft";
+        var change_id = localStorage.getItem("change_id");
+        var path = "configuration-items/sla/" + values.id + "/draft?change_id=" + change_id;
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             
