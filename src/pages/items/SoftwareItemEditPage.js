@@ -26,7 +26,7 @@ import {
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
-export const SOFTWARE_ITEM_DETAILS_PATH = "/item_details/software";
+export const SOFTWARE_ITEM_EDIT_PATH = "/item_edit/software";
 
 const columns = [
 {"name": "version", "label": "Versión"},
@@ -60,46 +60,24 @@ export default function SoftwareItemDetails() {
     }
 
   React.useEffect(() => {
-    dbGet("configuration-items/software/" + item_id).then(data => {
+    var change_id = localStorage.getItem("change_id");
+    dbGet("configuration-items/software/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
         setValues({...data});
         setCurrentValues({...data});
-        getVersions();
     }).catch(err => {console.log(err)});
     }   , []);
 
-    function fetchValues() {
-            dbGet("configuration-items/software/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
-
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
-        }).catch(err => {console.log(err)});
-}  
-
-
-    function getVersions() {
-        if (values.versions && values.versions.length > 0) {
-            return <SimpleTable
-                        data={values.versions}
-                        columns={columns}
-                        addRestoreColumn={true}
-                        function={restoreVersion}
-                        button_path={"/admin" + SOFTWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/software/" + values.id + "/restore"}/>
-        }
-        else if (values.versions && values.versions.length === 0) {
-            return <div className="version_row">No hay otras versiones del ítem</div>
-        }
-    }
+    // if (values === '' || values === undefined) {
+    //     fetchValues();
+    // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
+        delete request_values.change_id;
+        delete request_values.last_version;
+        delete request_values.item_type;
+        delete request_values.current_version_number;
+        delete request_values.current_version_id;
         delete request_values.versions;
         delete request_values.version;
         delete request_values.created_at;
@@ -107,6 +85,7 @@ export default function SoftwareItemDetails() {
         delete request_values.id;
         delete request_values.is_deleted;
         delete request_values.item_class;
+        delete request_values.draft;
         return request_values;
     }
 
@@ -116,15 +95,10 @@ export default function SoftwareItemDetails() {
         var path = "configuration-items/software/" + values.id  + "/draft?change_id=" + change_id;
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
-            
-            history.push("/admin" + SOFTWARE_ITEM_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
+            toast.success("Borrador guardado correctamente");
+            history.goBack();
         }
         ).catch(err => {console.log(err)});
-    }
-
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
     }
 
     function currencyFormat(num) {
@@ -141,7 +115,7 @@ export default function SoftwareItemDetails() {
             <Form onSubmit= {handleSubmit}>
             <Card className="incident-card">
                 <CardHeader >
-                    <h4 className="title">Detalles del ítem</h4>
+                    <h4 className="title">Detalles del borrador</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
@@ -149,7 +123,6 @@ export default function SoftwareItemDetails() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
                                 <Input className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "name"
@@ -161,7 +134,6 @@ export default function SoftwareItemDetails() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
                                 <Input className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -175,7 +147,6 @@ export default function SoftwareItemDetails() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <Input
-                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -189,7 +160,6 @@ export default function SoftwareItemDetails() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Proveedor</Label>
                                 <Input  className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.provider}
                                     onChange = {function(e){updateCurrentValues("provider", e.target.value)}}
                                     id = "provider"
@@ -201,7 +171,6 @@ export default function SoftwareItemDetails() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }}>Versión del Software</Label>
                                 <Input  className="other_input"
-                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.software_version}
                                     onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
                                     id = "software_version"
@@ -234,16 +203,6 @@ export default function SoftwareItemDetails() {
             </Form>
             </Col>
             <Col md="6">
-              <Card className="incident-card">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
             </Col>
           </Row>
         </div>

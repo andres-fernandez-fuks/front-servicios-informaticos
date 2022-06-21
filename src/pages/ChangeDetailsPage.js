@@ -49,7 +49,7 @@ const itemsColumns = [
     {"name": "draft_id", "label": "draft_id"},
     {"name": "type_show", "label": "Tipo"},
     {"name": "name", "label": "Nombre"},
-    
+    {"name": "draft_change_id", "label": "draft_change_id"},
 ]
 
 const incidentColumns = [
@@ -332,7 +332,7 @@ function ChangeDetails(props) {
                 <ChangeTable data={itemsCiData}
                              columns={itemsColumns}
                              addWatchColumn={true}
-                             excludeIdColumn={true} 
+                             excludeColumns={["id", "draft_id", "draft_change_id"]}
                              details_button_path={"/admin/item_details/"}
                              edit_button_path={"/admin/item_edit/"}
                              type_row = {2}

@@ -73,21 +73,12 @@ export default function App() {
     }).catch(err => {console.log(err)});
     }   , []);
 
-    function fetchValues() {
-            dbGet("configuration-items/hardware/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
-
-    console.log("Values: ", values)
-
     // if (values === '' || values === undefined) {
     //     fetchValues();
     // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
-        request_values["change_id"] = localStorage.getItem("change_id");
         delete request_values.last_version;
         delete request_values.item_type;
         delete request_values.current_version_number;
@@ -100,6 +91,7 @@ export default function App() {
         delete request_values.is_deleted;
         delete request_values.item_class;
         delete request_values.draft_id;
+        delete request_values.change_id;
         return request_values;
     }
 

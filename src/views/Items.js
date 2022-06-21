@@ -46,7 +46,7 @@ const tableData = [];
 const hardwareItemColumns = [
     {"name": "id", "label": "id"},
     {"name": "name", "label": "Nombre"},
-    {"name": "version_number", "label": "Versión"},
+    {"name": "current_version_number", "label": "Versión actual"},
     {"name": "manufacturer", "label": "Fabricante"},
     {"name": "serial_number", "label": "N° de serie"},
 ]
