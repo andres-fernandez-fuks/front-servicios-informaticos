@@ -40,6 +40,7 @@ import {
 
 import SimpleTable from "components/Table/SimpleTable";
 import ChangeTable from "components/Table/ChangeTable";
+import Tooltip from "@material-ui/core/Tooltip";
 
 export const CHANGE_DETAILS_PATH = "/change_details";
 
@@ -47,7 +48,9 @@ const tableData = [];
 const itemsColumns = [
     {"name": "id", "label": "ID"},
     {"name": "type_show", "label": "Tipo"},
+    {"name": "type", "label": "type"},
     {"name": "name", "label": "Nombre"},
+    {"name": "draft_id", "label": "draft_id"},
     {"name": "draft_change_id", "label": "draft_change_id"},
 ]
 
@@ -55,7 +58,6 @@ const incidentColumns = [
     {"name": "id", "label": "ID"},
     {"name": "type_show", "label": "Tipo"},
     {"name": "description", "label": "Descripción"}
-    
 ]
 
 
@@ -75,6 +77,7 @@ function ChangeDetails(props) {
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
     localStorage.setItem("wasInChange", true)
+    const [allItemsModified, setAllItemsModified] = React.useState(true);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -94,6 +97,7 @@ function ChangeDetails(props) {
 
     function fetchItemsData() {
         dbGet("changes/" + change_id).then(data => {
+            var this_change_id = parseInt(change_id);
             var incidents_data = data["incidents"]
             var problems_data = data["problems"]
             var ci = []
@@ -108,7 +112,7 @@ function ChangeDetails(props) {
             data["hardware_configuration_items"].map(i => {
                 i['type_show'] = "Hardware"
                 i['type'] = "hardware"
-                i['draft_change_id'] = i['draft'] && i['draft']['change_id']
+                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
                 ci.push(i)
                 console.log(i)
             })
@@ -116,7 +120,7 @@ function ChangeDetails(props) {
             data["software_configuration_items"].map(i => {
                 i['type_show'] = "Software"
                 i['type'] = "software"
-                i['draft_change_id'] = i['draft'] && i['draft']['change_id']
+                if (!i['draft_change_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
                 ci.push(i)
                 console.log(i)
             })
@@ -124,7 +128,7 @@ function ChangeDetails(props) {
             data["sla_configuration_items"].map(i => {
                 i['type_show'] = "SLA"
                 i['type'] = "sla"
-                i['draft_change_id'] = i['draft'] && i['draft']['change_id']
+                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
                 ci.push(i)
                 console.log(i)
             })
@@ -222,18 +226,25 @@ function ChangeDetails(props) {
     if (!values.taken_by) {
         return (
         <Grid align="center">
-        <Button className="btn-fill"
-        color="primary"
-        onClick={() => applyChange()}
-        >
-        Aplicar        
-        </Button>
-        <Button className="btn-fill"
-        color="secondary"
-        onClick={() => rejectChange()}
-        >
-        Rechazar        
-        </Button>
+            <Tooltip title={"Quedan ítems por modificar"}>
+            <span>
+                <Button
+                disabled = {!allItemsModified}
+                className="btn-fill"
+                color="primary"
+                onClick={() => applyChange()}
+                >
+                Aplicar        
+                </Button>
+                <Button
+                className="btn-fill"
+                color="secondary"
+                onClick={() => rejectChange()}
+                >
+                Rechazar        
+                </Button>
+            </span>
+            </Tooltip>
         </Grid>
         )
     }
@@ -336,12 +347,14 @@ function ChangeDetails(props) {
                 <ChangeTable data={itemsCiData}
                              columns={itemsColumns}
                              addWatchColumn={true}
-                             excludeColumns={["id", "draft_change_id"]}
+                             excludeColumns={["id", "draft_change_id", "draft_id", "type"]}
                              details_button_path={"/admin/item_details/"}
                              edit_button_path={"/admin/item_edit/"}
                              type_row = {1}
                              change_callback_id = {change_id}
-                             use_object_type = {true}/>
+                             use_object_type = {true}
+                             change_status = {values.status}
+                             />
                 </Grid>
                 </div>
                 <div class="items-div">

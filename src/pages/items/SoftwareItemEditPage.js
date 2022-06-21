@@ -86,6 +86,7 @@ export default function SoftwareItemDetails() {
         delete request_values.is_deleted;
         delete request_values.item_class;
         delete request_values.draft;
+        delete request_values.draft_change_id;
         return request_values;
     }
 
