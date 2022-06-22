@@ -66,9 +66,7 @@ export default function SignIn() {
     }
     Login(request_data).then(response => {
         localStorage.setItem("token", response.token)
-        // localStorage.setItem("user", JSON.stringify(response.user))
-        localStorage.setItem("role_id", response.user.role.id)
-        localStorage.setItem("role", response.user.role.name)
+        localStorage.setItem("permissions", JSON.stringify(response.permissions))
         localStorage.setItem("user_id", response.user.id)
         localStorage.setItem("username", response.user.username)
         history.push(simple_routes.dashboard)

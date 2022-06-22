@@ -25,6 +25,7 @@ import simple_routes from "utils/routes_simple.js"
 import AddIcon from '@mui/icons-material/Add';
 import { IconButton } from '@mui/material';
 import { KNOWN_ERROR_DETAILS_PATH } from "pages/KnownErrorDetailsPage";
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 // reactstrap components
 import {
@@ -167,6 +168,9 @@ function ErrorsTable() {
                     color="info"
                     style={{backgroundColor:"white"}}
                     onClick={() => {RedirectToKnownErrorCreation();}}
+                    hidden={!checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.CREATE)}
+
+
                     >
                     <AddIcon />
                 </IconButton>

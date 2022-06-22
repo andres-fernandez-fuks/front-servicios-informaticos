@@ -23,7 +23,7 @@ import {dbGet} from "../utils/backendFetchers";
 import simple_routes from "utils/routes_simple.js"
 import { useHistory } from "react-router-dom";
 import toast, { Toaster } from 'react-hot-toast';
-
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 // reactstrap components
 import {
   Button,  
@@ -46,7 +46,7 @@ const tableData = [];
 const hardwareItemColumns = [
     {"name": "id", "label": "id"},
     {"name": "name", "label": "Nombre"},
-    {"name": "version_number", "label": "Versión"},
+    {"name": "current_version_number", "label": "Versión actual"},
     {"name": "manufacturer", "label": "Fabricante"},
     {"name": "serial_number", "label": "N° de serie"},
 ]
@@ -172,6 +172,7 @@ function ItemsTable() {
                   aria-label="Crear ítem"
                   variant="contained" 
                   color="secondary"
+                  hidden={!checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.CREATE)}
                   style={{border: "2px solid black"}}
                   onClick={() => {RedirectToHardwareItemCreation();}}
                   >
@@ -185,6 +186,7 @@ function ItemsTable() {
                   color="secondary"
                   style={{border: "2px solid black"}}
                   onClick={() => {RedirectToSLAItemCreation();}}
+                  hidden={!checkPermissions(TABLES.SLA_ITEM, PERMISSIONS.CREATE)}
                   >
                   <AddIcon />
                   SLA
@@ -196,6 +198,7 @@ function ItemsTable() {
                   color="secondary"
                   style={{border: "2px solid black"}}
                   onClick={() => {RedirectToSoftwareItemCreation();}}
+                  hidden={!checkPermissions(TABLES.SOFTWARE_ITEM, PERMISSIONS.CREATE)}
                   >
                   <AddIcon />
                   Software

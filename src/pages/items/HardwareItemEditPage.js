@@ -27,6 +27,7 @@ import {
   Col,
 } from "reactstrap";
 import toast, { Toaster } from 'react-hot-toast';
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
@@ -46,7 +47,7 @@ export default function App() {
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = false;
+    const isEditable = checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.UPDATE);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
 
     function getPrice(price_string) {
@@ -73,21 +74,13 @@ export default function App() {
     }).catch(err => {console.log(err)});
     }   , []);
 
-    function fetchValues() {
-            dbGet("configuration-items/hardware/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
-
-    console.log("Values: ", values)
-
     // if (values === '' || values === undefined) {
     //     fetchValues();
     // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
-        request_values["change_id"] = localStorage.getItem("change_id");
+        delete request_values.change_id;
         delete request_values.last_version;
         delete request_values.item_type;
         delete request_values.current_version_number;
@@ -99,13 +92,19 @@ export default function App() {
         delete request_values.id;
         delete request_values.is_deleted;
         delete request_values.item_class;
+        delete request_values.draft;
+        delete request_values.is_draft;
+        delete request_values.is_deleted;
         delete request_values.draft_id;
+        delete request_values.draft_change_id;
+        delete request_values.version_number;
         return request_values;
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        var path = "configuration-items/hardware/" + values.id + "/draft";
+        var change_id = localStorage.getItem("change_id");
+        var path = "configuration-items/hardware/" + values.id + "/draft?change_id=" + change_id;
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             toast.success("Borrador guardado correctamente");
@@ -136,7 +135,7 @@ export default function App() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -148,7 +147,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -162,7 +161,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -176,7 +175,7 @@ export default function App() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.manufacturer}
                                     onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
                                     id = "serial_number"
@@ -188,7 +187,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.serial_number}
                                     onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
                                     id = "serial_number"
@@ -202,7 +201,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.purchase_date}
                                     onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
                                     id = "description"
@@ -214,7 +213,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currencyFormat(currentValues.price)}
                                     onChange = {function(e){updateCurrentValues("price", e.target.value)}}
                                     id = "description"

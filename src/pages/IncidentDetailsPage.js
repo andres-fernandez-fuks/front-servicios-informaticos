@@ -41,8 +41,9 @@ import {
 import SimpleTable from "components/Table/SimpleTable";
 import classNames from "classnames";
 import CommentsTracking from "components/Form/comment_tracking";
-export const INCIDENT_DETAILS_PATH = "/incidents_details";
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
+export const INCIDENT_DETAILS_PATH = "/incidents_details";
 const tableData = [];
 const ciItemColumns = [
     {"name": "id", "label": "ID"},
@@ -57,7 +58,7 @@ function IncidentDetails(props) {
     var paths = window.location.pathname.split("/") 
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState({});
-    const isEditable = false;
+    const isEditable = checkPermissions(TABLES.INCIDENT, PERMISSIONS.UPDATE)
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
@@ -163,6 +164,7 @@ function IncidentDetails(props) {
   }
 
   function addBlockButton() {
+    if (!isEditable) return
     if (values.is_blocked === true) {
         return (
             <Button className="btn-fill" align="left"
@@ -186,6 +188,7 @@ function IncidentDetails(props) {
   }
 
   function addButtons() {
+    if (!isEditable) return
       if (values === '') {
       fetchValues();
     }
@@ -278,7 +281,7 @@ function IncidentDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <Input
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.description}
                                   onChange = {(e) => {updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -292,7 +295,7 @@ function IncidentDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Estado</Label>
                               <Input className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue= {currentValues.status}
                                   onChange = {(e) => {updateCurrentValues("status", e.target.value)}}
                                   id = "type"
@@ -304,7 +307,7 @@ function IncidentDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
                               <Input className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue= {currentValues.priority}
                                   onChange = {(e) => {updateCurrentValues("priority", e.target.value)}}
                                   id = "type"
@@ -318,7 +321,7 @@ function IncidentDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Creado por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.created_by}
                                   onChange = {(e) => {updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
@@ -330,7 +333,7 @@ function IncidentDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Tomado por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.taken_by}
                                   onChange = { (e) => {updateCurrentValues("taken_by", e.target.value)}}
                                   id = "serial_number"

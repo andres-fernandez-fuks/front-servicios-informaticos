@@ -25,6 +25,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import toast, { Toaster } from 'react-hot-toast';
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 // reactstrap components
 import {
@@ -194,6 +195,7 @@ function IncidentsTable() {
                         color="info"
                         style={{backgroundColor:"white"}}
                         onClick={() => {RedirectToIncidentCreation();}}
+                        hidden={!checkPermissions(TABLES.INCIDENT, PERMISSIONS.CREATE)}
                         >
                         <AddIcon />
                     </IconButton>

@@ -51,13 +51,16 @@ import { SLA_ITEM_CREATION_PATH } from "pages/items/SLAItemCreationPage";
 import { SOFTWARE_ITEM_CREATION_PATH } from "pages/items/SoftwareItemCreationPage";
 import { SLA_ITEM_DETAILS_PATH } from "pages/items/SLAItemDetailsPage";
 import { HARDWARE_ITEM_EDIT_PATH } from "pages/items/HardwareItemEditPage";
+import { SLA_ITEM_EDIT_PATH } from "pages/items/SLAItemEditPage";
+import { SOFTWARE_ITEM_EDIT_PATH } from "pages/items/SoftwareItemEditPage";
 import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
 import HardwareItemCreation from "pages/items/HardwareItemCreationPage.js";
 import HardwareItemEdit from "pages/items/HardwareItemEditPage.js";
-
 import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
 import SoftwareCreation from "pages/items/SoftwareItemCreationPage";
 import SLAItemDetails from "pages/items/SLAItemDetailsPage.js";
+import SLAItemEdit from "pages/items/SLAItemEditPage.js";
+import SoftwareItemEdit from "pages/items/SoftwareItemEditPage.js";
 
 var ps;
 
@@ -174,6 +177,10 @@ function Admin(props) {
                 component={SLACreationPage}
                 />
                 <Route
+                path={'/admin' + SLA_ITEM_EDIT_PATH}
+                component={SLAItemEdit}
+                />
+                <Route
                 path={'/admin' + HARDWARE_ITEM_DETAILS_PATH}
                 component={HardwareItemDetails}
                 />
@@ -192,6 +199,10 @@ function Admin(props) {
                 <Route
                 path={'/admin' + SOFTWARE_ITEM_CREATION_PATH}
                 component={SoftwareCreation}
+                />
+                <Route
+                path={'/admin' + SOFTWARE_ITEM_EDIT_PATH}
+                component={SoftwareItemEdit}
                 />
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}

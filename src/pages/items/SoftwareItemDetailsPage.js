@@ -220,15 +220,6 @@ export default function SoftwareItemDetails() {
                         </Col>
                     </Row>
                 </CardBody>
-                <CardFooter className="form_col">
-                    <Button className="btn btn-primary"
-                    disabled = {!enableCreateButton}
-                    color="primary"
-                    type="submit"
-                    >
-                    Guardar        
-                </Button>
-                </CardFooter>
             </Card>
             </Form>
             </Col>

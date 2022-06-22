@@ -40,23 +40,25 @@ import {
 
 import SimpleTable from "components/Table/SimpleTable";
 import ChangeTable from "components/Table/ChangeTable";
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
+import Tooltip from "@material-ui/core/Tooltip";
 
 export const CHANGE_DETAILS_PATH = "/change_details";
 
 const tableData = [];
 const itemsColumns = [
     {"name": "id", "label": "ID"},
-    {"name": "draft_id", "label": "draft_id"},
     {"name": "type_show", "label": "Tipo"},
+    {"name": "type", "label": "type"},
     {"name": "name", "label": "Nombre"},
-    
+    {"name": "draft_id", "label": "draft_id"},
+    {"name": "draft_change_id", "label": "draft_change_id"},
 ]
 
 const incidentColumns = [
     {"name": "id", "label": "ID"},
     {"name": "type_show", "label": "Tipo"},
     {"name": "description", "label": "Descripción"}
-    
 ]
 
 
@@ -66,7 +68,7 @@ function ChangeDetails(props) {
     var paths = window.location.pathname.split("/") 
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = false;
+    const isEditable = checkPermissions(TABLES.CHANGE, PERMISSIONS.UPDATE)
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
     const [itemsCiData, setItemsCiData] = React.useState([]);
@@ -76,6 +78,7 @@ function ChangeDetails(props) {
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
     localStorage.setItem("wasInChange", true)
+    const [allItemsModified, setAllItemsModified] = React.useState(true);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -95,6 +98,7 @@ function ChangeDetails(props) {
 
     function fetchItemsData() {
         dbGet("changes/" + change_id).then(data => {
+            var this_change_id = parseInt(change_id);
             var incidents_data = data["incidents"]
             var problems_data = data["problems"]
             var ci = []
@@ -109,7 +113,7 @@ function ChangeDetails(props) {
             data["hardware_configuration_items"].map(i => {
                 i['type_show'] = "Hardware"
                 i['type'] = "hardware"
-                i['draft_id'] = i['draft'] && i['draft']['change_id']
+                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
                 ci.push(i)
                 console.log(i)
             })
@@ -117,6 +121,7 @@ function ChangeDetails(props) {
             data["software_configuration_items"].map(i => {
                 i['type_show'] = "Software"
                 i['type'] = "software"
+                if (!i['draft_change_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
                 ci.push(i)
                 console.log(i)
             })
@@ -124,6 +129,7 @@ function ChangeDetails(props) {
             data["sla_configuration_items"].map(i => {
                 i['type_show'] = "SLA"
                 i['type'] = "sla"
+                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
                 ci.push(i)
                 console.log(i)
             })
@@ -180,12 +186,16 @@ function ChangeDetails(props) {
     }
 
     const rejectChange = () => { 
+        dbPost("changes/" + change_id + "/discard", {}).then(data => {
+        } ).catch(err => {console.log(err)});
         var patch_data = {taken_by:localStorage.getItem("username"), status: "Rechazado"}
-        dbPatch("changes/" + change_id, patch_data);
-        history.push(simple_routes.changes);
+        dbPatch("changes/" + change_id, patch_data).then(data => {
+            history.push(simple_routes.changes);
+        }).catch(err => {console.log(err)});
     }
 
   function addBlockButton() {
+    if (!isEditable) return
     if (values.is_blocked === true) {
         return (
             <Button className="btn-fill" align="left"
@@ -209,7 +219,8 @@ function ChangeDetails(props) {
   }
 
   function addButtons() {
-      if (values === '') {
+    if (!isEditable) return
+    if (values === '') {
       fetchValues();
     }
     if (values.status === "Resuelto" || values.status === "Rechazado") {
@@ -218,18 +229,25 @@ function ChangeDetails(props) {
     if (!values.taken_by) {
         return (
         <Grid align="center">
-        <Button className="btn-fill"
-        color="primary"
-        onClick={() => applyChange()}
-        >
-        Aplicar        
-        </Button>
-        <Button className="btn-fill"
-        color="secondary"
-        onClick={() => rejectChange()}
-        >
-        Rechazar        
-        </Button>
+            <Tooltip title={allItemsModified ? "" : "Quedan ítems por modificar"}>
+            <span>
+                <Button
+                disabled = {!allItemsModified}
+                className="btn-fill"
+                color="primary"
+                onClick={() => applyChange()}
+                >
+                Aplicar        
+                </Button>
+                <Button
+                className="btn-fill"
+                color="secondary"
+                onClick={() => rejectChange()}
+                >
+                Rechazar        
+                </Button>
+            </span>
+            </Tooltip>
         </Grid>
         )
     }
@@ -264,7 +282,7 @@ function ChangeDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <Input
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -278,7 +296,7 @@ function ChangeDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Estado</Label>
                               <Input className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue= {currentValues.status}
                                   onChange = {function(e){updateCurrentValues("status", e.target.value)}}
                                   id = "type"
@@ -290,7 +308,7 @@ function ChangeDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
                               <Input className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue= {currentValues.priority}
                                   onChange = {function(e){updateCurrentValues("priority", e.target.value)}}
                                   id = "type"
@@ -304,7 +322,7 @@ function ChangeDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Pedido por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.created_by}
                                   onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
@@ -316,7 +334,7 @@ function ChangeDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Resuelto por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.taken_by}
                                   onChange = {function(e){updateCurrentValues("taken_by", e.target.value)}}
                                   id = "serial_number"
@@ -332,12 +350,14 @@ function ChangeDetails(props) {
                 <ChangeTable data={itemsCiData}
                              columns={itemsColumns}
                              addWatchColumn={true}
-                             excludeIdColumn={true} 
+                             excludeColumns={["id", "draft_change_id", "draft_id", "type"]}
                              details_button_path={"/admin/item_details/"}
                              edit_button_path={"/admin/item_edit/"}
-                             type_row = {2}
+                             type_row = {1}
                              change_callback_id = {change_id}
-                             use_object_type = {true}/>
+                             use_object_type = {true}
+                             change_status = {values.status}
+                             />
                 </Grid>
                 </div>
                 <div class="items-div">
