@@ -63,7 +63,6 @@ const incidentColumns = [
 ]
 
 
-
 function ChangeDetails(props) {
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -136,7 +135,6 @@ function ChangeDetails(props) {
             })
 
             setItemsCiData(ci)
-            
             setItemsData([...incidents_data, ...problems_data]);
             setProblemItemsData(problems_data);
         }).catch(err => {console.log(err)});
@@ -148,21 +146,11 @@ function ChangeDetails(props) {
             setCurrentValues(data);
             fetchItemsData();
             setIsBlocked(data["is_blocked"]);
+            setIsTaken(data["taken_by"] !== null)
             localStorage.setItem("change_id", change_id);
         }).catch(err => {console.log(err)});
         }   , []);
 
-    function fetchValues() {
-            dbGet("changes/" + change_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
-
-    function solveChange() {
-        var patch_data = {status:"Resuelto"}
-        dbPatch("changes/" + change_id, patch_data);
-        history.push(simple_routes.changes);
-    }
 
     function blockChange() {
         var patch_data = {is_blocked:true}
@@ -179,7 +167,8 @@ function ChangeDetails(props) {
     function takeChange() {
         var patch_data = {taken_by:localStorage.getItem("username")}
         dbPatch("changes/" + change_id, patch_data).then(data => {
-          setCurrentValues(data);
+            setCurrentValues(data);
+            setIsTaken(true);
       });
         // sendComment("Incidente tomado");
     }
@@ -209,7 +198,7 @@ function ChangeDetails(props) {
                     <Button className="btn-fill" align="left"
                     hidden = {!isBlocked}
                     color="warning"
-                    type="submit"
+                    type="button"
                     onClick={() => unblockChange()}
                     >
                     Desbloquear        
@@ -217,8 +206,8 @@ function ChangeDetails(props) {
                     <Button className="btn-fill" align="left"
                     hidden = {isBlocked}
                     color="warning"
-                    type="submit"
-                    onClick={() => rejectChange()}
+                    type="button"
+                    onClick={() => blockChange()}
                     >
                     Bloquear        
                     </Button> 
@@ -228,12 +217,12 @@ function ChangeDetails(props) {
   function addButtons() {
     if (!isEditable) return
     if (values === '') {
-      fetchValues();
+      return;
     }
     if (values.status === "Resuelto" || values.status === "Rechazado") {
         return;
     }
-    if (values.taken_by) {
+    if (isTaken) {
         return (
         <Grid align="center">
             <Tooltip title={allItemsModified ? "" : "Quedan ítems por modificar"}>
@@ -241,18 +230,21 @@ function ChangeDetails(props) {
                 <Button
                 disabled = {!allItemsModified}
                 className="btn-fill"
-                color="primary"
+                color="info"
+                type="button"
                 onClick={() => applyChange()}
                 >
                 Aplicar        
                 </Button>
                 <Button
                 className="btn-fill"
-                color="secondary"
+                color="danger"
+                type="button"
                 onClick={() => rejectChange()}
                 >
                 Rechazar        
                 </Button>
+                {addBlockButton()}
             </span>
             </Tooltip>
         </Grid>
@@ -263,11 +255,12 @@ function ChangeDetails(props) {
         <Grid align="center">
         <Button className="btn-fill" align="right"
         color="success"
+        type="button"
         onClick={() => takeChange()}
         >
         Tomar        
         </Button>
-        {addBlockButton()}
+        
         </Grid>)
     }
   }

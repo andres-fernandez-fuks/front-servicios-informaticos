@@ -67,6 +67,7 @@ function ProblemDetails(props) {
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [isBlocked, setIsBlocked] = React.useState(false);
     const [isTaken, setIsTaken] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -99,6 +100,7 @@ function ProblemDetails(props) {
             fetchItemsData();
             setIsBlocked(data["is_blocked"]);
             setIsTaken(data["taken_by"] !== null);
+            setIsLoading(false);
         }).catch(err => {console.log(err)});
         }   , []);
 
@@ -159,10 +161,7 @@ function ProblemDetails(props) {
       }
 
   function addButtons() {
-    if (!isEditable) return
-    if (values === '') {
-      fetchValues();
-    }
+    if (isLoading || !isEditable) return
     if (values.status === "Resuelto") {
         return;
     }
