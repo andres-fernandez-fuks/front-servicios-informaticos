@@ -59,7 +59,6 @@ function IncidentDetails(props) {
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState({});
     const isEditable = checkPermissions(TABLES.INCIDENT, PERMISSIONS.UPDATE)
-    console.log("IS EDITABLE", isEditable)
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);

@@ -39,6 +39,7 @@ import {
   } from "reactstrap";
 
 import SimpleTable from "components/Table/SimpleTable";
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 export const KNOWN_ERROR_DETAILS_PATH = "/known_error_details";
 
@@ -56,7 +57,7 @@ function KnownErrorDetails(props) {
     var paths = window.location.pathname.split("/")
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = false;
+    const isEditable = checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.UPDATE);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/")
@@ -104,6 +105,7 @@ function KnownErrorDetails(props) {
     }
 
   function addButtons() {
+    if (!isEditable) return 
       if (values === '') {
       fetchValues();
     }
@@ -152,7 +154,7 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <Input
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -164,7 +166,7 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="solution">Solución</Label>
                               <Input
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.solution}
                                   onChange = {function(e){updateCurrentValues("solution", e.target.value)}}
                                   id = "solution"
@@ -178,7 +180,7 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Creado por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.created_by}
                                   onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
@@ -190,7 +192,7 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Tomado por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.taken_by}
                                   onChange = {function(e){updateCurrentValues("taken_by", e.target.value)}}
                                   id = "serial_number"
