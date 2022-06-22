@@ -87,6 +87,7 @@ function ChangesTable() {
                 data-toggle="buttons"
             >
                 <Button
+                hidden={!checkPermissions(TABLES.CHANGE, PERMISSIONS.CREATE)}
                 tag="label"
                 className={classNames("btn-simple", {
                     active: category === "Mis cambios",

@@ -176,6 +176,14 @@ function ChangeDetails(props) {
         setIsBlocked(false);
     }
 
+    function takeChange() {
+        var patch_data = {taken_by:localStorage.getItem("username")}
+        dbPatch("changes/" + change_id, patch_data).then(data => {
+          setCurrentValues(data);
+      });
+        // sendComment("Incidente tomado");
+    }
+
     const applyChange = () => { 
         dbPost("changes/" + change_id + "/apply", {}).then(data => {
         } ).catch(err => {console.log(err)});
@@ -210,7 +218,7 @@ function ChangeDetails(props) {
                     hidden = {isBlocked}
                     color="warning"
                     type="submit"
-                    onClick={() => blockChange()}
+                    onClick={() => rejectChange()}
                     >
                     Bloquear        
                     </Button> 
@@ -225,7 +233,7 @@ function ChangeDetails(props) {
     if (values.status === "Resuelto" || values.status === "Rechazado") {
         return;
     }
-    if (!values.taken_by) {
+    if (values.taken_by) {
         return (
         <Grid align="center">
             <Tooltip title={allItemsModified ? "" : "Quedan ítems por modificar"}>
@@ -255,9 +263,9 @@ function ChangeDetails(props) {
         <Grid align="center">
         <Button className="btn-fill" align="right"
         color="success"
-        onClick={() => applyChange()}
+        onClick={() => takeChange()}
         >
-        Aplicar        
+        Tomar        
         </Button>
         {addBlockButton()}
         </Grid>)

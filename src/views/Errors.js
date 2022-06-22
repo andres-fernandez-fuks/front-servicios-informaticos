@@ -90,6 +90,7 @@ function ErrorsTable() {
                 data-toggle="buttons"
             >
                 <Button
+                hidden={!checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.EDIT)}
                 tag="label"
                 className={classNames("btn-simple", {
                     active: category === "Mis errores",

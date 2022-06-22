@@ -91,6 +91,7 @@ function ProblemsTable() {
                 data-toggle="buttons"
             >
                 <Button
+                hidden={!checkPermissions(TABLES.PROBLEM, PERMISSIONS.EDIT)}
                 tag="label"
                 className={classNames("btn-simple", {
                     active: category === "Mis problemas",
