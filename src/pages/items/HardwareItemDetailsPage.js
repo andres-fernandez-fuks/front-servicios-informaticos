@@ -69,7 +69,6 @@ export default function App() {
     dbGet("configuration-items/hardware/" + item_id).then(data => {
         setValues({...data});
         setCurrentValues({...data});
-        debugger;
         getVersions();
     }).catch(err => {console.log(err)});
     }   , []);

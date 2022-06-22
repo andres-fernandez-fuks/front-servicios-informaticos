@@ -101,7 +101,6 @@ export default function SoftwareItemDetails() {
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             toast.success("Borrador guardado correctamente");
-            debugger;
             history.goBack();
         }
         ).catch(err => {console.log(err)});
