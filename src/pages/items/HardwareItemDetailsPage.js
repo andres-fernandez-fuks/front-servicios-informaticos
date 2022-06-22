@@ -36,7 +36,7 @@ export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
 
 const columns = [
     {"name": "version_number", "label": "Versión"},
-    {"name": "name", "label": "Nombre"},
+    {"name": "created_at", "label": "Fecha de creación"},
 ]
 
 export default function App() {
@@ -69,15 +69,10 @@ export default function App() {
     dbGet("configuration-items/hardware/" + item_id).then(data => {
         setValues({...data});
         setCurrentValues({...data});
+        debugger;
         getVersions();
     }).catch(err => {console.log(err)});
     }   , []);
-
-    function fetchValues() {
-            dbGet("configuration-items/hardware/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
 
     function restoreVersion(request_path, redirect_path, version_id) {
         dbPost(request_path, {"version": version_id}).then(data => {
@@ -130,18 +125,6 @@ export default function App() {
             window.location.reload();
         }
         ).catch(err => {console.log(err)});
-    }
-
-    const submitForm = (e) => {
-        //formData["created_by"] = localStorage.getItem("username");
-        //formData["description"] = document.getElementById('description').value;
-        //formData["priority"] = values.priority;
-        //dbPost("incidents", formData);
-        //history.push(simple_routes.incidents);
-    }
-
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
     }
 
     function currencyFormat(num) {
@@ -257,6 +240,16 @@ export default function App() {
                                 <Input
                                     readOnly
                                     defaultValue = {currentValues.current_version_number}
+                                    id = "description"
+                                    type="text"/>
+                            </FormGroup>
+                        </Col>
+                        <Col md="12">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
+                                <Input
+                                    readOnly
+                                    defaultValue = {currentValues.change && currentValues.change.description}
                                     id = "description"
                                     type="text"/>
                             </FormGroup>
