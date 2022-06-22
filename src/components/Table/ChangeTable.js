@@ -87,7 +87,7 @@ export default function SimpleTable(props) {
         var edit_path = props.edit_button_path + object_type + "/" + object_id;
         var disabled = draft_change_id && draft_change_id !== parseInt(localStorage.change_id)
 
-        if (props.change_status === 'Resuelto') {
+        if (['Resuelto', 'Rechazado'].includes(props.change_status) ) {
             return (
                 <Tooltip title="Detalles">
                     <IconButton
