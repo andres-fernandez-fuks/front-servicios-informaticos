@@ -42,6 +42,7 @@ import SimpleTable from "components/Table/SimpleTable";
 import ChangeTable from "components/Table/ChangeTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import Tooltip from "@material-ui/core/Tooltip";
+import CommentsTracking from "components/Form/comment_tracking";
 
 export const CHANGE_DETAILS_PATH = "/change_details";
 
@@ -73,12 +74,12 @@ function ChangeDetails(props) {
     const [itemsData, setItemsData] = React.useState([]);
     const [itemsCiData, setItemsCiData] = React.useState([]);
     const [problemItemsData, setProblemItemsData] = React.useState([]);
-    var paths = window.location.pathname.split("/") 
     var change_id = paths[paths.length - 1]
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
     localStorage.setItem("wasInChange", true)
     const [allItemsModified, setAllItemsModified] = React.useState(true);
+    const [flushLocalComments, setFlushLocalComments] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -378,15 +379,18 @@ function ChangeDetails(props) {
           </Card>
           </Form>
           </Col>
-          <Col md="6">
+          <Col md="6" className="comment-section">
           <Row>
-            <Card className="card-user">
-              <CardBody className="comment-card">
-              <div className="comment-card">
-              <h4 className="title">Comentarios</h4>
-              </div>
-              </CardBody>
-            </Card>
+            <Col md="11">
+              <h4 className="title">Tracking</h4>
+                <div>
+                    <CommentsTracking 
+                        comments={values.comments} 
+                        commentCreationUrl={"changes/" + change_id + "/comments"}
+                        flushLocalComments={flushLocalComments}
+                    />
+                </div>
+          </Col>
             </Row>
           </Col>
         </Row>

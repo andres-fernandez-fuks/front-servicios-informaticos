@@ -74,6 +74,7 @@ export default function SoftwareItemDetails() {
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.change_id;
+        delete request_values.change;
         delete request_values.last_version;
         delete request_values.item_type;
         delete request_values.current_version_number;
