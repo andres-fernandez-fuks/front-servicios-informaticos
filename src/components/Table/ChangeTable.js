@@ -11,6 +11,8 @@ import { NavLink, Link, useLocation } from "react-router-dom";
 import RestoreIcon from '@mui/icons-material/Restore';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditOffIcon from '@mui/icons-material/EditOff';
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -64,17 +66,43 @@ export default function SimpleTable(props) {
         }
       });
 
-      function insertButtons(tableMeta, props) {
-        var object_id = tableMeta.rowData[0];
-        var draft_change_id = tableMeta.rowData[-1];
-        console.log("ID DE OBJETO: " + object_id);
+      function insertModifiedButton(tableMeta, props) {
+        var draft_id = tableMeta.rowData[4];
+        var draft_change_id = tableMeta.rowData[5];
+        var modified = draft_id && draft_change_id === parseInt(localStorage.change_id); // modificado si hay borrador y es de este cambio
 
+        if (modified) {
+            return ( <> <DoneIcon style={{ color: '#5AD660' }}/> </> );
+        } else {
+            return ( <> <CloseIcon style={{ color: '#B14141' }}/> </> );
+        }
+    }
+
+    function insertButtons(tableMeta, props) {
+        var object_id = tableMeta.rowData[0];
+        var draft_change_id = tableMeta.rowData[5];
+        debugger;
         var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
         var details_path = props.details_button_path + object_type + "/" + object_id;
         var edit_path = props.edit_button_path + object_type + "/" + object_id;
         var disabled = draft_change_id && draft_change_id !== parseInt(localStorage.change_id)
-        debugger;
-       
+
+        if (props.change_status === 'Resuelto') {
+            return (
+                <Tooltip title="Detalles">
+                    <IconButton
+                        className={classes.onlyButtonSpacing}
+                        color="inherit"
+                        size="small"
+                        component={Link}
+                        to={details_path}
+                        path >
+                        <VisibilityIcon />
+                    </IconButton>
+                </Tooltip>
+            )
+        }
+        
         if (disabled) {
             return (
                 <>
@@ -104,7 +132,7 @@ export default function SimpleTable(props) {
                 </Tooltip>
             </>
             )
-        }
+    }
         return (
         <>
             <Tooltip title="Detalles">
@@ -189,28 +217,47 @@ export default function SimpleTable(props) {
         });
     }
 
-        new_columns.push({
-            name: "Detalles",
-            options: {
-            download: false,
-            filter: false,
-            sort: false,
-            setCellHeaderProps: () => {
-                return {  };
-            },
-            setCellProps: () => ({
-                style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle"},
-            }),
-            customBodyRender: (value, tableMeta, updateValue) => {
+    new_columns.push({
+        name: "Acciones",
+        options: {
+        download: false,
+        filter: false,
+        sort: false,
+        setCellHeaderProps: () => {
+            return {  };
+        },
+        setCellProps: () => ({
+            style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle"},
+        }),
+        customBodyRender: (value, tableMeta, updateValue) => {
 
-                // if (props.change_callback_id) {
-                //     path = path + "/" + props.change_callback_id;
-                // }
+            // if (props.change_callback_id) {
+            //     path = path + "/" + props.change_callback_id;
+            // }
 
-                return (insertButtons(tableMeta, props));
-            },
-            },
-        });
+            return (insertButtons(tableMeta, props));
+        },
+        },
+    });
+
+    new_columns.push({
+        name: "¿Modificado?",
+        options: {
+        download: false,
+        filter: false,
+        sort: false,
+        display: props.change_status !== 'Resuelto', // solamente se muestra si el cambio no está resuelto
+        setCellHeaderProps: () => {
+            return {  };
+        },
+        setCellProps: () => ({
+            style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle"},
+        }),
+        customBodyRender: (value, tableMeta, updateValue) => {
+            return insertModifiedButton(tableMeta, props);
+        },
+        },
+    });
 
     const table_options = {
         elevation: 0,

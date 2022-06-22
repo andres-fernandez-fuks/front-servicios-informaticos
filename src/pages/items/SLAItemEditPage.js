@@ -41,6 +41,7 @@ const columns = [
 
 export default function SLADetailsPage() {
 
+    
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -68,7 +69,7 @@ export default function SLADetailsPage() {
 
   React.useEffect(() => {
     var change_id = localStorage.getItem("change_id");
-    dbGet("configuration-items/hardware/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
+    dbGet("configuration-items/sla/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
         setValues({...data});
         setCurrentValues({...data});
     }).catch(err => {console.log(err)});
@@ -92,7 +93,12 @@ export default function SLADetailsPage() {
         delete request_values.id;
         delete request_values.is_deleted;
         delete request_values.item_class;
+        delete request_values.draft;
+        delete request_values.is_draft;
+        delete request_values.is_deleted;
         delete request_values.draft_id;
+        delete request_values.draft_change_id;
+        delete request_values.version_number;
         return request_values;
     }
 
@@ -201,7 +207,7 @@ export default function SLADetailsPage() {
                             <Label style={{ color:"#1788bd" }} for="type">Gerente</Label>
                                 <Input className="other_input"
                                     defaultValue= {currentValues.service_manager}
-                                    onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
+                                    onChange = {function(e){updateCurrentValues("service_manager", e.target.value)}}
                                     id = "service_manager"
                                     type="text"
                                     readOnly = {!isEditable}
@@ -270,7 +276,7 @@ export default function SLADetailsPage() {
                             <Label style={{ color:"#1788bd" }} >Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.version}
+                                    defaultValue = "Borrador"
                                     id = "description"
                                     type="text"/>
                             </FormGroup>
