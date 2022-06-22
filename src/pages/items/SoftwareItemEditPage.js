@@ -22,7 +22,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
@@ -40,7 +40,7 @@ export default function SoftwareItemDetails() {
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = false;
+    const isEditable = checkPermissions(TABLES.SOFTWARE, PERMISSIONS.UPDATE);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
 
     function getPrice(price_string) {
@@ -127,6 +127,7 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "name"
                                     type="text"
+                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -138,6 +139,7 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
                                     type="text"
+                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -151,6 +153,7 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
                                     type="text"
+                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -164,6 +167,7 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("provider", e.target.value)}}
                                     id = "provider"
                                     type="text"
+                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -175,6 +179,7 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
                                     id = "software_version"
                                     type="text"
+                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>

@@ -27,6 +27,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
@@ -46,7 +47,7 @@ export default function SLADetailsPage() {
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = false;
+    const isEditable = checkPermissions(TABLES.SLA_ITEM, PERMISSIONS.UPDATE)
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
 
     function getPrice(price_string) {
@@ -138,6 +139,7 @@ export default function SLADetailsPage() {
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
                                     type="text"
+                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -149,6 +151,7 @@ export default function SLADetailsPage() {
                                     onChange = {function(e){updateCurrentValues("client", e.target.value)}}
                                     id = "client"
                                     type="text"
+                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -160,7 +163,9 @@ export default function SLADetailsPage() {
                                     id = "is_crucial"
                                     onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
                                     checked = {currentValues.is_crucial}
-                                    type="checkbox"/>
+                                    type="checkbox"
+                                    disabled = {!isEditable}
+                                />
                             </FormGroup>
                         </Col>  
                     </Row>
@@ -173,6 +178,7 @@ export default function SLADetailsPage() {
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
                                     type="text"
+                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -186,6 +192,7 @@ export default function SLADetailsPage() {
                                     onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
                                     id = "service_type"
                                     type="text"
+                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -197,6 +204,7 @@ export default function SLADetailsPage() {
                                     onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
                                     id = "service_manager"
                                     type="text"
+                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -227,6 +235,7 @@ export default function SLADetailsPage() {
                                       }}
                                     id = "measurement_value"
                                     type="number"
+                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -240,6 +249,7 @@ export default function SLADetailsPage() {
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
                                     id = "starting_date"
                                     type="date"
+                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -251,6 +261,7 @@ export default function SLADetailsPage() {
                                     onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
                                     id = "ending_date"
                                     type="text"
+                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
