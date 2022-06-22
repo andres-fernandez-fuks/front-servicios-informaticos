@@ -86,6 +86,7 @@ function KnownErrorDetails(props) {
         dbGet("errors/" + error_id).then(data => {
             setValues(data);
             setCurrentValues(data);
+            getVersions();
             fetchItemsData();
         }).catch(err => {console.log(err)});
         }   , []);
@@ -94,6 +95,30 @@ function KnownErrorDetails(props) {
             dbGet("errors/" + error_id).then(data => {
                 setValues(data);
             }).catch(err => {console.log(err)});
+    }
+
+    function restoreVersion(request_path, redirect_path, version_id) {
+        dbPost(request_path, {"version": version_id}).then(data => {
+            redirect_path += "/" + data.id;
+            history.push(redirect_path);
+            window.location.reload();
+            // setValues(data);
+        }).catch(err => {console.log(err)});
+    }
+
+    function getVersions() {
+        if (values.versions && values.versions.length > 0) {
+            return <SimpleTable
+                data={values.versions}
+                columns={columns}
+                addRestoreColumn={!localStorage.getItem("wasInChange")}
+                function={restoreVersion}
+                button_path={"/admin" + KNOWN_ERROR_DETAILS_PATH}
+                request_endpoint={"errors/" + values.id + "/restore"}/>
+        }
+        else if (values.versions && values.versions.length === 0) {
+            return <div className="version_row">No hay otras versiones del ítem</div>
+        }
     }
 
     //todo esto no se si va
@@ -186,18 +211,6 @@ function KnownErrorDetails(props) {
                               />
                           </FormGroup>
                       </Col>
-                      <Col md="6">
-                          <FormGroup>
-                          <Label style={{ color:"#1788bd" }}>Tomado por</Label>
-                              <Input  className="other_input"
-                                  readOnly = {isEditable}
-                                  defaultValue = {currentValues.taken_by}
-                                  onChange = {function(e){updateCurrentValues("taken_by", e.target.value)}}
-                                  id = "serial_number"
-                                  type="text"
-                          />
-                          </FormGroup>
-                      </Col>
                   </Row>
                 </div>
             <div class="items-div">
@@ -217,6 +230,16 @@ function KnownErrorDetails(props) {
           </Form>
           </Col>
           <Col md="6">
+            <Card className="incident-card">
+                <CardBody>
+                <div>
+                <h4 className="title">Otras versiones</h4>
+                    <div className="versions">
+                        {getVersions()}
+                    </div>
+                </div>
+                </CardBody>
+            </Card>
           </Col>
         </Row>
       </div>
