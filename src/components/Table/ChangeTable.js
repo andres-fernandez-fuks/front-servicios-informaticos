@@ -67,8 +67,8 @@ export default function SimpleTable(props) {
       });
 
       function insertModifiedButton(tableMeta, props) {
-        var draft_id = tableMeta.rowData[1];
-        var draft_change_id = tableMeta.rowData[4];
+        var draft_id = tableMeta.rowData[4];
+        var draft_change_id = tableMeta.rowData[5];
         var modified = draft_id && draft_change_id === parseInt(localStorage.change_id); // modificado si hay borrador y es de este cambio
 
         if (modified) {
@@ -80,8 +80,8 @@ export default function SimpleTable(props) {
 
     function insertButtons(tableMeta, props) {
         var object_id = tableMeta.rowData[0];
-        var draft_change_id = tableMeta.rowData[-1];
-
+        var draft_change_id = tableMeta.rowData[5];
+        debugger;
         var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
         var details_path = props.details_button_path + object_type + "/" + object_id;
         var edit_path = props.edit_button_path + object_type + "/" + object_id;

@@ -92,8 +92,12 @@ export default function SLADetailsPage() {
         delete request_values.id;
         delete request_values.is_deleted;
         delete request_values.item_class;
+        delete request_values.draft;
+        delete request_values.is_draft;
+        delete request_values.is_deleted;
         delete request_values.draft_id;
         delete request_values.draft_change_id;
+        delete request_values.version_number;
         return request_values;
     }
 

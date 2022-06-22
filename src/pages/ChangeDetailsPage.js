@@ -226,7 +226,7 @@ function ChangeDetails(props) {
     if (!values.taken_by) {
         return (
         <Grid align="center">
-            <Tooltip title={"Quedan ítems por modificar"}>
+            <Tooltip title={allItemsModified ? "" : "Quedan ítems por modificar"}>
             <span>
                 <Button
                 disabled = {!allItemsModified}
