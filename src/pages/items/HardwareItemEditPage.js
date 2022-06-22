@@ -75,6 +75,7 @@ export default function App() {
 
     function getRequestValues() {
         var request_values = {...currentValues};
+        delete request_values.change
         delete request_values.change_id;
         delete request_values.last_version;
         delete request_values.item_type;
