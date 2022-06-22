@@ -158,8 +158,9 @@ function IncidentDetails(props) {
 
   const submitForm = (data) => { 
       var patch_data = {taken_by:localStorage.getItem("username")}
-      dbPatch("incidents/" + incident_id, patch_data);
-      // history.push(simple_routes.incidents);
+      dbPatch("incidents/" + incident_id, patch_data).then(data => {
+        setCurrentValues(data)
+    });
       sendComment("Incidente tomado");
   }
 
@@ -235,35 +236,8 @@ function IncidentDetails(props) {
         setFlushLocalComments(false);
     });
     
- }
+  }
 
- function reloadComments(){
-    fetchValues()
-
- }
- const showComments = () => {
-    if (values === '') {
-      fetchValues();
-    }
-    if (values.comments === undefined) {
-        return;
-    }
-    if (values.comments.length === 0) {
-        return;
-    }
-    return (
-        <div>
-        {values.comments.map(comment => {
-            return (
-                <div class="comment-div">
-                <div class="comment-header-div">{comment.created_at} - {comment.created_by}</div>
-                <div class="comment-text-div"> {comment.text} </div>
-                </div>
-            )
-        })}
-        </div>
-    )
- }
 
   return (
     <>
@@ -363,27 +337,11 @@ function IncidentDetails(props) {
             <Col md="11">
               <h4 className="title">Tracking</h4>
                 <div>
-                  {/* <Input 
-                        placeholder="Ingrese un comentario..."
-                        id = "comment"
-                        type="text"
-                    />
-                </div>
-                <div className="comments-button-div">
-                    <Button 
-                    size="sm"
-                    color="info"
-                    onClick={() => sendComment()}
-                    >
-                    Comentar        
-                    </Button>
-                </div>
-                <div>
-                    {showComments()} */}
                     <CommentsTracking 
                         comments={values.comments} 
                         commentCreationUrl={"incidents/" + incident_id + "/comments"}
-                        flushLocalComments={flushLocalComments}/>
+                        flushLocalComments={flushLocalComments}
+                    />
                 </div>
           </Col>
             </Row>

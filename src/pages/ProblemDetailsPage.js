@@ -40,7 +40,7 @@ import {
 
 import SimpleTable from "components/Table/SimpleTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
-
+import CommentsTracking from "components/Form/comment_tracking";
 export const PROBLEM_DETAILS_PATH = "/problem_details";
 
 const tableData = [];
@@ -60,11 +60,11 @@ function ProblemDetails(props) {
     const isEditable = checkPermissions(TABLES.PROBLEM, PERMISSIONS.UPDATE)
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
-    var paths = window.location.pathname.split("/") 
     var problem_id = paths[paths.length - 1]
     const [bigChartData, setbigChartData] = React.useState(tableData);
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
+    const [flushLocalComments, setFlushLocalComments] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -107,7 +107,6 @@ function ProblemDetails(props) {
     function solveProblem() {
         var patch_data = {status:"Resuelto"}
         dbPatch("problems/" + problem_id, patch_data);
-        history.push(simple_routes.problems);
         sendComment("Problema resuelto");
     }
 
@@ -125,7 +124,9 @@ function ProblemDetails(props) {
 
     const submitForm = (data) => { 
         var patch_data = {taken_by:localStorage.getItem("username")}
-        dbPatch("problems/" + problem_id, patch_data);
+        dbPatch("problems/" + problem_id, patch_data).then(data => {
+            setCurrentValues(data)
+        });
         sendComment("Problema tomado");
     }
 
@@ -153,7 +154,8 @@ function ProblemDetails(props) {
   }
 
   function addButtons() {
-      if (values === '') {
+    if (!isEditable) return
+    if (values === '') {
       fetchValues();
     }
     if (values.status === "Resuelto") {
@@ -193,40 +195,20 @@ function ProblemDetails(props) {
         comment:comment,
         created_by:created_by
     }
-    dbPost("problems/" + problem_id + "/comments", post_data);
-    window.location.reload();
+    dbPost("problems/" + problem_id + "/comments", post_data).then(data => {
+        fetchValues();
+        setFlushLocalComments(true);
+        setFlushLocalComments(false);
+    })
  }
 
- const showComments = () => {
-    if (values === '') {
-      fetchValues();
-    }
-    if (values.comments === undefined) {
-        return;
-    }
-    if (values.comments.length === 0) {
-        return;
-    }
-    return (
-        <div>
-        {values.comments.map(comment => {
-            return (
-                <div class="comment-div">
-                <div class="comment-header-div">{comment.created_at} - {comment.created_by}</div>
-                <div class="comment-text-div"> {comment.text} </div>
-                </div>
-            )
-        })}
-        </div>
-    )
- }
 
   return (
     <>
       <div className="content">
         <Row>
           <Col md="6">
-          <Form>
+          <Form onSubmit= {(e)=>e.preventDefault()}>
           <Card className="problem-card">
               <CardHeader >
                   <h4 className="title">Detalles del problema</h4>
@@ -321,23 +303,11 @@ function ProblemDetails(props) {
           <Col md="11">
               <h4 className="title">Tracking</h4>
                 <div>
-                  <Input 
-                        placeholder="Ingrese un comentario..."
-                        id = "comment"
-                        type="text"
+                    <CommentsTracking 
+                        comments={values.comments} 
+                        commentCreationUrl={"problems/" + problem_id + "/comments"}
+                        flushLocalComments={flushLocalComments}
                     />
-                </div>
-                <div className="comments-button-div">
-                    <Button 
-                    size="sm"
-                    color="info"
-                    onClick={() => sendComment()}
-                    >
-                    Comentar        
-                    </Button>
-                </div>
-                <div>
-                    {showComments()}
                 </div>
           </Col>
             </Row>
