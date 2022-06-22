@@ -29,8 +29,8 @@ import { dbPost } from "utils/backendFetchers";
 export const SOFTWARE_ITEM_DETAILS_PATH = "/item_details/software";
 
 const columns = [
-{"name": "version", "label": "Versión"},
-{"name": "name", "label": "Nombre"},
+    {"name": "version_number", "label": "Versión"},
+    {"name": "created_at", "label": "Fecha de creación"},
 ]
 
 export default function SoftwareItemDetails() {
@@ -67,11 +67,6 @@ export default function SoftwareItemDetails() {
     }).catch(err => {console.log(err)});
     }   , []);
 
-    function fetchValues() {
-            dbGet("configuration-items/software/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
 
     function restoreVersion(request_path, redirect_path, version_id) {
         dbPost(request_path, {"version": version_id}).then(data => {
@@ -122,14 +117,6 @@ export default function SoftwareItemDetails() {
         ).catch(err => {console.log(err)});
     }
 
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
-    }
-
-    function currencyFormat(num) {
-        if (!num) return;
-        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-     }
 
     return (
       <>
@@ -213,8 +200,20 @@ export default function SoftwareItemDetails() {
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.version}
+                                    defaultValue = {currentValues.current_version_number}
                                     id = "version"
+                                    type="text"/>
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md="12">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
+                                <Input
+                                    readOnly
+                                    defaultValue = {currentValues.change && currentValues.change.description}
+                                    id = "description"
                                     type="text"/>
                             </FormGroup>
                         </Col>
