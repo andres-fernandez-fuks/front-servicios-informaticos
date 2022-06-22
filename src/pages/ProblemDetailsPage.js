@@ -65,6 +65,8 @@ function ProblemDetails(props) {
     const [bigChartData, setbigChartData] = React.useState(tableData);
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}])
+    const [isBlocked, setIsBlocked] = React.useState(false);
+    const [isTaken, setIsTaken] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -95,6 +97,8 @@ function ProblemDetails(props) {
             setValues(data);
             setCurrentValues(data);
             fetchItemsData();
+            setIsBlocked(data["is_blocked"]);
+            setIsTaken(data["taken_by"] !== null);
         }).catch(err => {console.log(err)});
         }   , []);
 
@@ -123,34 +127,35 @@ function ProblemDetails(props) {
         sendComment("Problema desbloqueado");
     }
 
-    const submitForm = (data) => { 
+    const takeChange = (data) => { 
         var patch_data = {taken_by:localStorage.getItem("username")}
         dbPatch("problems/" + problem_id, patch_data);
         sendComment("Problema tomado");
     }
 
-  function addBlockButton() {
-    if (values.is_blocked === true) {
-        return (
-            <Button className="btn-fill" align="left"
-            color="warning"
-            type="submit"
-            onClick={() => unblockProblem()}
-            >
-            Desbloquear        
-            </Button>
-        )
-    }
-    return (
-        <Button className="btn-fill" align="left"
-        color="warning"
-        type="submit"
-        onClick={() => blockProblem()}
-        >
-        Bloquear        
-        </Button>  
-    )
-  }
+    function addBlockButton() {
+        if (!isEditable) return
+            return (
+                <>
+                    <Button className="btn-fill" align="left"
+                    hidden = {!isBlocked}
+                    color="warning"
+                    type="submit"
+                    onClick={() => unblockProblem()}
+                    >
+                    Desbloquear        
+                    </Button>
+                    <Button className="btn-fill" align="left"
+                    hidden = {isBlocked}
+                    color="warning"
+                    type="submit"
+                    onClick={() => blockProblem()}
+                    >
+                    Bloquear        
+                    </Button> 
+                </> 
+            )
+      }
 
   function addButtons() {
       if (values === '') {
@@ -162,9 +167,10 @@ function ProblemDetails(props) {
     if (!values.taken_by) {
         return (
         <Button className="btn-fill"
+        hidden={isTaken}
         color="primary"
         type="submit"
-        onClick={() => submitForm()}
+        onClick={() => takeChange()}
         >
         Tomar        
         </Button>)
@@ -194,7 +200,6 @@ function ProblemDetails(props) {
         created_by:created_by
     }
     dbPost("problems/" + problem_id + "/comments", post_data);
-    window.location.reload();
  }
 
  const showComments = () => {
@@ -301,7 +306,7 @@ function ProblemDetails(props) {
                   </Row>
                 </div>
             <div class="items-div">
-                <h4 className="title">Ítems asociados</h4>
+                <h4 className="title">Incidentes asociados</h4>
                 <SimpleTable data={itemsData}
                              columns={columns}
                              addWatchColumn={true}

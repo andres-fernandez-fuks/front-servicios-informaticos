@@ -34,8 +34,8 @@ import { dbPost } from "utils/backendFetchers";
 export const SLA_ITEM_DETAILS_PATH = "/item_details/sla";
 
 const columns = [
-    {"name": "version", "label": "Versión"},
-    {"name": "name", "label": "Nombre"},
+    {"name": "version_number", "label": "Versión"},
+    {"name": "created_at", "label": "Fecha de creación"},
 ]
 
 export default function SLADetailsPage() {
@@ -293,11 +293,23 @@ export default function SLADetailsPage() {
                             <Label style={{ color:"#1788bd" }} >Versión</Label>
                                 <Input
                                     readOnly
-                                    defaultValue = {currentValues.version}
+                                    defaultValue = {currentValues.current_version_number}
                                     id = "description"
                                     type="text"/>
                             </FormGroup>
-                        </Col>  
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md="12">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
+                                <Input
+                                    readOnly
+                                    defaultValue = {currentValues.change && currentValues.change.description}
+                                    id = "description"
+                                    type="text"/>
+                            </FormGroup>
+                        </Col>
                     </Row>
                 </CardBody>
             </Card>

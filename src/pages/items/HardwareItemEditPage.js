@@ -35,11 +35,6 @@ import { dbPost } from "utils/backendFetchers";
 export const ITEM_EDIT_PATH = "/item_edit";
 export const HARDWARE_ITEM_EDIT_PATH = "/item_edit/hardware";
 
-const columns = [
-    {"name": "version_number", "label": "Versión"},
-    {"name": "name", "label": "Nombre"},
-]
-
 export default function App() {
     const classes = useStyles();
     const history = useHistory();

@@ -75,10 +75,10 @@ function ChangeDetails(props) {
     const [problemItemsData, setProblemItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
     var change_id = paths[paths.length - 1]
-    const [columns, setColumns] = React.useState(incidentColumns);
-    const [formFields, setFormFields] = React.useState([{}])
+    const [isBlocked, setIsBlocked] = React.useState(false);
     localStorage.setItem("wasInChange", true)
     const [allItemsModified, setAllItemsModified] = React.useState(true);
+    const [isTaken, setIsTaken] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -146,6 +146,7 @@ function ChangeDetails(props) {
             setValues(data);
             setCurrentValues(data);
             fetchItemsData();
+            setIsBlocked(data["is_blocked"]);
             localStorage.setItem("change_id", change_id);
         }).catch(err => {console.log(err)});
         }   , []);
@@ -165,15 +166,13 @@ function ChangeDetails(props) {
     function blockChange() {
         var patch_data = {is_blocked:true}
         dbPatch("changes/" + change_id, patch_data);
-        // history.push(simple_routes.changes);
-        window.location.reload(false);
+        setIsBlocked(true);
     }
 
     function unblockChange() {
         var patch_data = {is_blocked:false}
         dbPatch("changes/" + change_id, patch_data);
-        // history.push(simple_routes.changes);
-        window.location.reload(false);
+        setIsBlocked(false);
     }
 
     const applyChange = () => { 
@@ -194,30 +193,29 @@ function ChangeDetails(props) {
         }).catch(err => {console.log(err)});
     }
 
-  function addBlockButton() {
-    if (!isEditable) return
-    if (values.is_blocked === true) {
-        return (
-            <Button className="btn-fill" align="left"
-            color="warning"
-            type="submit"
-            onClick={() => unblockChange()}
-            >
-            Desbloquear        
-            </Button>
-        )
-    }
-    return (
-        <Button className="btn-fill" align="left"
-        color="warning"
-        type="submit"
-        onClick={() => blockChange()}
-        >
-        Bloquear        
-        </Button>  
-    )
-  }
-
+    function addBlockButton() {
+        if (!isEditable) return
+            return (
+                <>
+                    <Button className="btn-fill" align="left"
+                    hidden = {!isBlocked}
+                    color="warning"
+                    type="submit"
+                    onClick={() => unblockChange()}
+                    >
+                    Desbloquear        
+                    </Button>
+                    <Button className="btn-fill" align="left"
+                    hidden = {isBlocked}
+                    color="warning"
+                    type="submit"
+                    onClick={() => blockChange()}
+                    >
+                    Bloquear        
+                    </Button> 
+                </> 
+            )
+      }
   function addButtons() {
     if (!isEditable) return
     if (values === '') {

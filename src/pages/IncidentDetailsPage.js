@@ -59,12 +59,14 @@ function IncidentDetails(props) {
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState({});
     const isEditable = checkPermissions(TABLES.INCIDENT, PERMISSIONS.UPDATE)
+    const [isBlocked, setIsBlocked] = React.useState(false);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
     var incident_id = paths[paths.length - 1]
     const [columns, setColumns] = React.useState(ciItemColumns);
+    const [isTaken, setIsTaken] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -94,6 +96,8 @@ function IncidentDetails(props) {
             setValues(data);
             setCurrentValues(data);
             fetchItemsData();
+            setIsBlocked(data["is_blocked"])
+            setIsTaken(data["taken_by"] !== null)
         }).catch(err => {console.log(err)});
         }   , []);
 
@@ -148,15 +152,17 @@ function IncidentDetails(props) {
         var patch_data = {is_blocked:true}
         dbPatch("incidents/" + incident_id, patch_data);
         sendComment("Incidente bloqueado");
+        setIsBlocked(true);
     }
 
     function unblockIncident() {
         var patch_data = {is_blocked:false}
         dbPatch("incidents/" + incident_id, patch_data);
         sendComment("Incidente desbloqueado");
+        setIsBlocked(false);
     }
 
-  const submitForm = (data) => { 
+  const takeIncident = () => { 
       var patch_data = {taken_by:localStorage.getItem("username")}
       dbPatch("incidents/" + incident_id, patch_data);
       // history.push(simple_routes.incidents);
@@ -165,59 +171,59 @@ function IncidentDetails(props) {
 
   function addBlockButton() {
     if (!isEditable) return
-    if (values.is_blocked === true) {
         return (
-            <Button className="btn-fill" align="left"
-            color="warning"
-            type="submit"
-            onClick={() => unblockIncident()}
-            >
-            Desbloquear        
-            </Button>
+            <>
+                <Button className="btn-fill" align="left"
+                hidden = {!isBlocked}
+                color="warning"
+                type="submit"
+                onClick={() => unblockIncident()}
+                >
+                Desbloquear        
+                </Button>
+                <Button className="btn-fill" align="left"
+                hidden = {isBlocked}
+                color="warning"
+                type="submit"
+                onClick={() => blockIncident()}
+                >
+                Bloquear        
+                </Button> 
+            </> 
         )
-    }
-    return (
-        <Button className="btn-fill" align="left"
-        color="warning"
-        type="submit"
-        onClick={() => blockIncident()}
-        >
-        Bloquear        
-        </Button>  
-    )
   }
 
   function addButtons() {
     if (!isEditable) return
       if (values === '') {
-      fetchValues();
+        return
     }
     if (values.status === "Resuelto") {
         return;
     }
-    if (!values.taken_by) {
         return (
-        <Button className="btn-fill"
-        color="primary"
-        type="submit"
-        onClick={() => submitForm()}
-        >
-        Tomar        
-        </Button>)
-    }
-    if (values.taken_by !== undefined) {
-    return (
-        <Grid align="center">
-        <Button className="btn-fill" align="right"
-        color="success"
-        type="submit"
-        onClick={() => solveIncident()}
-        >
-        Resolver        
-        </Button>
-        {addBlockButton()}
-        </Grid>)
-    }
+        <>
+            <Button className="btn-fill"
+            hidden={isTaken}
+            color="primary"
+            type="submit"
+            onClick={() => takeIncident()}
+            >
+            Tomar        
+            </Button>
+            <Grid align="center">
+            <Button className="btn-fill" align="right"
+            hidden={!isTaken}
+            color="success"
+            type="submit"
+            onClick={() => solveIncident()}
+            >
+            Resolver        
+            </Button>
+            {addBlockButton()}
+            </Grid>
+        </>
+        )
   }
 
   const sendComment = (comment) => {
@@ -235,34 +241,6 @@ function IncidentDetails(props) {
         setFlushLocalComments(false);
     });
     
- }
-
- function reloadComments(){
-    fetchValues()
-
- }
- const showComments = () => {
-    if (values === '') {
-      fetchValues();
-    }
-    if (values.comments === undefined) {
-        return;
-    }
-    if (values.comments.length === 0) {
-        return;
-    }
-    return (
-        <div>
-        {values.comments.map(comment => {
-            return (
-                <div class="comment-div">
-                <div class="comment-header-div">{comment.created_at} - {comment.created_by}</div>
-                <div class="comment-text-div"> {comment.text} </div>
-                </div>
-            )
-        })}
-        </div>
-    )
  }
 
   return (
@@ -363,27 +341,11 @@ function IncidentDetails(props) {
             <Col md="11">
               <h4 className="title">Tracking</h4>
                 <div>
-                  {/* <Input 
-                        placeholder="Ingrese un comentario..."
-                        id = "comment"
-                        type="text"
-                    />
-                </div>
-                <div className="comments-button-div">
-                    <Button 
-                    size="sm"
-                    color="info"
-                    onClick={() => sendComment()}
-                    >
-                    Comentar        
-                    </Button>
-                </div>
-                <div>
-                    {showComments()} */}
                     <CommentsTracking 
                         comments={values.comments} 
                         commentCreationUrl={"incidents/" + incident_id + "/comments"}
-                        flushLocalComments={flushLocalComments}/>
+                        flushLocalComments={flushLocalComments}
+                        />
                 </div>
           </Col>
             </Row>
