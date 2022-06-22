@@ -25,6 +25,7 @@ import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import AddIcon from '@mui/icons-material/Add';
 import { CHANGE_DETAILS_PATH } from "pages/ChangeDetailsPage";
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 // reactstrap components
 import {
@@ -163,6 +164,8 @@ function ChangesTable() {
                     color="info"
                     style={{backgroundColor:"white"}}
                     onClick={() => {RedirectToProblemCreation();}}
+                    hidden={!checkPermissions(TABLES.CHANGE, PERMISSIONS.CREATE)}
+
                     >
                     <AddIcon />
                 </IconButton>

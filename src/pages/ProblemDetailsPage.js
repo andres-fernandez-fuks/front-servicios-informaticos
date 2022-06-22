@@ -39,6 +39,7 @@ import {
   } from "reactstrap";
 
 import SimpleTable from "components/Table/SimpleTable";
+import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 
 export const PROBLEM_DETAILS_PATH = "/problem_details";
 
@@ -56,7 +57,7 @@ function ProblemDetails(props) {
     var paths = window.location.pathname.split("/") 
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = false;
+    const isEditable = checkPermissions(TABLES.PROBLEM, PERMISSIONS.UPDATE)
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
@@ -237,7 +238,7 @@ function ProblemDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <Input
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -251,7 +252,7 @@ function ProblemDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Estado</Label>
                               <Input className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue= {currentValues.status}
                                   onChange = {function(e){updateCurrentValues("status", e.target.value)}}
                                   id = "type"
@@ -263,7 +264,7 @@ function ProblemDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
                               <Input className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue= {currentValues.priority}
                                   onChange = {function(e){updateCurrentValues("priority", e.target.value)}}
                                   id = "type"
@@ -277,7 +278,7 @@ function ProblemDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Creado por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.created_by}
                                   onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
@@ -289,7 +290,7 @@ function ProblemDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Tomado por</Label>
                               <Input  className="other_input"
-                                  readOnly = {isEditable}
+                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.taken_by}
                                   onChange = {function(e){updateCurrentValues("taken_by", e.target.value)}}
                                   id = "serial_number"
