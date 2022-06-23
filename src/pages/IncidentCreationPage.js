@@ -132,6 +132,14 @@ function IncidentCreation(props) {
 
   }
 
+  function getItemValue(index){
+    if (formFields.length == 0 || Object.entries(formFields[index]).length == 0){
+      return 
+    }else {
+      return { value: formFields[index], label: formFields[index] }
+    }
+  }
+
   return (
     <>
       <div className="content">
@@ -183,6 +191,7 @@ function IncidentCreation(props) {
                           <Select
                               id={"item" + index+2}
                               options={confItems}
+                              value={getItemValue(index)}
                               onChange={event => handleFormChange(event, index, "item_name_"+index)}
                               search
                               filterOptions={fuzzySearch} 

@@ -101,6 +101,13 @@ function ProblemCreation(props) {
     setFormFields([...formFields, object])
   }
 
+  function getItemValue(index){
+    if (formFields.length == 0 || Object.entries(formFields[index]).length == 0){
+      return 
+    }else {
+      return { value: formFields[index], label: formFields[index] }
+    }
+  }
   function updatePriority(new_priority){
     //Llama al actualizador del values pasandole todos los datos
     //anteriores pero actualiza la prioridad
@@ -170,7 +177,7 @@ function ProblemCreation(props) {
                     </Row>
                   </Grid>
                     <Grid className = {classes.PaddedGrip}>
-                    <Label style={{ color:"#1788bd" }}>Prioridad</Label>
+                    <Label style={{ color:"#1788bd" }}>Incidentes</Label>
                         {formFields.map((form, index) => {
                             return (
                             <Grid item xs={12}>
@@ -179,6 +186,7 @@ function ProblemCreation(props) {
                             <Col md="10">
                             <Select
                                 styles = {selectStyles}
+                                value = {getItemValue(index)}
                                 id={"incident" + index+2}
                                 options={incidents}
                                 onChange={event => handleFormChange(event, index, "incident_name_"+index)}
@@ -202,7 +210,9 @@ function ProblemCreation(props) {
                             </Grid>
                             )
                             })}
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                            <Row> <Col>
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo incidente</Button>
+                            </Col> </Row>
                         </Grid>
               </CardBody>
               <CardFooter align="center">
