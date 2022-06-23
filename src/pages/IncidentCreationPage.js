@@ -86,6 +86,12 @@ function IncidentCreation(props) {
 
   const removeFields = (index) => {
     let data = [...formFields];
+    delete formData["item_name_"+index]
+    for (let i = index+1; i < data.length; i++) {
+      let aux = formData["item_name_"+i]
+      delete formData["item_name_"+i]
+      formData["item_name_"+(i-1)] = aux
+    } 
     data.splice(index, 1)
     setFormFields(data)
   }
@@ -120,8 +126,9 @@ function IncidentCreation(props) {
       formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
-      dbPost("incidents", formData);
-      history.push(simple_routes.incidents);
+      console.log("formData", formData)
+      //dbPost("incidents", formData);
+      //history.push(simple_routes.incidents);
       toast.success("Incidente creado correctamente")
 
   }
@@ -146,7 +153,6 @@ function IncidentCreation(props) {
                     label="Descripción"
                     placeholder="Ingrese una descripción"
                     type="text"
-
                 />
               </FormGroup>
               </Grid>
