@@ -322,7 +322,7 @@ function ChangeDetails(props) {
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Pedido por</Label>
                               <Input  className="other_input"
-                                  readOnly = {!isEditable}
+                                  readOnly
                                   defaultValue = {currentValues.created_by}
                                   onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
@@ -334,7 +334,7 @@ function ChangeDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Resuelto por</Label>
                               <Input  className="other_input"
-                                  readOnly = {!isEditable}
+                                  readOnly
                                   defaultValue = {currentValues.taken_by}
                                   onChange = {function(e){updateCurrentValues("taken_by", e.target.value)}}
                                   id = "serial_number"
