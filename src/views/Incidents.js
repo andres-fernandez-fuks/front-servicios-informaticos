@@ -87,10 +87,10 @@ function IncidentsTable() {
     const my_incidents_route = "users/" + localStorage.getItem("user_id") + "/incidents" ;
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(myIncidentColumns);
-    const [category, setCategory] = useState("Mis incidentes");
+    const [category, setCategory] = useState("No tomados");
     const classes = useStyles();
     useEffect(() => {
-        dbGet(my_incidents_route).then(data => {
+        dbGet("incidents/not-assigned").then(data => {
             setbigChartData(data);
             // setColumns(incidentColumns);
         }).catch(err => {console.log(err)});
@@ -117,24 +117,6 @@ function IncidentsTable() {
                 className="btn-group-toggle float-right"
                 data-toggle="buttons"
             >
-                <Button
-                hidden={!checkPermissions(TABLES.INCIDENT, PERMISSIONS.EDIT)}
-                tag="label"
-                className={classNames("btn-simple", {
-                    active: category === "Mis incidentes",
-                })}
-                color="info"
-                id="0"
-                size="sm"
-                onClick={(e) => fetchData(e, my_incidents_route, myIncidentColumns)}
-                >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis incidentes">
-                    Mis incidentes
-                </span>
-                <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-single-02" />
-                </span>
-                </Button>
                 <Button
                 color="info"
                 id="1"
@@ -184,6 +166,24 @@ function IncidentsTable() {
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
+                </span>
+                </Button>
+                <Button
+                hidden={!checkPermissions(TABLES.INCIDENT, PERMISSIONS.EDIT)}
+                tag="label"
+                className={classNames("btn-simple", {
+                    active: category === "Mis incidentes",
+                })}
+                color="info"
+                id="0"
+                size="sm"
+                onClick={(e) => fetchData(e, my_incidents_route, myIncidentColumns)}
+                >
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis incidentes">
+                    Mis incidentes
+                </span>
+                <span className="d-block d-sm-none">
+                    <i className="tim-icons icon-single-02" />
                 </span>
                 </Button>
             </ButtonGroup>

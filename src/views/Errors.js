@@ -57,11 +57,11 @@ function ErrorsTable() {
     const history = useHistory();
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(errorColumns);
-    const [category, setCategory] = useState("Mis errores");
+    const [category, setCategory] = useState("No tomados");
     const classes = useStyles();
 
     useEffect(() => {
-        dbGet("errors").then(data => {
+        dbGet("errors/not-assigned").then(data => {
             setbigChartData(data);
             // setColumns(errorColumns);
         }).catch(err => {console.log(err)});
@@ -89,24 +89,6 @@ function ErrorsTable() {
                 className="btn-group-toggle float-right"
                 data-toggle="buttons"
             >
-                <Button
-                hidden={!checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.EDIT)}
-                tag="label"
-                className={classNames("btn-simple", {
-                    active: category === "Mis errores",
-                })}
-                color="info"
-                id="0"
-                size="sm"
-                onClick={(e) => fetchData(e, "errors")}
-                >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis errores">
-                    Mis errores
-                </span>
-                <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-single-02" />
-                </span>
-                </Button>
                 <Button
                 color="info"
                 id="1"
@@ -156,6 +138,24 @@ function ErrorsTable() {
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
+                </span>
+                </Button>
+                <Button
+                hidden={!checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.EDIT)}
+                tag="label"
+                className={classNames("btn-simple", {
+                    active: category === "Mis errores",
+                })}
+                color="info"
+                id="0"
+                size="sm"
+                onClick={(e) => fetchData(e, "errors")}
+                >
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis errores">
+                    Mis errores
+                </span>
+                <span className="d-block d-sm-none">
+                    <i className="tim-icons icon-single-02" />
                 </span>
                 </Button>
             </ButtonGroup>

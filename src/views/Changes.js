@@ -56,16 +56,15 @@ function ChangesTable() {
     const history = useHistory();
     const [bigChartData, setbigChartData] = useState(tableData);
     const [columns, setColumns] = useState(changeColumns);
-    const [category, setCategory] = useState("Mis cambios");
+    const [category, setCategory] = useState("No tomados");
     const classes = useStyles();
 
     const RedirectToProblemCreation = () => {
         history.push(simple_routes.changeCreation);
     };
     useEffect(() => {
-        dbGet("changes").then(data => {
+        dbGet("changes/not-assigned").then(data => {
             setbigChartData(data);
-            // setColumns(changeColumns);
         }).catch(err => {console.log(err)});
     }   , []);
     function fetchData(event, endpoint, filterStatus) {
@@ -89,24 +88,6 @@ function ChangesTable() {
                 className="btn-group-toggle float-right"
                 data-toggle="buttons"
             >
-                <Button
-                hidden={!checkPermissions(TABLES.CHANGE, PERMISSIONS.CREATE)}
-                tag="label"
-                className={classNames("btn-simple", {
-                    active: category === "Mis cambios",
-                })}
-                color="info"
-                id="0"
-                size="sm"
-                onClick={(e) => fetchData(e, "changes")}
-                >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis cambios">
-                    Mis cambios
-                </span>
-                <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-single-02" />
-                </span>
-                </Button>
                 <Button
                 color="info"
                 id="1"
@@ -156,6 +137,24 @@ function ChangesTable() {
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
+                </span>
+                </Button>
+                <Button
+                hidden={!checkPermissions(TABLES.CHANGE, PERMISSIONS.CREATE)}
+                tag="label"
+                className={classNames("btn-simple", {
+                    active: category === "Mis cambios",
+                })}
+                color="info"
+                id="0"
+                size="sm"
+                onClick={(e) => fetchData(e, "changes")}
+                >
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis cambios">
+                    Mis cambios
+                </span>
+                <span className="d-block d-sm-none">
+                    <i className="tim-icons icon-single-02" />
                 </span>
                 </Button>
             </ButtonGroup>

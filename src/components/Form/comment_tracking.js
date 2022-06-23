@@ -10,7 +10,7 @@ function CommentHistory(props) {
         props.comments.map(comment => {
             return (
                 <div class="comment-div" key={comment.created_at}>
-                <div class="comment-header-div">{comment.created_at} - {comment.created_by}</div>
+                <div class="comment-header-div">{comment.created_at} - {comment.created_by ? comment.created_by : "Notificación del sistema"}</div>
                 <div class="comment-text-div"> {comment.text} </div>
                 </div>
             )

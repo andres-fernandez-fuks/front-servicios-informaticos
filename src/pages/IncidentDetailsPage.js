@@ -135,10 +135,11 @@ function IncidentDetails(props) {
       dbPatch("incidents/" + incident_id, patch_data);
       // history.push(simple_routes.incidents);
       sendComment("Incidente tomado");
+      setIsTaken(true);
   }
 
   function addBlockButton() {
-    if (!isEditable) return;
+    if (!isEditable || !isTaken) return;
         return (
             <>
                 <Button className="btn-fill" align="left"

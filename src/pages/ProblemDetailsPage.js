@@ -101,6 +101,7 @@ function ProblemDetails(props) {
             setIsBlocked(data["is_blocked"]);
             setIsTaken(data["taken_by"] !== null);
             setIsLoading(false);
+            console.log("comentarios: ", data)
         }).catch(err => {console.log(err)});
         }   , []);
 
