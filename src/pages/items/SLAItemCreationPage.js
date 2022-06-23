@@ -52,7 +52,6 @@ export const selectStyles = {
         borderBottom: '1px dotted pink',
         color: "white",
         backgroundColor: "#27293d",
-        text:"orange"
     }),
     control: styles => ({
         ...styles,
@@ -65,12 +64,26 @@ export const selectStyles = {
     }),
     singleValue: styles => ({
       ...styles,
-      color:"white"
-  }),
+      color:"white",
+      fontSize: "0.75rem"
+    }),
     option: (styles, {isFocused}) => ({
         ...styles,
         backgroundColor: isFocused ? "#1d253b" : "#27293d",
-    })};
+        fontSize: "0.75rem"
+    }),
+    input: (styles) => ({
+        ...styles,
+        color:"white",
+        fontSize: "0.75rem"
+    }),
+    placeholder: (styles) => ({
+        ...styles,
+        color:"#6c757c",
+        textAlign:"left",
+        fontSize: "0.75rem"
+    }),
+};
 export default function SLACreationPage() {
     const classes = useStyles();
     const history = useHistory();

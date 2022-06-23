@@ -70,13 +70,6 @@
     justify-content: center;
   }
 
-.row_div {
-    display: flex;
-    flex-direction: row;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    vertical-align: middle;
-}
 
 .heighttext{
     font-size:13px;
@@ -101,6 +94,12 @@
     width: 15%;
     color: black;
     
+}
+
+.left_aligned_input {
+    width: 15%;
+    color: black;
+    text-align:"left",   
 }
 
 .form_col {

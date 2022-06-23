@@ -25,10 +25,14 @@ import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles";
+import { selectStyles } from "./items/SLAItemCreationPage";
 // reactstrap components
 import {
   Button,
   Card,
+  Row,
+  Label,
+  Input,
   CardHeader,
   CardBody,
   CardFooter,
@@ -39,6 +43,7 @@ import {
 
 import Select from 'react-select'
 import toast, { Toaster } from 'react-hot-toast';
+import { RowDragging } from "devextreme-react/data-grid";
 
 const priorities = [
   { value: 'Alta', label: 'Alta' },
@@ -71,7 +76,7 @@ function IncidentCreation(props) {
         data[index] = value;
     }
     else {
-        value = event;
+        value = event["value"];
         data[index] = value;
         setFormFields(data);
         setItemValues([...itemValues, value]);
@@ -111,6 +116,7 @@ function IncidentCreation(props) {
         toast.error("Debe relacionar por lo menos un ítem de configuración")
         return
       }
+      
       formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
@@ -119,8 +125,6 @@ function IncidentCreation(props) {
       toast.success("Incidente creado correctamente")
 
   }
-
-  const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
 
   return (
     <>
@@ -134,61 +138,73 @@ function IncidentCreation(props) {
           </CardHeader>
           <CardBody>
               <Grid className = {classes.SmallPaddedGrip} >
-                  <h5 className="title">Descripción</h5>
-                  <input class="heighttext"
-                    name="description"
+              <FormGroup>
+                <Label style={{ color:"#1788bd" }}>Descripción</Label>
+                <Input className="left_aligned_input"
                     required
                     id="description"
                     label="Descripción"
-                    autoFocus
-                    autoComplete="off"
                     placeholder="Ingrese una descripción"
-                  />
+                    type="text"
+
+                />
+              </FormGroup>
               </Grid>
-              <Grid className = {classes.MediumPaddedGrip}>
-                <Col className="px-md-1" md="3">
+              <Grid className = {classes.MediumPaddedGrip}> 
+              <Row>
+                <Col md="10">
+                
                   <FormGroup>
-                  <h5 className="title">Prioridad</h5>
-                    <Select styles={selectStyles}
+                    <Label style={{ color:"#1788bd" }} for="type">Prioridad</Label>
+                    <Select 
+                        styles={selectStyles}
                         id="priority"
-                        value={{ value: values.priority, label: values.priority }}
                         onChange={function(new_option){updatePriority(new_option.value)}}
                         options={priorities}
                         autoFocus
+                        placeholder="Seleccione una prioridad"
                     />
                   </FormGroup>
-                </Col>
+                  </Col>
+              </Row>
               </Grid>
                 <Grid className = {classes.MediumPaddedGrip}>
-                <h5> <b>Ítems de configuración</b></h5>
+                <Label style={{ color:"#1788bd" }} for="type">Ítems de configuración</Label>
                     {formFields.map((form, index) => {
                         return (
-                        <Grid item xs={12}>
-                        <div key={index} className="row_div">
-                        <SelectSearch
-                            id={"item" + index+2}
-                            options={confItems}
-                            value={itemValues[index]}
-                            onChange={event => handleFormChange(event, index, "item_name_"+index)}
-                            search
-                            filterOptions={fuzzySearch} 
-                            placeholder="Search something"
-                        />
-                        &nbsp; &nbsp; &nbsp;
-                        <IconButton
-                                className={classes.onlyButtonNoSpacing}
-                                size="medium" 
-                                aria-label="delete"
-                                color="inherit"
-                                onClick={() => removeFields(index)}
-                                >
-                                <DeleteIcon/>
-                            </IconButton>
-                        </div>
+                        <Grid item md="12">   
+                        <div key={index} > <Row className="row_div">
+                          <Col md="10">
+                          <Select
+                              id={"item" + index+2}
+                              options={confItems}
+                              onChange={event => handleFormChange(event, index, "item_name_"+index)}
+                              search
+                              filterOptions={fuzzySearch} 
+                              placeholder="Buscar ítem de configuración"
+                              styles={selectStyles}
+                          />
+                          </Col>
+                          <Col md="2"> 
+                          <IconButton
+                              className={classes.onlyButtonNoSpacing}
+                              size="medium" 
+                              aria-label="delete"
+                              color="inherit"
+                              onClick={() => removeFields(index)}
+                              >
+                              <DeleteIcon/>
+                          </IconButton>
+                          </Col>
+                          </Row>
+                          </div>
+                        
                         </Grid>
                         )
                         })}
+                        <Row> <Col>
                         <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                        </Col></Row> 
                     </Grid>
           </CardBody>
           <CardFooter align="center">
