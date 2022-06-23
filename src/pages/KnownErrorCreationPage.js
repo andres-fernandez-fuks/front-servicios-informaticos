@@ -37,10 +37,13 @@ import {
   FormGroup,
   Form,
   Col,
+  Row,
+  Input,
+  Label
 } from "reactstrap";
 
 import Select from 'react-select'
-
+import { selectStyles } from "./items/SLAItemCreationPage";
 const formData = {};
 
 
@@ -67,7 +70,7 @@ function ErrorCreation(props) {
         data[index] = value;
     }
     else {
-        value = event;
+        value = event["value"];
         data[index] = value;
         setFormFields(data);
         setIncidentValues([...incidentValues, value]);
@@ -75,11 +78,26 @@ function ErrorCreation(props) {
     formData[field] = value;
   }
 
+  function getItemValue(index){
+    if (formFields.length == 0 || Object.entries(formFields[index]).length == 0){
+      return 
+    }else {
+      return { value: formFields[index], label: formFields[index] }
+    }
+  }
+
   const removeFields = (index) => {
     let data = [...formFields];
+    delete formData["incident_name_"+index]
+    for (let i = index+1; i < data.length; i++) {
+      let aux = formData["incident_name_"+i]
+      delete formData["incident_name_"+i]
+      formData["incident_name_"+(i-1)] = aux
+    } 
     data.splice(index, 1)
     setFormFields(data)
   }
+
 
   const addFields = () => {
     let object = {};
@@ -109,7 +127,6 @@ function ErrorCreation(props) {
       toast.success("Error creado correctamente")
   }
 
-  const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
 
   return (
     <>
@@ -123,49 +140,49 @@ function ErrorCreation(props) {
             </CardHeader>
             <CardBody>
                 <Grid className = {classes.SmallPaddedGrip} >
-                    <h5 className="title">Descripción</h5>
-                    <input class="heighttext"
-                        name="description"
-                        required
-                        id="description"
-                        label="Descripción"
-                        autoFocus
-                        autoComplete="off"
-                        placeholder="Ingrese una descripción"
-                    />
+                <Label style={{ color:"#1788bd" }}>Descripción</Label>
+                <Input className="left_aligned_input"
+                    required
+                    id="description"
+                    label="Descripción"
+                    placeholder="Ingrese una descripción"
+                    type="text"
+                />
                 </Grid>
                 <Grid className = {classes.SmallPaddedGrip} >
-                    <h5 className="title">Solución</h5>
-                    <input class="heighttext"
-                        name="solution"
-                        required
-                        id="solution"
-                        label="Solución"
-                        autoFocus
-                        autoComplete="off"
-                        placeholder="Ingrese una solución"
-                    />
+                <Label style={{ color:"#1788bd" }}>Solución</Label>
+                  <Input className="left_aligned_input"
+                      required
+                      id="solution"
+                      label="Solución"
+                      placeholder="Ingrese una solución"
+                      type="text"
+                  />
                 </Grid>
                 <Grid className = {classes.MediumPaddedGrip}>
                     <Col className="px-md-1" md="3">
                     </Col>
                 </Grid>
                     <Grid className = {classes.PaddedGrip}>
-                    <h5> <b>Incidentes</b></h5>
+                    <Label style={{ color:"#1788bd" }}>Incidentes</Label>
                         {formFields.map((form, index) => {
                             return (
                             <Grid item xs={12}>
-                            <div key={index} className="row_div">
-                            <SelectSearch
+                            <div key={index} > <Row className="row_div">
+                            <Col md="10">
+                            <Select
                                 id={"incident" + index+2}
                                 options={incidents}
-                                value={incidentValues[index]}
+                                styles = {selectStyles}
+                                value={getItemValue(index)}
                                 onChange={event => handleFormChange(event, index, "incident_name_"+index)}
                                 search
                                 filterOptions={fuzzySearch} 
-                                placeholder="Search something"
+                                placeholder="Buscar un incidente"
                             />
-                            &nbsp; &nbsp; &nbsp;
+                            </Col>
+                            <Col md = "2">
+                         
                             <IconButton
                                     size="medium" 
                                     aria-label="delete"
@@ -174,11 +191,15 @@ function ErrorCreation(props) {
                                     >
                                     <DeleteIcon/>
                                 </IconButton>
+                            </Col>
+                            </Row>
                             </div>
                             </Grid>
                             )
                             })}
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo Error</Button>
+                            <Row><Col>
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo Incidente</Button>
+                            </Col></Row>
                         </Grid>
               </CardBody>
               <CardFooter align="center">
