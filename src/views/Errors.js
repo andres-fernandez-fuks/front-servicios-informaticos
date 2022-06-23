@@ -26,6 +26,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { IconButton } from '@mui/material';
 import { KNOWN_ERROR_DETAILS_PATH } from "pages/KnownErrorDetailsPage";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
+import toast, { Toaster } from 'react-hot-toast';
 
 // reactstrap components
 import {
@@ -48,7 +49,7 @@ const errorColumns = [
     {"name": "id", "label": "id"},
     {"name": "description", "label": "Descripción"},
     {"name": "solution", "label": "Solución"},
-    {"name": "created_by", "label": "Creado por"},
+    {"name": "created_by", "label": "Actualizado por"},
     {"name": "created_at", "label": "Reportado el"},
 ]
 
@@ -81,6 +82,7 @@ function ErrorsTable() {
   return (
     <>
       <div className="content">
+      <Toaster />
         <Row>
           <Col md="12">
             <Card className={classes.card} style={{paddingTop:5}}>
