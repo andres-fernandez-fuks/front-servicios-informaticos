@@ -68,10 +68,13 @@ function ChangesTable() {
             // setColumns(changeColumns);
         }).catch(err => {console.log(err)});
     }   , []);
-    function fetchData(event, endpoint) {
+    function fetchData(event, endpoint, filterStatus) {
         const category = event.target.getAttribute("aria-label");
         setCategory(category);
         dbGet(endpoint).then(data => {
+            if (filterStatus) {
+                data = data.filter(e => e.status == filterStatus)
+            }
             setbigChartData(data);
         }).catch(err => {console.log(err)});
     }
@@ -114,7 +117,7 @@ function ChangesTable() {
                 onClick={(e) => fetchData(e, "changes/not-assigned")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="No tomados">
-                    No tomados
+                    Pendientes
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
@@ -128,10 +131,10 @@ function ChangesTable() {
                 className={classNames("btn-simple", {
                     active: category === "Tomados",
                 })}
-                onClick={(e) => fetchData(e, "changes/assigned")}
+                onClick={(e) => fetchData(e, "changes/assigned", "Resuelto")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Tomados">
-                    Tomados
+                    Aplicados
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
@@ -145,10 +148,10 @@ function ChangesTable() {
                 className={classNames("btn-simple", {
                     active: category === "Resueltos",
                 })}
-                onClick={(e) => fetchData(e, "changes/solved")}
+                onClick={(e) => fetchData(e, "changes/assigned", "Rechazado")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Resueltos">
-                    Resueltos
+                    Rechazados
                 </span>
                 <span className="d-block d-sm-none">
                     <i className="tim-icons icon-gift-2" />
