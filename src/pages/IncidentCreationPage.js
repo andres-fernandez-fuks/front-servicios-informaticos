@@ -126,7 +126,6 @@ function IncidentCreation(props) {
       formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
-      console.log("formData", formData)
       dbPost("incidents", formData);
       history.push(simple_routes.incidents);
       toast.success("Incidente creado correctamente")
