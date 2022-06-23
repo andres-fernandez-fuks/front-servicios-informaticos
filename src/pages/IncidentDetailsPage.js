@@ -212,7 +212,7 @@ function IncidentDetails(props) {
         setFlushLocalComments(false);
     });
     
- }
+}
 
   return (
     <>

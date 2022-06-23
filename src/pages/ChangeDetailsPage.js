@@ -152,15 +152,23 @@ function ChangeDetails(props) {
         }   , []);
 
 
+    function fetchValues() {
+        dbGet("changes/" + change_id).then(data => {
+            setValues(data);
+        }).catch(err => {console.log(err)});
+    }
+
     function blockChange() {
         var patch_data = {is_blocked:true}
         dbPatch("changes/" + change_id, patch_data);
+        sendComment("Cambio bloqueado");
         setIsBlocked(true);
     }
 
     function unblockChange() {
         var patch_data = {is_blocked:false}
         dbPatch("changes/" + change_id, patch_data);
+        sendComment("Cambio desbloqueado");
         setIsBlocked(false);
     }
 
@@ -170,7 +178,7 @@ function ChangeDetails(props) {
             setCurrentValues(data);
             setIsTaken(true);
       });
-        // sendComment("Incidente tomado");
+        sendComment("Cambio tomado");
     }
 
     const applyChange = () => { 
@@ -180,6 +188,7 @@ function ChangeDetails(props) {
         dbPatch("changes/" + change_id, patch_data).then(data => {
             history.push(simple_routes.changes);
         }).catch(err => {console.log(err)});
+        sendComment("Cambio aplicado");
     }
 
     const rejectChange = () => { 
@@ -189,6 +198,24 @@ function ChangeDetails(props) {
         dbPatch("changes/" + change_id, patch_data).then(data => {
             history.push(simple_routes.changes);
         }).catch(err => {console.log(err)});
+        sendComment("Cambio rechazado");
+    }
+
+    const sendComment = (comment) => {
+        if (!comment) comment = document.getElementById("comment").value;  
+        if (!comment) return;
+        
+        var created_by = localStorage.getItem("username");
+        var post_data = {
+            comment:comment,
+            created_by:created_by
+        }
+        dbPost("changes/" + change_id + "/comments", post_data).then(data => {
+            fetchValues();
+            setFlushLocalComments(true);
+            setFlushLocalComments(false);
+        });
+        
     }
 
     function addBlockButton() {
@@ -228,7 +255,7 @@ function ChangeDetails(props) {
             <Tooltip title={allItemsModified ? "" : "Quedan ítems por modificar"}>
             <span>
                 <Button
-                disabled = {!allItemsModified}
+                disabled = {!allItemsModified || isBlocked}
                 className="btn-fill"
                 color="info"
                 type="button"
@@ -236,7 +263,10 @@ function ChangeDetails(props) {
                 >
                 Aplicar        
                 </Button>
+            </span>
+            </Tooltip>
                 <Button
+                disabled = {isBlocked}
                 className="btn-fill"
                 color="danger"
                 type="button"
@@ -245,8 +275,6 @@ function ChangeDetails(props) {
                 Rechazar        
                 </Button>
                 {addBlockButton()}
-            </span>
-            </Tooltip>
         </Grid>
         )
     }
