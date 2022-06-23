@@ -59,12 +59,15 @@ function IncidentDetails(props) {
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState({});
     const isEditable = checkPermissions(TABLES.INCIDENT, PERMISSIONS.UPDATE)
+    const [isBlocked, setIsBlocked] = React.useState(false);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [itemsData, setItemsData] = React.useState([]);
     var paths = window.location.pathname.split("/") 
     var incident_id = paths[paths.length - 1]
     const [columns, setColumns] = React.useState(ciItemColumns);
+    const [isTaken, setIsTaken] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -94,6 +97,9 @@ function IncidentDetails(props) {
             setValues(data);
             setCurrentValues(data);
             fetchItemsData();
+            setIsBlocked(data["is_blocked"])
+            setIsTaken(data["taken_by"] !== null);
+            setIsLoading(false);
         }).catch(err => {console.log(err)});
         }   , []);
 
@@ -101,40 +107,6 @@ function IncidentDetails(props) {
             dbGet("incidents/" + incident_id).then(data => {
                 setValues(data);
             }).catch(err => {console.log(err)});
-    }
-
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
-        }).catch(err => {console.log(err)});
-}  
-
-    console.log("Values: ", values)
-
-    function getRequestValues() {
-        var request_values = {...currentValues};
-        delete request_values.versions;
-        delete request_values.version;
-        delete request_values.created_at;
-        delete request_values.updated_at;
-        delete request_values.id;
-        delete request_values.is_deleted;
-        delete request_values.item_class;
-        return request_values;
-    }
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        var path = "configuration-items/hardware/" + values.id + "/version";
-        var request_values = getRequestValues();
-        dbPost(path, request_values).then(data => {
-            history.push("/admin" + INCIDENT_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
-        }
-        ).catch(err => {console.log(err)});
     }
 
     function solveIncident() {
@@ -148,15 +120,17 @@ function IncidentDetails(props) {
         var patch_data = {is_blocked:true}
         dbPatch("incidents/" + incident_id, patch_data);
         sendComment("Incidente bloqueado");
+        setIsBlocked(true);
     }
 
     function unblockIncident() {
         var patch_data = {is_blocked:false}
         dbPatch("incidents/" + incident_id, patch_data);
         sendComment("Incidente desbloqueado");
+        setIsBlocked(false);
     }
 
-  const submitForm = (data) => { 
+  function takeIncident() { 
       var patch_data = {taken_by:localStorage.getItem("username")}
       dbPatch("incidents/" + incident_id, patch_data);
       // history.push(simple_routes.incidents);
@@ -164,30 +138,31 @@ function IncidentDetails(props) {
   }
 
   function addBlockButton() {
-    if (!isEditable) return
-    if (values.is_blocked === true) {
+    if (!isEditable) return;
         return (
-            <Button className="btn-fill" align="left"
-            color="warning"
-            type="submit"
-            onClick={() => unblockIncident()}
-            >
-            Desbloquear        
-            </Button>
+            <>
+                <Button className="btn-fill" align="left"
+                hidden = {!isBlocked}
+                color="warning"
+                type="button"
+                onClick={() => unblockIncident()}
+                >
+                Desbloquear        
+                </Button>
+                <Button className="btn-fill" align="left"
+                hidden = {isBlocked}
+                color="warning"
+                type="button"
+                onClick={() => blockIncident()}
+                >
+                Bloquear        
+                </Button> 
+            </> 
         )
-    }
-    return (
-        <Button className="btn-fill" align="left"
-        color="warning"
-        type="submit"
-        onClick={() => blockIncident()}
-        >
-        Bloquear        
-        </Button>  
-    )
   }
 
   function addButtons() {
+    if (isLoading) return;
     if (!isEditable) return
       if (values === '') {
       fetchValues();
@@ -195,30 +170,31 @@ function IncidentDetails(props) {
     if (values.status === "Resuelto") {
         return;
     }
-    if (!values.taken_by) {
         return (
-        <Button className="btn-fill"
-        color="primary"
-        type="submit"
-        onClick={() => submitForm()}
-        >
-        Tomar        
-        </Button>)
-    }
-    if (values.taken_by !== undefined) {
-    return (
-        <Grid align="center">
-        <Button className="btn-fill" align="right"
-        color="success"
-        type="submit"
-        onClick={() => solveIncident()}
-        >
-        Resolver        
-        </Button>
-        {addBlockButton()}
-        </Grid>)
-    }
+        <>
+            <Button className="btn-fill"
+            hidden={isTaken}
+            color="primary"
+            type="button"
+            onClick={() => takeIncident()}
+            >
+            Tomar        
+            </Button>
+            <Grid align="center">
+            <Button className="btn-fill" align="right"
+            hidden={!isTaken}
+            color="success"
+            type="button"
+            onClick={() => solveIncident()}
+            >
+            Resolver        
+            </Button>
+            {addBlockButton()}
+            </Grid>
+        </>
+        )
   }
+
 
   const sendComment = (comment) => {
     if (!comment) comment = document.getElementById("comment").value;  
@@ -237,40 +213,12 @@ function IncidentDetails(props) {
     
  }
 
- function reloadComments(){
-    fetchValues()
-
- }
- const showComments = () => {
-    if (values === '') {
-      fetchValues();
-    }
-    if (values.comments === undefined) {
-        return;
-    }
-    if (values.comments.length === 0) {
-        return;
-    }
-    return (
-        <div>
-        {values.comments.map(comment => {
-            return (
-                <div class="comment-div">
-                <div class="comment-header-div">{comment.created_at} - {comment.created_by}</div>
-                <div class="comment-text-div"> {comment.text} </div>
-                </div>
-            )
-        })}
-        </div>
-    )
- }
-
   return (
     <>
       <div className="content">
         <Row>
           <Col md="6">
-          <Form onSubmit= {handleSubmit}>
+          <Form>
           <Card className="incident-card">
               <CardHeader >
                   <h4 className="title">Detalles del incidente</h4>
@@ -363,27 +311,11 @@ function IncidentDetails(props) {
             <Col md="11">
               <h4 className="title">Tracking</h4>
                 <div>
-                  {/* <Input 
-                        placeholder="Ingrese un comentario..."
-                        id = "comment"
-                        type="text"
-                    />
-                </div>
-                <div className="comments-button-div">
-                    <Button 
-                    size="sm"
-                    color="info"
-                    onClick={() => sendComment()}
-                    >
-                    Comentar        
-                    </Button>
-                </div>
-                <div>
-                    {showComments()} */}
                     <CommentsTracking 
                         comments={values.comments} 
                         commentCreationUrl={"incidents/" + incident_id + "/comments"}
-                        flushLocalComments={flushLocalComments}/>
+                        flushLocalComments={flushLocalComments}
+                        />
                 </div>
           </Col>
             </Row>

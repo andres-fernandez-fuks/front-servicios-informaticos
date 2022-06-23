@@ -35,11 +35,6 @@ import { dbPost } from "utils/backendFetchers";
 export const ITEM_EDIT_PATH = "/item_edit";
 export const HARDWARE_ITEM_EDIT_PATH = "/item_edit/hardware";
 
-const columns = [
-    {"name": "version_number", "label": "Versión"},
-    {"name": "name", "label": "Nombre"},
-]
-
 export default function App() {
     const classes = useStyles();
     const history = useHistory();
@@ -80,6 +75,7 @@ export default function App() {
 
     function getRequestValues() {
         var request_values = {...currentValues};
+        delete request_values.change
         delete request_values.change_id;
         delete request_values.last_version;
         delete request_values.item_type;

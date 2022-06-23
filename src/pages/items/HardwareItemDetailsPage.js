@@ -36,7 +36,7 @@ export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
 
 const columns = [
     {"name": "version_number", "label": "Versión"},
-    {"name": "name", "label": "Nombre"},
+    {"name": "created_at", "label": "Fecha de creación"},
 ]
 
 export default function App() {
@@ -72,12 +72,6 @@ export default function App() {
         getVersions();
     }).catch(err => {console.log(err)});
     }   , []);
-
-    function fetchValues() {
-            dbGet("configuration-items/hardware/" + item_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
 
     function restoreVersion(request_path, redirect_path, version_id) {
         dbPost(request_path, {"version": version_id}).then(data => {
@@ -132,18 +126,6 @@ export default function App() {
         ).catch(err => {console.log(err)});
     }
 
-    const submitForm = (e) => {
-        //formData["created_by"] = localStorage.getItem("username");
-        //formData["description"] = document.getElementById('description').value;
-        //formData["priority"] = values.priority;
-        //dbPost("incidents", formData);
-        //history.push(simple_routes.incidents);
-    }
-
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
-    }
-
     function currencyFormat(num) {
         if (!num) return;
         return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -166,7 +148,7 @@ export default function App() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -178,7 +160,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -192,7 +174,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -206,7 +188,7 @@ export default function App() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.manufacturer}
                                     onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
                                     id = "serial_number"
@@ -218,7 +200,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
                                 <Input  className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.serial_number}
                                     onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
                                     id = "serial_number"
@@ -232,7 +214,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
                                 <Input className="other_input"
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.purchase_date}
                                     onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
                                     id = "description"
@@ -244,7 +226,7 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
                                 <Input
-                                    readOnly = {isEditable}
+                                    readOnly = {!isEditable}
                                     defaultValue = {currencyFormat(currentValues.price)}
                                     onChange = {function(e){updateCurrentValues("price", e.target.value)}}
                                     id = "description"
@@ -257,6 +239,16 @@ export default function App() {
                                 <Input
                                     readOnly
                                     defaultValue = {currentValues.current_version_number}
+                                    id = "description"
+                                    type="text"/>
+                            </FormGroup>
+                        </Col>
+                        <Col md="12">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
+                                <Input
+                                    readOnly
+                                    defaultValue = {currentValues.change && currentValues.change.description}
                                     id = "description"
                                     type="text"/>
                             </FormGroup>

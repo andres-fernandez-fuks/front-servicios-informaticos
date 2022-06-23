@@ -74,6 +74,7 @@ export default function SoftwareItemDetails() {
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.change_id;
+        delete request_values.change;
         delete request_values.last_version;
         delete request_values.item_type;
         delete request_values.current_version_number;
@@ -101,7 +102,6 @@ export default function SoftwareItemDetails() {
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             toast.success("Borrador guardado correctamente");
-            debugger;
             history.goBack();
         }
         ).catch(err => {console.log(err)});

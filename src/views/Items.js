@@ -172,7 +172,7 @@ function ItemsTable() {
                   aria-label="Crear ítem"
                   variant="contained" 
                   color="secondary"
-                  hidden={!checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.CREATE)}
+                  hidden={!checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.EDIT)}
                   style={{border: "2px solid black"}}
                   onClick={() => {RedirectToHardwareItemCreation();}}
                   >
@@ -186,7 +186,7 @@ function ItemsTable() {
                   color="secondary"
                   style={{border: "2px solid black"}}
                   onClick={() => {RedirectToSLAItemCreation();}}
-                  hidden={!checkPermissions(TABLES.SLA_ITEM, PERMISSIONS.CREATE)}
+                  hidden={!checkPermissions(TABLES.SLA_ITEM, PERMISSIONS.EDIT)}
                   >
                   <AddIcon />
                   SLA
@@ -198,7 +198,7 @@ function ItemsTable() {
                   color="secondary"
                   style={{border: "2px solid black"}}
                   onClick={() => {RedirectToSoftwareItemCreation();}}
-                  hidden={!checkPermissions(TABLES.SOFTWARE_ITEM, PERMISSIONS.CREATE)}
+                  hidden={!checkPermissions(TABLES.SOFTWARE_ITEM, PERMISSIONS.EDIT)}
                   >
                   <AddIcon />
                   Software

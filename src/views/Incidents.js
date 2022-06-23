@@ -118,6 +118,7 @@ function IncidentsTable() {
                 data-toggle="buttons"
             >
                 <Button
+                hidden={!checkPermissions(TABLES.INCIDENT, PERMISSIONS.EDIT)}
                 tag="label"
                 className={classNames("btn-simple", {
                     active: category === "Mis incidentes",

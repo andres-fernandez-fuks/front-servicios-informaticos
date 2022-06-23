@@ -42,6 +42,7 @@ import SimpleTable from "components/Table/SimpleTable";
 import ChangeTable from "components/Table/ChangeTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import Tooltip from "@material-ui/core/Tooltip";
+import CommentsTracking from "components/Form/comment_tracking";
 
 export const CHANGE_DETAILS_PATH = "/change_details";
 
@@ -62,7 +63,6 @@ const incidentColumns = [
 ]
 
 
-
 function ChangeDetails(props) {
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -73,12 +73,12 @@ function ChangeDetails(props) {
     const [itemsData, setItemsData] = React.useState([]);
     const [itemsCiData, setItemsCiData] = React.useState([]);
     const [problemItemsData, setProblemItemsData] = React.useState([]);
-    var paths = window.location.pathname.split("/") 
     var change_id = paths[paths.length - 1]
-    const [columns, setColumns] = React.useState(incidentColumns);
-    const [formFields, setFormFields] = React.useState([{}])
+    const [isBlocked, setIsBlocked] = React.useState(false);
     localStorage.setItem("wasInChange", true)
     const [allItemsModified, setAllItemsModified] = React.useState(true);
+    const [flushLocalComments, setFlushLocalComments] = React.useState(false);
+    const [isTaken, setIsTaken] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -135,7 +135,6 @@ function ChangeDetails(props) {
             })
 
             setItemsCiData(ci)
-            
             setItemsData([...incidents_data, ...problems_data]);
             setProblemItemsData(problems_data);
         }).catch(err => {console.log(err)});
@@ -146,34 +145,32 @@ function ChangeDetails(props) {
             setValues(data);
             setCurrentValues(data);
             fetchItemsData();
+            setIsBlocked(data["is_blocked"]);
+            setIsTaken(data["taken_by"] !== null)
             localStorage.setItem("change_id", change_id);
         }).catch(err => {console.log(err)});
         }   , []);
 
-    function fetchValues() {
-            dbGet("changes/" + change_id).then(data => {
-                setValues(data);
-            }).catch(err => {console.log(err)});
-    }
-
-    function solveChange() {
-        var patch_data = {status:"Resuelto"}
-        dbPatch("changes/" + change_id, patch_data);
-        history.push(simple_routes.changes);
-    }
 
     function blockChange() {
         var patch_data = {is_blocked:true}
         dbPatch("changes/" + change_id, patch_data);
-        // history.push(simple_routes.changes);
-        window.location.reload(false);
+        setIsBlocked(true);
     }
 
     function unblockChange() {
         var patch_data = {is_blocked:false}
         dbPatch("changes/" + change_id, patch_data);
-        // history.push(simple_routes.changes);
-        window.location.reload(false);
+        setIsBlocked(false);
+    }
+
+    function takeChange() {
+        var patch_data = {taken_by:localStorage.getItem("username")}
+        dbPatch("changes/" + change_id, patch_data).then(data => {
+            setCurrentValues(data);
+            setIsTaken(true);
+      });
+        // sendComment("Incidente tomado");
     }
 
     const applyChange = () => { 
@@ -194,39 +191,38 @@ function ChangeDetails(props) {
         }).catch(err => {console.log(err)});
     }
 
-  function addBlockButton() {
-    if (!isEditable) return
-    if (values.is_blocked === true) {
-        return (
-            <Button className="btn-fill" align="left"
-            color="warning"
-            type="submit"
-            onClick={() => unblockChange()}
-            >
-            Desbloquear        
-            </Button>
-        )
-    }
-    return (
-        <Button className="btn-fill" align="left"
-        color="warning"
-        type="submit"
-        onClick={() => blockChange()}
-        >
-        Bloquear        
-        </Button>  
-    )
-  }
-
+    function addBlockButton() {
+        if (!isEditable) return
+            return (
+                <>
+                    <Button className="btn-fill" align="left"
+                    hidden = {!isBlocked}
+                    color="warning"
+                    type="button"
+                    onClick={() => unblockChange()}
+                    >
+                    Desbloquear        
+                    </Button>
+                    <Button className="btn-fill" align="left"
+                    hidden = {isBlocked}
+                    color="warning"
+                    type="button"
+                    onClick={() => blockChange()}
+                    >
+                    Bloquear        
+                    </Button> 
+                </> 
+            )
+      }
   function addButtons() {
     if (!isEditable) return
     if (values === '') {
-      fetchValues();
+      return;
     }
     if (values.status === "Resuelto" || values.status === "Rechazado") {
         return;
     }
-    if (!values.taken_by) {
+    if (isTaken) {
         return (
         <Grid align="center">
             <Tooltip title={allItemsModified ? "" : "Quedan ítems por modificar"}>
@@ -234,18 +230,21 @@ function ChangeDetails(props) {
                 <Button
                 disabled = {!allItemsModified}
                 className="btn-fill"
-                color="primary"
+                color="info"
+                type="button"
                 onClick={() => applyChange()}
                 >
                 Aplicar        
                 </Button>
                 <Button
                 className="btn-fill"
-                color="secondary"
+                color="danger"
+                type="button"
                 onClick={() => rejectChange()}
                 >
                 Rechazar        
                 </Button>
+                {addBlockButton()}
             </span>
             </Tooltip>
         </Grid>
@@ -256,11 +255,12 @@ function ChangeDetails(props) {
         <Grid align="center">
         <Button className="btn-fill" align="right"
         color="success"
-        onClick={() => applyChange()}
+        type="button"
+        onClick={() => takeChange()}
         >
-        Aplicar        
+        Tomar        
         </Button>
-        {addBlockButton()}
+        
         </Grid>)
     }
   }
@@ -378,15 +378,18 @@ function ChangeDetails(props) {
           </Card>
           </Form>
           </Col>
-          <Col md="6">
+          <Col md="6" className="comment-section">
           <Row>
-            <Card className="card-user">
-              <CardBody className="comment-card">
-              <div className="comment-card">
-              <h4 className="title">Comentarios</h4>
-              </div>
-              </CardBody>
-            </Card>
+            <Col md="11">
+              <h4 className="title">Tracking</h4>
+                <div>
+                    <CommentsTracking 
+                        comments={values.comments} 
+                        commentCreationUrl={"changes/" + change_id + "/comments"}
+                        flushLocalComments={flushLocalComments}
+                    />
+                </div>
+          </Col>
             </Row>
           </Col>
         </Row>
