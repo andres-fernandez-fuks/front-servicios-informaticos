@@ -209,97 +209,97 @@ function ChangeCreation(props) {
                     </Col>
                     </Row>
                 </Grid>
-                    <Grid className = {classes.PaddedGrip}>
-                    <Label style={{ color:"#1788bd" }}>Incidentes</Label>
-                        {formFields.map((form, index) => {
-                            return (
-                            <Grid item xs={12}>
-                            <div key={index} >
-                            <Row className="row_div">
-                            <Col md="10">
-                              <Select
-                                styles = {selectStyles}
-                                id={"incident" + index+2}
-                                options={incidents}
-                                value = {getIncidentValue(index)}
-                                onChange={event => handleFormChange(event, index, "incident_name_"+index)}
-                                search
-                                filterOptions={fuzzySearch} 
-                                placeholder="Buscar incidente"
-                            />
-                            </Col>
-                            <Col md="2">
-                            <IconButton
-                                    size="medium" 
-                                    aria-label="delete"
-                                    color="primary"
-                                    onClick={() => removeFields(index)}
-                                    >
-                                    <DeleteIcon/>
-                                </IconButton>
-                            </Col>
-                            </Row>
-                            </div>
-                            </Grid>
-                            
-                            )
-                            })}
-                        <Row> <Col>
-                        <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo incidente</Button>
-                        </Col></Row>
-                        <Label style={{ color:"#1788bd" }}>Problemas</Label>
-                        {formProblemFields.map((form, index) => {
-                            return (
-                            <Grid item xs={12}>
-                            <div key={index}>
-                            <Row className="row_div">
-                            <Col md="10">
-                            <Select
-                                styles = {selectStyles}
-                                id={"problem" + index+2}
-                                options={problems}
-                                value = {getProblemValue(index)}
-                                onChange={event => handleFormChange(event, index, "problem_name_"+index)}
-                                search
-                                filterOptions={fuzzySearch} 
-                                placeholder="Buscar problema"
-                            />
-                            </Col>
-                            <Col md="2">
-                            <IconButton
-                                    size="medium" 
-                                    aria-label="delete"
-                                    color="primary"
-                                    onClick={() => removeProblemFields(index)}
-                                    >
-                                    <DeleteIcon/>
-                                </IconButton>
-                            </Col>
-                            </Row>
-                            </div>
-                            </Grid>
-                            )
-                            })}
-                            <Row> <Col>
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addProblemFields}>Nuevo problema</Button>
-                            </Col></Row>
-                            <CardFooter align="center">
-                                <Button className="btn-fill"
-                                    color="success"
-                                    type="submit"
-                                    onClick={(e) => {e.preventDefault(); submitForm()}}
-                                    >
-                                    Crear        
-                                </Button>
-                                <Button className="btn-fill"
-                                    color="warning"
-                                    onClick={() => exitForm()}
-                                    >
-                                    Volver        
-                                </Button>
-                            </CardFooter>
+                <Grid className = {classes.PaddedGrip}>
+                <Label style={{ color:"#1788bd" }}>Incidentes</Label>
+                {formFields.map((form, index) => {
+                    return (
+                    <Grid item xs={12}>
+                    <div key={index} >
+                    <Row className="row_div">
+                    <Col md="10">
+                      <Select
+                        styles = {selectStyles}
+                        id={"incident" + index+2}
+                        options={incidents}
+                        value = {getIncidentValue(index)}
+                        onChange={event => handleFormChange(event, index, "incident_name_"+index)}
+                        search
+                        filterOptions={fuzzySearch} 
+                        placeholder="Buscar incidente"
+                    />
+                    </Col>
+                    <Col md="2">
+                    <IconButton
+                            size="medium" 
+                            aria-label="delete"
+                            color="primary"
+                            onClick={() => removeFields(index)}
+                            >
+                            <DeleteIcon/>
+                        </IconButton>
+                    </Col>
+                    </Row>
+                    </div>
                     </Grid>
-              </CardBody>
+                    
+                    )
+                    })}
+                <Row> <Col>
+                <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo incidente</Button>
+                </Col></Row>
+                <Label style={{ color:"#1788bd" }}>Problemas</Label>
+                {formProblemFields.map((form, index) => {
+                    return (
+                    <Grid item xs={12}>
+                    <div key={index}>
+                    <Row className="row_div">
+                    <Col md="10">
+                    <Select
+                        styles = {selectStyles}
+                        id={"problem" + index+2}
+                        options={problems}
+                        value = {getProblemValue(index)}
+                        onChange={event => handleFormChange(event, index, "problem_name_"+index)}
+                        search
+                        filterOptions={fuzzySearch} 
+                        placeholder="Buscar problema"
+                    />
+                    </Col>
+                    <Col md="2">
+                    <IconButton
+                            size="medium" 
+                            aria-label="delete"
+                            color="primary"
+                            onClick={() => removeProblemFields(index)}
+                            >
+                            <DeleteIcon/>
+                        </IconButton>
+                    </Col>
+                    </Row>
+                    </div>
+                    </Grid>
+                    )
+                    })}
+                <Row> <Col>
+                <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addProblemFields}>Nuevo problema</Button>
+                </Col></Row>
+                <CardFooter align="center">
+                    <Button className="btn-fill"
+                        color="success"
+                        type="submit"
+                        onClick={(e) => {e.preventDefault(); submitForm()}}
+                        >
+                        Crear        
+                    </Button>
+                    <Button className="btn-fill"
+                        color="warning"
+                        onClick={() => exitForm()}
+                        >
+                        Volver        
+                    </Button>
+                </CardFooter>
+                </Grid>
+            </CardBody>
               
               
             </Card>

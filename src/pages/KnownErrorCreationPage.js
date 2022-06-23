@@ -138,7 +138,7 @@ function ErrorCreation(props) {
             <CardHeader >
                 <h4 className="title">Creación de Error</h4>
             </CardHeader>
-            <CardBody>
+            <CardBody style={{overflow: "auto"}}>
                 <Grid className = {classes.SmallPaddedGrip} >
                 <Label style={{ color:"#1788bd" }}>Descripción</Label>
                 <Input className="left_aligned_input"

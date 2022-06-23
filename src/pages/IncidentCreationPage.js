@@ -43,7 +43,6 @@ import {
 
 import Select from 'react-select'
 import toast, { Toaster } from 'react-hot-toast';
-import { RowDragging } from "devextreme-react/data-grid";
 
 const priorities = [
   { value: 'Alta', label: 'Alta' },
@@ -181,46 +180,45 @@ function IncidentCreation(props) {
                   </Col>
               </Row>
               </Grid>
-                <Grid className = {classes.MediumPaddedGrip}>
-                <Label style={{ color:"#1788bd" }} for="type">Ítems de configuración</Label>
-                    {formFields.map((form, index) => {
-                        return (
-                        <Grid item md="12">   
-                        <div key={index} > <Row className="row_div">
-                          <Col md="10">
-                          <Select
-                              id={"item" + index+2}
-                              options={confItems}
-                              value={getItemValue(index)}
-                              onChange={event => handleFormChange(event, index, "item_name_"+index)}
-                              search
-                              filterOptions={fuzzySearch} 
-                              placeholder="Buscar ítem de configuración"
-                              styles={selectStyles}
-                          />
-                          </Col>
-                          <Col md="2"> 
-                          <IconButton
-                              className={classes.onlyButtonNoSpacing}
-                              size="medium" 
-                              aria-label="delete"
-                              color="inherit"
-                              onClick={() => removeFields(index)}
-                              >
-                              <DeleteIcon/>
-                          </IconButton>
-                          </Col>
-                          </Row>
-                          </div>
-                        
-                        </Grid>
-                        )
-                        })}
-                        <Row> <Col>
-                        <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
-                        </Col></Row> 
-                    </Grid>
-          </CardBody>
+              <Grid className = {classes.PaddedGrip}>
+              <Label style={{ color:"#1788bd" }} for="type">Ítems de configuración</Label>
+              {formFields.map((form, index) => {
+                  return (
+                  <Grid item md="12">   
+                  <div key={index} > <Row className="row_div">
+                    <Col md="10">
+                    <Select
+                        id={"item" + index+2}
+                        options={confItems}
+                        value={getItemValue(index)}
+                        onChange={event => handleFormChange(event, index, "item_name_"+index)}
+                        search
+                        filterOptions={fuzzySearch} 
+                        placeholder="Buscar ítem de configuración"
+                        styles={selectStyles}
+                    />
+                    </Col>
+                    <Col md="2"> 
+                    <IconButton
+                        className={classes.onlyButtonNoSpacing}
+                        size="medium" 
+                        aria-label="delete"
+                        color="inherit"
+                        onClick={() => removeFields(index)}
+                        >
+                        <DeleteIcon/>
+                    </IconButton>
+                    </Col>
+                    </Row>
+                    </div>
+                  
+                  </Grid>
+                  )
+                  })}
+                  <Row> <Col>
+                  <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                  </Col></Row> 
+          
           <CardFooter align="center">
           <Button className="btn-fill"
             color="success"
@@ -236,7 +234,8 @@ function IncidentCreation(props) {
             Volver        
           </Button>
           </CardFooter>
-          
+          </Grid>
+          </CardBody>
         </Card>
         </Form>
         </div>
