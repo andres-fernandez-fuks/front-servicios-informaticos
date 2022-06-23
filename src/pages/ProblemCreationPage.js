@@ -31,16 +31,19 @@ import toast, { Toaster } from 'react-hot-toast';
 import {
   Button,
   Card,
+  Label,
+  Input,
   CardHeader,
   CardBody,
   CardFooter,
   FormGroup,
   Form,
   Col,
+  Row
 } from "reactstrap";
 
 import Select from 'react-select'
-
+import { selectStyles } from "./items/SLAItemCreationPage";
 const priorities = [
   { value: 'Alta', label: 'Alta' },
   { value: 'Media', label: 'Media' },
@@ -73,7 +76,7 @@ function ProblemCreation(props) {
         data[index] = value;
     }
     else {
-        value = event;
+        value = event["value"];
         data[index] = value;
         setFormFields(data);
         setIncidentValues([...incidentValues, value]);
@@ -83,6 +86,12 @@ function ProblemCreation(props) {
 
   const removeFields = (index) => {
     let data = [...formFields];
+    delete formData["incident_name_"+index]
+    for (let i = index+1; i < data.length; i++) {
+      let aux = formData["incident_name_"+i]
+      delete formData["incident_name_"+i]
+      formData["incident_name_"+(i-1)] = aux
+    } 
     data.splice(index, 1)
     setFormFields(data)
   }
@@ -92,6 +101,13 @@ function ProblemCreation(props) {
     setFormFields([...formFields, object])
   }
 
+  function getItemValue(index){
+    if (formFields.length == 0 || Object.entries(formFields[index]).length == 0){
+      return 
+    }else {
+      return { value: formFields[index], label: formFields[index] }
+    }
+  }
   function updatePriority(new_priority){
     //Llama al actualizador del values pasandole todos los datos
     //anteriores pero actualiza la prioridad
@@ -121,60 +137,65 @@ function ProblemCreation(props) {
       toast.success("Problema creado correctamente")
   }
 
-  const selectStyles = { menu: styles => ({ ...styles, zIndex: 999 }) };
+
 
   return (
     <>
       <div className="content">
+      <div className={classes.centeredDiv}>
         <Toaster/>
           <Form onSubmit={submitForm}>
-            <Card>
+            <Card style={{ width: '40rem' }} className="creation-card">
               <CardHeader >
                 <h4 className="title">Creación de Problema</h4>
               </CardHeader>
               <CardBody>
                   <Grid className = {classes.SmallPaddedGrip} >
-                      <h5 className="title">Descripción</h5>
-                      <input class="heighttext"
-                        name="description"
+                      <Label style={{ color:"#1788bd" }}>Descripción</Label>
+                      <Input className="left_aligned_input"
                         required
                         id="description"
                         label="Descripción"
-                        autoFocus
-                        autoComplete="off"
                         placeholder="Ingrese una descripción"
+                        type="text"
                       />
                   </Grid>
                   <Grid className = {classes.SmallPaddedGrip}>
-                    <Col className="px-md-1" md="3">
+                    <Row>
+                    <Col md="10">
                       <FormGroup>
-                      <h5 className="title">Prioridad</h5>
-                        <Select styles={selectStyles}
+                      <Label style={{ color:"#1788bd" }}>Prioridad</Label>
+                        <Select 
+                            styles={selectStyles}
                             id="priority"
-                            value={{ value: values.priority, label: values.priority }}
                             onChange={function(new_option){updatePriority(new_option.value)}}
                             options={priorities}
                             autoFocus
                         />
                       </FormGroup>
                     </Col>
+                    </Row>
                   </Grid>
                     <Grid className = {classes.PaddedGrip}>
-                    <h5> <b>Incidentes</b></h5>
+                    <Label style={{ color:"#1788bd" }}>Incidentes</Label>
                         {formFields.map((form, index) => {
                             return (
                             <Grid item xs={12}>
-                            <div key={index} className="row_div">
-                            <SelectSearch
+                            <div key={index}>
+                            <Row className="row_div">
+                            <Col md="10">
+                            <Select
+                                styles = {selectStyles}
+                                value = {getItemValue(index)}
                                 id={"incident" + index+2}
                                 options={incidents}
-                                value={incidentValues[index]}
                                 onChange={event => handleFormChange(event, index, "incident_name_"+index)}
                                 search
                                 filterOptions={fuzzySearch} 
-                                placeholder="Search something"
+                                placeholder="Buscar problemas"
                             />
-                            &nbsp; &nbsp; &nbsp;
+                            </Col>
+                            <Col md="2">
                             <IconButton
                                     size="medium" 
                                     aria-label="delete"
@@ -183,11 +204,15 @@ function ProblemCreation(props) {
                                     >
                                     <DeleteIcon/>
                                 </IconButton>
+                            </Col>
+                            </Row>
                             </div>
                             </Grid>
                             )
                             })}
-                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo ítem</Button>
+                            <Row> <Col>
+                            <Button size="sm" style={{backgroundColor:"#00B1E1" }} onClick={addFields}>Nuevo incidente</Button>
+                            </Col> </Row>
                         </Grid>
               </CardBody>
               <CardFooter align="center">
@@ -208,6 +233,7 @@ function ProblemCreation(props) {
               
             </Card>
             </Form>
+      </div>
       </div>
     </>
   );

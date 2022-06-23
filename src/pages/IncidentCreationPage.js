@@ -86,6 +86,12 @@ function IncidentCreation(props) {
 
   const removeFields = (index) => {
     let data = [...formFields];
+    delete formData["item_name_"+index]
+    for (let i = index+1; i < data.length; i++) {
+      let aux = formData["item_name_"+i]
+      delete formData["item_name_"+i]
+      formData["item_name_"+(i-1)] = aux
+    } 
     data.splice(index, 1)
     setFormFields(data)
   }
@@ -126,6 +132,14 @@ function IncidentCreation(props) {
 
   }
 
+  function getItemValue(index){
+    if (formFields.length == 0 || Object.entries(formFields[index]).length == 0){
+      return 
+    }else {
+      return { value: formFields[index], label: formFields[index] }
+    }
+  }
+
   return (
     <>
       <div className="content">
@@ -146,7 +160,6 @@ function IncidentCreation(props) {
                     label="Descripción"
                     placeholder="Ingrese una descripción"
                     type="text"
-
                 />
               </FormGroup>
               </Grid>
@@ -178,6 +191,7 @@ function IncidentCreation(props) {
                           <Select
                               id={"item" + index+2}
                               options={confItems}
+                              value={getItemValue(index)}
                               onChange={event => handleFormChange(event, index, "item_name_"+index)}
                               search
                               filterOptions={fuzzySearch} 
