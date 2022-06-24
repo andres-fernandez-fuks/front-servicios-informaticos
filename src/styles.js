@@ -1,6 +1,9 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 export default makeStyles((theme) => ({
+  disabledInput: {
+        color: "#999999"
+    },
   PaddedGrid: {
     marginTop: 50
   },

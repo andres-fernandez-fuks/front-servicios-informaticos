@@ -23,6 +23,8 @@ import {
   Col,
 } from "reactstrap";
 
+import {DisabledInput} from "components/Form/DisabledInput.js";
+
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
@@ -118,6 +120,8 @@ export default function SoftwareItemDetails() {
     }
 
 
+
+
     return (
       <>
         <div className="content">
@@ -134,8 +138,7 @@ export default function SoftwareItemDetails() {
                         <Col md="6">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "name"
@@ -146,8 +149,7 @@ export default function SoftwareItemDetails() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -160,8 +162,7 @@ export default function SoftwareItemDetails() {
                         <Col className="pb-md-2" md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
-                                <Input
-                                    readOnly = {!isEditable}
+                                <DisabledInput
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -174,8 +175,7 @@ export default function SoftwareItemDetails() {
                         <Col md="5">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Proveedor</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
                                     defaultValue = {currentValues.provider}
                                     onChange = {function(e){updateCurrentValues("provider", e.target.value)}}
                                     id = "provider"
@@ -186,8 +186,7 @@ export default function SoftwareItemDetails() {
                         <Col md="5">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }}>Versión del Software</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
                                     defaultValue = {currentValues.software_version}
                                     onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
                                     id = "software_version"
@@ -198,8 +197,7 @@ export default function SoftwareItemDetails() {
                         <Col md="2">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <Input
-                                    readOnly
+                                <DisabledInput
                                     defaultValue = {currentValues.current_version_number}
                                     id = "version"
                                     type="text"/>
@@ -210,8 +208,7 @@ export default function SoftwareItemDetails() {
                         <Col md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
-                                <Input
-                                    readOnly
+                                <DisabledInput
                                     defaultValue = {currentValues.change && currentValues.change.description}
                                     id = "description"
                                     type="text"/>

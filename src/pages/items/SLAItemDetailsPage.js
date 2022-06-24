@@ -27,6 +27,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import {DisabledInput} from "components/Form/DisabledInput.js";
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
@@ -158,8 +159,8 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Nombre</Label>
-                                <Input
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -170,8 +171,8 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Cliente</Label>
-                                <Input
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue= {currentValues.client}
                                     onChange = {function(e){updateCurrentValues("client", e.target.value)}}
                                     id = "client"
@@ -183,7 +184,7 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >¿Crucial?</Label>
                             <br></br> &nbsp; &nbsp; &nbsp;
-                                <Input
+                                <DisabledInput
                                     id = "is_crucial"
                                     disabled = {!isEditable}
                                     onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
@@ -196,8 +197,8 @@ export default function SLADetailsPage() {
                         <Col className="pb-md-2" md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
-                                <Input
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -210,8 +211,8 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo de servicio</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue= {currentValues.service_type}
                                     onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
                                     id = "service_type"
@@ -222,8 +223,8 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Gerente</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue= {currentValues.service_manager}
                                     onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
                                     id = "service_manager"
@@ -248,8 +249,8 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue= {currentValues.measurement_value}
                                     onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
                                     onKeyPress={(event) => {
@@ -267,8 +268,8 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Fecha de inicio</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput  className="other_input"
+                                    
                                     defaultValue = {currentValues.starting_date}
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
                                     id = "starting_date"
@@ -279,8 +280,8 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }}>Fecha de fin</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput  className="other_input"
+                                    
                                     defaultValue = {currentValues.ending_date}
                                     onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
                                     id = "ending_date"
@@ -291,7 +292,7 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >Versión</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = {currentValues.current_version_number}
                                     id = "description"
@@ -303,7 +304,7 @@ export default function SLADetailsPage() {
                         <Col md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = {currentValues.change && currentValues.change.description}
                                     id = "description"

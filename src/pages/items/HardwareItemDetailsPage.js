@@ -27,6 +27,7 @@ import {
   Col,
 } from "reactstrap";
 import toast, { Toaster } from 'react-hot-toast';
+import {DisabledInput} from "components/Form/DisabledInput.js";
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
@@ -147,8 +148,8 @@ export default function App() {
                         <Col md="6">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -159,8 +160,8 @@ export default function App() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -173,8 +174,8 @@ export default function App() {
                         <Col className="pb-md-2" md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
-                                <Input
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -187,8 +188,8 @@ export default function App() {
                         <Col md="6">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput  className="other_input"
+                                    
                                     defaultValue = {currentValues.manufacturer}
                                     onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
                                     id = "serial_number"
@@ -199,8 +200,8 @@ export default function App() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput  className="other_input"
+                                    
                                     defaultValue = {currentValues.serial_number}
                                     onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
                                     id = "serial_number"
@@ -213,8 +214,8 @@ export default function App() {
                         <Col className="pb-md-2" md="5">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue = {currentValues.purchase_date}
                                     onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
                                     id = "description"
@@ -225,8 +226,8 @@ export default function App() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
-                                <Input
-                                    readOnly = {!isEditable}
+                                <DisabledInput
+                                    
                                     defaultValue = {currencyFormat(currentValues.price)}
                                     onChange = {function(e){updateCurrentValues("price", e.target.value)}}
                                     id = "description"
@@ -236,7 +237,7 @@ export default function App() {
                         <Col md="3">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = {currentValues.current_version_number}
                                     id = "description"
@@ -246,7 +247,7 @@ export default function App() {
                         <Col md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = {currentValues.change && currentValues.change.description}
                                     id = "description"

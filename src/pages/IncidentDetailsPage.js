@@ -38,6 +38,7 @@ import {
     Col,
   } from "reactstrap";
 
+import {DisabledInput} from "components/Form/DisabledInput.js";  
 import SimpleTable from "components/Table/SimpleTable";
 import classNames from "classnames";
 import CommentsTracking from "components/Form/comment_tracking";
@@ -188,7 +189,7 @@ function IncidentDetails(props) {
                 <Button className="btn-fill" align="right"
                 hidden={!isTaken}
                 disabled = {isBlocked}
-                color="success"
+                color="info"
                 type="button"
                 onClick={() => solveIncident()}
                 >
@@ -235,8 +236,8 @@ function IncidentDetails(props) {
                       <Col className="pb-md-2" md="12">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
-                              <Input
-                                  readOnly = {!isEditable}
+                              <DisabledInput
+                                  
                                   defaultValue = {currentValues.description}
                                   onChange = {(e) => {updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -249,8 +250,8 @@ function IncidentDetails(props) {
                       <Col md="6">
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Estado</Label>
-                              <Input className="other_input"
-                                  readOnly = {!isEditable}
+                              <DisabledInput className="other_input"
+                                  
                                   defaultValue= {currentValues.status}
                                   onChange = {(e) => {updateCurrentValues("status", e.target.value)}}
                                   id = "type"
@@ -261,8 +262,8 @@ function IncidentDetails(props) {
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
-                              <Input className="other_input"
-                                  readOnly = {!isEditable}
+                              <DisabledInput className="other_input"
+                                  
                                   defaultValue= {currentValues.priority}
                                   onChange = {(e) => {updateCurrentValues("priority", e.target.value)}}
                                   id = "type"
@@ -275,8 +276,8 @@ function IncidentDetails(props) {
                       <Col md="6">
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Creado por</Label>
-                              <Input  className="other_input"
-                                  readOnly = {!isEditable}
+                              <DisabledInput  className="other_input"
+                                  
                                   defaultValue = {currentValues.created_by}
                                   onChange = {(e) => {updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
@@ -287,8 +288,8 @@ function IncidentDetails(props) {
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Tomado por</Label>
-                              <Input  className="other_input"
-                                  readOnly = {!isEditable}
+                              <DisabledInput  className="other_input"
+                                  
                                   defaultValue = {currentValues.taken_by}
                                   onChange = { (e) => {updateCurrentValues("taken_by", e.target.value)}}
                                   id = "serial_number"

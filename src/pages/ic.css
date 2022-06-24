@@ -90,10 +90,8 @@
     color: black;
 }
 
-.other_input {
-    width: 15%;
-    color: black;
-    
+.other_input:disabled {
+    color: white;
 }
 
 .left_aligned_input {

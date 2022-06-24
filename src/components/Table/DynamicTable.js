@@ -11,10 +11,10 @@ import { NavLink, Link, useLocation } from "react-router-dom";
 
 function choosePriorityColor(priority) {
     switch(priority) {
-        case "Pendiente": return "#9F0606";
-        case "Alta": return "#9F0606";
-        case "Media": return "#E86C36";
-        case "En proceso": return "#E86C36";
+        case "Pendiente": return "#BB2E2E";
+        case "Alta": return "#BB2E2E";
+        case "Media": return "#BF6B40";
+        case "En proceso": return "#BF6B40";
         case "Baja": return "#6F975C";
         case "Resuelto": return "#6F975C";
         case "Rechazado": return "#736464";
@@ -67,7 +67,7 @@ export default function CustomDataTable(props) {
           },
           background: {
             default: "",
-            paper: "#1f2131"
+            paper: "#28283D"
           }
         }
       });
@@ -163,6 +163,7 @@ export default function CustomDataTable(props) {
     }
 
     const table_options = {
+        elevation: 0,
         filterType: 'dropdown',
         selectableRows: false,
         textLabels: datatableTextLabels(),

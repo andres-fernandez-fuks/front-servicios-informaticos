@@ -38,6 +38,7 @@ import {
     Col,
   } from "reactstrap";
 
+import {DisabledInput} from "components/Form/DisabledInput.js";  
 import SimpleTable from "components/Table/SimpleTable";
 import ChangeTable from "components/Table/ChangeTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
@@ -222,7 +223,7 @@ function ChangeDetails(props) {
         if (!isEditable) return
             return (
                 <>
-                    <Button className="btn-fill" align="left"
+                    <Button className="btn-fill"
                     hidden = {!isBlocked}
                     color="warning"
                     type="button"
@@ -230,7 +231,7 @@ function ChangeDetails(props) {
                     >
                     Desbloquear        
                     </Button>
-                    <Button className="btn-fill" align="left"
+                    <Button className="btn-fill"
                     hidden = {isBlocked}
                     color="warning"
                     type="button"
@@ -272,6 +273,7 @@ function ChangeDetails(props) {
                 </Button>
             </span>
             </Tooltip>
+            &nbsp;
             <Tooltip title={isBlocked ? "Cambio bloqueado" : ""}>
                 <span>
                     <Button
@@ -321,8 +323,8 @@ function ChangeDetails(props) {
                       <Col className="pb-md-2" md="12">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
-                              <Input
-                                  readOnly = {!isEditable}
+                              <DisabledInput
+                                  
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -335,8 +337,8 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Estado</Label>
-                              <Input className="other_input"
-                                  readOnly = {!isEditable}
+                              <DisabledInput
+                                  
                                   defaultValue= {currentValues.status}
                                   onChange = {function(e){updateCurrentValues("status", e.target.value)}}
                                   id = "type"
@@ -347,8 +349,8 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
-                              <Input className="other_input"
-                                  readOnly = {!isEditable}
+                              <DisabledInput
+                                  
                                   defaultValue= {currentValues.priority}
                                   onChange = {function(e){updateCurrentValues("priority", e.target.value)}}
                                   id = "type"
@@ -361,7 +363,7 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Pedido por</Label>
-                              <Input  className="other_input"
+                              <DisabledInput  className="other_input"
                                   readOnly
                                   defaultValue = {currentValues.created_by}
                                   onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
@@ -373,7 +375,7 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Resuelto por</Label>
-                              <Input  className="other_input"
+                              <DisabledInput  className="other_input"
                                   readOnly
                                   defaultValue = {currentValues.taken_by}
                                   onChange = {function(e){updateCurrentValues("taken_by", e.target.value)}}
