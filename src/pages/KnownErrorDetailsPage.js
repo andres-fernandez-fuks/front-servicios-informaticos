@@ -124,29 +124,25 @@ function KnownErrorDetails(props) {
 
     //todo esto no se si va
     const submitForm = (data) => {
-        var patch_data = {taken_by:localStorage.getItem("username")}
-        dbPatch("errors/" + error_id, patch_data);
-        sendComment("Error tomado");
+        dbPost("errors/" + error_id + "/version", currentValues);
+        sendComment("Error actualizado");
     }
 
   function addButtons() {
-    if (!isEditable) return 
+    if (!isEditable) return
       if (values === '') {
       fetchValues();
     }
-    //todo ver que el boton de guardar ande
-    if (!values.taken_by) {
-        return (
+//todo ver que el boton de guardar ande
+    return (
         <Button className="btn-fill"
         color="primary"
         type="submit"
-        disabled = {!enableCreateButton}
         onClick={() => submitForm()}
         >
         Guardar
         </Button>)
     }
-  }
 
   //todo ver si esto sirve
   const sendComment = (comment) => {
