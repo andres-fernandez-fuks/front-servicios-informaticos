@@ -145,7 +145,7 @@ function IncidentCreation(props) {
           <div className={classes.centeredDiv}>
       <Toaster/>
       <Form onSubmit="return false" className="center-div">
-        <Card style={{ width: '40rem' }} className="creation-card">
+        <Card style={{ width: '40rem' }}>
           <CardHeader >
             <h4 className="title">Creación de Incidente</h4>
           </CardHeader>

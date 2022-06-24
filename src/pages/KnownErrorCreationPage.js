@@ -134,11 +134,11 @@ function ErrorCreation(props) {
             <div className={classes.centeredDiv}>
         <Toaster/>
         <Form onSubmit="return false" className="center-div">
-            <Card style={{ width: '40rem' }} className="creation-card">
+            <Card style={{ width: '40rem' }}>
             <CardHeader >
                 <h4 className="title">Creación de Error</h4>
             </CardHeader>
-            <CardBody style={{overflow: "auto"}}>
+            <CardBody>
                 <Grid className = {classes.SmallPaddedGrip} >
                 <Label style={{ color:"#1788bd" }}>Descripción</Label>
                 <Input className="left_aligned_input"
