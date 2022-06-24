@@ -48,6 +48,11 @@ const incidentColumns = [
     {"name": "id", "label": "ID"},
     {"name": "description", "label": "Descripción"}
 ]
+const versionColumns = [
+    {"name": "version_number", "label": "Número de versión"},
+    {"name": "description", "label": "Descripción"}
+]
+
 
 
 
@@ -78,7 +83,6 @@ function KnownErrorDetails(props) {
     function fetchItemsData() {
         dbGet("errors/" + error_id).then(data => {
             var incidents_data = data["incidents"]
-
             setItemsData(incidents_data);
         }).catch(err => {console.log(err)});
     }
@@ -93,10 +97,11 @@ function KnownErrorDetails(props) {
         }   , []);
 
     function fetchValues() {
-            dbGet("errors/" + error_id).then(data => {
-                setValues(data);
-                setCurrentValues(data);
-            }).catch(err => {console.log(err)});
+        dbGet("errors/" + error_id).then(data => {
+            setValues(data);
+            getVersions()
+            //setCurrentValues(data);
+        }).catch(err => {console.log(err)});
     }
 
     function restoreVersion(request_path, redirect_path, version_id) {
@@ -112,7 +117,7 @@ function KnownErrorDetails(props) {
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable
                 data={values.versions}
-                columns={columns}
+                columns={versionColumns}
                 addRestoreColumn={!localStorage.getItem("wasInChange")}
                 function={restoreVersion}
                 button_path={"/admin" + KNOWN_ERROR_DETAILS_PATH}
@@ -131,12 +136,12 @@ function KnownErrorDetails(props) {
         cleaned_data["created_at"] = data["created_at"]
         return cleaned_data
     }
-    //todo esto no se si va
+
     const submitForm = (data) => {
         var cleaned_data = cleanPostValues(currentValues)
-        dbPost("errors/" + error_id + "/version", cleaned_data);
-        fetchValues()
-
+        dbPost("errors/" + error_id + "/version", cleaned_data).then(data => {
+            setValues(data)
+        });
     }
 
   function addButtons() {
@@ -160,7 +165,7 @@ function KnownErrorDetails(props) {
       <div className="content">
         <Row>
           <Col md="6">
-          <Form onSubmit="return false">
+          <Form>
           <Card className="error-card">
               <CardHeader >
                   <h4 className="title">Detalles del Error</h4>
