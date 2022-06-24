@@ -95,6 +95,7 @@ function KnownErrorDetails(props) {
     function fetchValues() {
             dbGet("errors/" + error_id).then(data => {
                 setValues(data);
+                setCurrentValues(data);
             }).catch(err => {console.log(err)});
     }
 
@@ -103,7 +104,7 @@ function KnownErrorDetails(props) {
             redirect_path += "/" + data.id;
             history.push(redirect_path);
             window.location.reload();
-            // setValues(data);
+            setValues(data);
         }).catch(err => {console.log(err)});
     }
 
@@ -122,10 +123,20 @@ function KnownErrorDetails(props) {
         }
     }
 
+    function cleanPostValues(data){
+        let cleaned_data = {}
+        cleaned_data["created_by"] = data["created_by"]
+        cleaned_data["description"] = data["description"]
+        cleaned_data["solution"] = data["solution"]
+        cleaned_data["created_at"] = data["created_at"]
+        return cleaned_data
+    }
     //todo esto no se si va
     const submitForm = (data) => {
-        dbPost("errors/" + error_id + "/version", currentValues);
-        sendComment("Error actualizado");
+        var cleaned_data = cleanPostValues(currentValues)
+        dbPost("errors/" + error_id + "/version", cleaned_data);
+        fetchValues()
+
     }
 
   function addButtons() {
@@ -138,32 +149,18 @@ function KnownErrorDetails(props) {
         <Button className="btn-fill"
         color="primary"
         type="submit"
-        onClick={() => submitForm()}
+        onClick={(e) =>{e.preventDefault(); submitForm()}}
         >
         Guardar
         </Button>)
     }
-
-  //todo ver si esto sirve
-  const sendComment = (comment) => {
-    if (!comment) comment = document.getElementById("comment").value;
-    if (!comment) return;
-    
-    var created_by = localStorage.getItem("username");
-    var post_data = {
-        comment:comment,
-        created_by:created_by
-    }
-    dbPost("errors/" + error_id + "/comments", post_data);
-    window.location.reload();
- }
 
   return (
     <>
       <div className="content">
         <Row>
           <Col md="6">
-          <Form>
+          <Form onSubmit="return false">
           <Card className="error-card">
               <CardHeader >
                   <h4 className="title">Detalles del Error</h4>
