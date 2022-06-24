@@ -30,7 +30,7 @@ import {
   Col,
 } from "reactstrap";
 import { HARDWARE_ITEM_DETAILS_PATH } from "pages/items/HardwareItemDetailsPage";
-
+import { DisabledInput } from "components/Form/DisabledInput";
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
@@ -230,7 +230,7 @@ export default function HardwareItemCreation() {
                         <Col md="3">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = {1}
                                     id = "version_number"

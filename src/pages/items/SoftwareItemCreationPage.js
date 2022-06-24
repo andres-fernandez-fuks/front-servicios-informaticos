@@ -6,7 +6,7 @@ import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
 import { SOFTWARE_ITEM_DETAILS_PATH } from "./SoftwareItemDetailsPage";
 import toast, { Toaster } from 'react-hot-toast';
-
+import { DisabledInput } from "components/Form/DisabledInput";
 // reactstrap components
 import {
   Button,
@@ -191,7 +191,7 @@ export default function SoftwareCreation() {
                         <Col md="">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = {1}
                                     id = "version_number"

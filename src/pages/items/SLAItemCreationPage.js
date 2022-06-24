@@ -28,7 +28,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import { DisabledInput } from "components/Form/DisabledInput";
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 
@@ -311,7 +311,7 @@ export default function SLACreationPage() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >Versión</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = {1}
                                     id = "version"

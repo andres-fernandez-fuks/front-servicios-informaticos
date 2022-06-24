@@ -40,8 +40,12 @@ import {
 
 import SimpleTable from "components/Table/SimpleTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
+import { DisabledInput } from "components/Form/DisabledInput";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export const KNOWN_ERROR_DETAILS_PATH = "/known_error_details";
+
 
 const tableData = [];
 const incidentColumns = [
@@ -106,10 +110,9 @@ function KnownErrorDetails(props) {
 
     function restoreVersion(request_path, redirect_path, version_id) {
         dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
             setValues(data);
+            setCurrentValues(data)
+            toast.success("Se ha restaurado la versión '" + version_id +"' correctamente")
         }).catch(err => {console.log(err)});
     }
 
@@ -141,6 +144,7 @@ function KnownErrorDetails(props) {
         var cleaned_data = cleanPostValues(currentValues)
         dbPost("errors/" + error_id + "/version", cleaned_data).then(data => {
             setValues(data)
+            toast.success("Se ha creado la versión correctamente")
         });
     }
 
@@ -163,6 +167,7 @@ function KnownErrorDetails(props) {
   return (
     <>
       <div className="content">
+        <Toaster/>
         <Row>
           <Col md="6">
           <Form>
@@ -202,7 +207,7 @@ function KnownErrorDetails(props) {
                       <Col md="6">
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Creado por</Label>
-                              <Input  className="other_input"
+                              <DisabledInput                                  
                                   readOnly = {!isEditable}
                                   defaultValue = {currentValues.created_by}
                                   onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
@@ -211,6 +216,16 @@ function KnownErrorDetails(props) {
                               />
                           </FormGroup>
                       </Col>
+                      <Col md="6">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
+                                <DisabledInput
+                                    readOnly
+                                    defaultValue = {currentValues.current_version_number}
+                                    id = "description"
+                                    type="text"/>
+                            </FormGroup>
+                        </Col>
                   </Row>
                 </div>
             <div class="items-div">
