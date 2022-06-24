@@ -38,10 +38,12 @@ import {
     Col,
   } from "reactstrap";
 
+import Tooltip from "@material-ui/core/Tooltip";
 import SimpleTable from "components/Table/SimpleTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import CommentsTracking from "components/Form/comment_tracking";
 export const PROBLEM_DETAILS_PATH = "/problem_details";
+
 
 const tableData = [];
 const incidentColumns = [
@@ -121,12 +123,14 @@ function ProblemDetails(props) {
         var patch_data = {is_blocked:true}
         dbPatch("problems/" + problem_id, patch_data);
         sendComment("Problema bloqueado");
+        setIsBlocked(true);
     }
 
     function unblockProblem() {
         var patch_data = {is_blocked:false}
         dbPatch("problems/" + problem_id, patch_data);
         sendComment("Problema desbloqueado");
+        setIsBlocked(false);
     }
 
     const takeChange = (data) => { 
@@ -135,6 +139,7 @@ function ProblemDetails(props) {
             setCurrentValues(data)
         });
         sendComment("Problema tomado");
+        setIsTaken(true);
     }
 
     function addBlockButton() {
@@ -162,7 +167,11 @@ function ProblemDetails(props) {
       }
 
   function addButtons() {
-    if (isLoading || !isEditable) return
+    if (isLoading) return;
+    if (!isEditable) return
+      if (values === '') {
+        return;
+    }
     if (values.status === "Resuelto") {
         return;
     }
@@ -180,13 +189,18 @@ function ProblemDetails(props) {
     if (values.taken_by !== undefined) {
     return (
         <Grid align="center">
-        <Button className="btn-fill" align="right"
-        color="success"
-        type="submit"
-        onClick={() => solveProblem()}
-        >
-        Resolver        
-        </Button>
+        <Tooltip title={isBlocked ? "Problema bloqueado" : "" }>
+            <span>
+                <Button className="btn-fill" align="right"
+                disabled = {isBlocked}
+                color="success"
+                type="submit"
+                onClick={() => solveProblem()}
+                >
+                Resolver        
+                </Button>
+            </span>
+        </Tooltip>
         {addBlockButton()}
         </Grid>)
     }

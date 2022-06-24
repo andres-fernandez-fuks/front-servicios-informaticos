@@ -42,6 +42,7 @@ import SimpleTable from "components/Table/SimpleTable";
 import classNames from "classnames";
 import CommentsTracking from "components/Form/comment_tracking";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
+import Tooltip from "@material-ui/core/Tooltip";
 
 export const INCIDENT_DETAILS_PATH = "/incidents_details";
 const tableData = [];
@@ -166,13 +167,13 @@ function IncidentDetails(props) {
     if (isLoading) return;
     if (!isEditable) return
       if (values === '') {
-      fetchValues();
+        return;
     }
     if (values.status === "Resuelto") {
         return;
     }
         return (
-        <>
+            <>  
             <Button className="btn-fill"
             hidden={isTaken}
             color="primary"
@@ -182,17 +183,22 @@ function IncidentDetails(props) {
             Tomar        
             </Button>
             <Grid align="center">
-            <Button className="btn-fill" align="right"
-            hidden={!isTaken}
-            color="success"
-            type="button"
-            onClick={() => solveIncident()}
-            >
-            Resolver        
-            </Button>
-            {addBlockButton()}
-            </Grid>
-        </>
+            <Tooltip title={isBlocked ? "Incidente bloqueado" : "" }>
+                <span>
+                <Button className="btn-fill" align="right"
+                hidden={!isTaken}
+                disabled = {isBlocked}
+                color="success"
+                type="button"
+                onClick={() => solveIncident()}
+                >
+                Resolver        
+                </Button>
+                </span>
+            </Tooltip>
+                {addBlockButton()}
+                </Grid>
+            </>
         )
   }
 

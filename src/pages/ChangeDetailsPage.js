@@ -240,7 +240,14 @@ function ChangeDetails(props) {
                     </Button> 
                 </> 
             )
-      }
+    }
+
+    function defineTooltipMessage() {
+        if (allItemsModified && !isBlocked) return "";
+        if (isBlocked) return "Cambio bloqueado";
+        return "Quedan ítems por modificar"; 
+    }
+
   function addButtons() {
     if (!isEditable) return
     if (values === '') {
@@ -252,7 +259,7 @@ function ChangeDetails(props) {
     if (isTaken) {
         return (
         <Grid align="center">
-            <Tooltip title={allItemsModified ? "" : "Quedan ítems por modificar"}>
+            <Tooltip title={defineTooltipMessage()}>
             <span>
                 <Button
                 disabled = {!allItemsModified || isBlocked}
@@ -265,16 +272,21 @@ function ChangeDetails(props) {
                 </Button>
             </span>
             </Tooltip>
-                <Button
-                disabled = {isBlocked}
-                className="btn-fill"
-                color="danger"
-                type="button"
-                onClick={() => rejectChange()}
-                >
-                Rechazar        
-                </Button>
-                {addBlockButton()}
+            <Tooltip title={isBlocked ? "Cambio bloqueado" : ""}>
+                <span>
+                    <Button
+                    disabled = {isBlocked}
+                    className="btn-fill"
+                    color="danger"
+                    type="button"
+                    onClick={() => rejectChange()}
+                    >
+                    Rechazar        
+                    </Button>
+                </span>
+            </Tooltip>
+            {addBlockButton()}
+
         </Grid>
         )
     }
