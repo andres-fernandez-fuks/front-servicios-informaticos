@@ -62,7 +62,7 @@ function ErrorsTable() {
     const classes = useStyles();
 
     useEffect(() => {
-        dbGet("errors/not-assigned").then(data => {
+        dbGet("errors").then(data => {
             setbigChartData(data);
             // setColumns(errorColumns);
         }).catch(err => {console.log(err)});
@@ -86,82 +86,6 @@ function ErrorsTable() {
         <Row>
           <Col md="12">
             <Card className={classes.card} style={{paddingTop:5}}>
-            <Col sm="12">
-            <ButtonGroup
-                className="btn-group-toggle float-right"
-                data-toggle="buttons"
-            >
-                <Button
-                color="info"
-                id="1"
-                size="sm"
-                tag="label"
-                className={classNames("btn-simple", {
-                    active: category === "No tomados",
-                })}
-                onClick={(e) => fetchData(e, "errors/not-assigned")}
-                >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="No tomados">
-                    No tomados
-                </span>
-                <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-gift-2" />
-                </span>
-                </Button>
-                <Button
-                color="info"
-                id="2"
-                size="sm"
-                tag="label"
-                className={classNames("btn-simple", {
-                    active: category === "Tomados",
-                })}
-                onClick={(e) => fetchData(e, "errors/assigned")}
-                >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Tomados">
-                    Tomados
-                </span>
-                <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-gift-2" />
-                </span>
-                </Button>
-                <Button
-                color="info"
-                id="3"
-                size="sm"
-                tag="label"
-                className={classNames("btn-simple", {
-                    active: category === "Resueltos",
-                })}
-                onClick={(e) => fetchData(e, "errors/solved")}
-                >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Resueltos">
-                    Resueltos
-                </span>
-                <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-gift-2" />
-                </span>
-                </Button>
-                <Button
-                hidden={!checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.EDIT)}
-                tag="label"
-                className={classNames("btn-simple", {
-                    active: category === "Mis errores",
-                })}
-                color="info"
-                id="0"
-                size="sm"
-                onClick={(e) => fetchData(e, "errors")}
-                >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Mis errores">
-                    Mis errores
-                </span>
-                <span className="d-block d-sm-none">
-                    <i className="tim-icons icon-single-02" />
-                </span>
-                </Button>
-            </ButtonGroup>
-            </Col>
               <CardHeader>
                 <CardTitle
                 tag="h4">Errores &nbsp; &nbsp; &nbsp;
