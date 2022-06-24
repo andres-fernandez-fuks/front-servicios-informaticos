@@ -145,7 +145,7 @@ function ProblemCreation(props) {
       <div className={classes.centeredDiv}>
         <Toaster/>
           <Form onSubmit={submitForm}>
-            <Card style={{ width: '40rem' }} className="creation-card">
+            <Card style={{ width: '40rem' }}>
               <CardHeader >
                 <h4 className="title">Creación de Problema</h4>
               </CardHeader>
