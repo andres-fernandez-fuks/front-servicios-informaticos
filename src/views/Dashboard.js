@@ -20,7 +20,6 @@ import React from "react";
 import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
-import {createChart, chart_options} from "utils/charts";
 import { dbGet } from "utils/backendFetchers";
 // reactstrap components
 import {

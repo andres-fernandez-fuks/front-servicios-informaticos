@@ -62,8 +62,8 @@ const default_options = {
 
 export default function LineGraph(props) {
     const [data, setData] = React.useState(props.data ? props.data : []);
-    const [frameInMonth, setframeInMonth] = React.useState(true);
-    const [showDataLabelsOnly, setshowDataLabelsOnly] = React.useState(true);
+    const [frameInMonth, setframeInMonth] = React.useState(props.frameInMonth);
+    const [showDataLabelsOnly, setshowDataLabelsOnly] = React.useState(props.showDataLabelsOnly);
 
     React.useEffect(() => {
         setframeInMonth(props.frameInMonth);
@@ -71,41 +71,45 @@ export default function LineGraph(props) {
         setshowDataLabelsOnly(props.showDataLabelsOnly)
     }, [props.frameInMonth, props.data, props.showDataLabelsOnly]);
 
-    if (document.getElementsByTagName("canvas").length >0) {
-        let ctx = document.getElementsByTagName("canvas")[0].getContext('2d');
+    function createDataset(name, data, canvas) {       
+        let ctx = canvas.getContext("2d");
+    
         let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
 
         gradientStroke.addColorStop(1, "rgba(29,140,248,0.2)");
         gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
-        gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
-    }
+        gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); 
 
-    function createDataset(name, data, canvas) {       
-        //return (canvas) => {
-            debugger
-            let ctx = canvas.getContext("2d");
-        
-            let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
-
-            gradientStroke.addColorStop(1, "rgba(29,140,248,0.2)");
-            gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
-            gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
-            return {
-                datasets: [
-                    {
-                        label: name,
-                        data: data
-                    }
-                ]
-            };
-        //}
-        
+        return {
+            datasets: [
+                {
+                    label: name,
+                    data: data,
+                    //Plus some config
+                    fill: true,
+                    backgroundColor: gradientStroke,
+                    borderColor: "#1f8ef1",
+                    borderWidth: 2,
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    pointBackgroundColor: "#1f8ef1",
+                    pointBorderColor: "rgba(255,255,255,0)",
+                    pointHoverBackgroundColor: "#1f8ef1",
+                    pointBorderWidth: 20,
+                    pointHoverRadius: 4,
+                    pointHoverBorderWidth: 15,
+                    pointRadius: 4,
+                }
+            ]
+        };        
     }
 
     function createOptions() {
         var options = { ...default_options };
-        if (showDataLabelsOnly)
+        if (showDataLabelsOnly){
+            console.log("Datalabelsonly")
             options["scales"]["xAxes"][0]["ticks"]["source"] = "data";
+        }
         if (frameInMonth && data.length > 0) {
 
             let first_month = data[0]["x"].getMonth();
@@ -125,7 +129,6 @@ export default function LineGraph(props) {
         }
         return options;
     }
-    //console.log("AAAA", createDataset(props.name, data))
     return (
         <>
             <Line
