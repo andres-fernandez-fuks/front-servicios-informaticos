@@ -176,11 +176,12 @@ export default function SLACreationPage() {
     return (
       <>
         <div className="content">
+            <div className={classes.centeredDiv}>
           <Toaster />
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
-            <Card>
+            <Card style={{ width: '40rem' }}>
                 <CardHeader >
                     <h4 className="title">Crear un SLA</h4>
                 </CardHeader>
@@ -333,6 +334,7 @@ export default function SLACreationPage() {
             </Form>
             </Col>
           </Row>
+          </div>
         </div>
       </>
     );

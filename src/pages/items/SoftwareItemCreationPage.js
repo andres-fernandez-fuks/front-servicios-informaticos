@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import { dbGet, dbPatch } from 'utils/backendFetchers';
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
+import "pages/items/ic.css";
 import useStyles from "styles"
 import { SOFTWARE_ITEM_DETAILS_PATH } from "./SoftwareItemDetailsPage";
 import toast, { Toaster } from 'react-hot-toast';
@@ -113,11 +114,12 @@ export default function SoftwareCreation() {
     return (
       <>
         <div className="content">
+            <div className={classes.centeredDiv}>
           <Toaster />  
           <Row>
             <Col md="6">
             <Form onSubmit= {handleSubmit}>
-            <Card className="incident-card">
+            <Card style={{ width: '40rem' }}>
                 <CardHeader >
                     <h4 className="title">Creación de un ítem de Software</h4>
                 </CardHeader>
@@ -213,6 +215,7 @@ export default function SoftwareCreation() {
             </Form>
             </Col>
           </Row>
+          </div>
         </div>
       </>
     );

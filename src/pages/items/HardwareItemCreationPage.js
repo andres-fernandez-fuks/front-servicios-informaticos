@@ -1,5 +1,6 @@
 import React from "react";
 import Grid from '@mui/material/Grid';
+import {DatePicker} from "react"
 
 import { dbGet, dbPatch } from 'utils/backendFetchers';
 import "pages/items/ic.css";
@@ -59,7 +60,9 @@ export default function HardwareItemCreation() {
     }
 
     function updateCurrentValues(field, new_value) {
+        debugger;
         if (field === "price") new_value = getPrice(new_value);
+        if (field === "purchase_date") new_value = moment(new_value).format("DD-MM-YYYY");
         currentValues[field] = new_value;
         if (JSON.stringify(currentValues) !== JSON.stringify(values)) {
             setEnableCreateButton(true);
@@ -111,8 +114,6 @@ export default function HardwareItemCreation() {
         return true  
     }
 
-
-
     function currencyFormat(num) {
         if (!num) return;
         return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -121,137 +122,140 @@ export default function HardwareItemCreation() {
     return (
       <>
         <div className="content">
-        <Toaster/>
-          <Row>
-            <Col md="6">
-            <Form onSubmit= {handleSubmit}>
-            <Card className="incident-card">
-                <CardHeader >
-                    <h4 className="title">Crear un ítem de hardware</h4>
-                </CardHeader>
-                <CardBody>
-                    <Row>
-                        <Col md="6">
-                            <FormGroup>
-                                <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
-                                    //defaultValue= {currentValues.name}
-                                    onChange = {function(e){ updateCurrentValues("name", e.target.value)}}
-                                    id = "type"
-                                    type="text"
-                            />
-                            </FormGroup>
-                        </Col>
-                        <Col md="6">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
-                                    //defaultValue= {currentValues.type}
-                                    onChange = {function(e){updateCurrentValues("type", e.target.value)}}
-                                    id = "type"
-                                    type="text"
-                                />
-                            </FormGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col className="pb-md-2" md="12">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
-                                <Input
-                                    readOnly = {!isEditable}
-                                    //defaultValue = {currentValues.description}
-                                    onChange = {function(e){updateCurrentValues("description", e.target.value)}}
-                                    id = "description"
-                                    type="text"
-                            />
-                            </FormGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md="6">
-                            <FormGroup>
-                                <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
-                                    //defaultValue = {currentValues.manufacturer}
-                                    onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
-                                    id = "serial_number"
-                                    type="text"
-                                />
-                            </FormGroup>
-                        </Col>
-                        <Col md="6">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
-                                <Input  className="other_input"
-                                    readOnly = {!isEditable}
-                                    //defaultValue = {currentValues.serial_number}
-                                    onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
-                                    id = "serial_number"
-                                    type="text"
-                            />
-                            </FormGroup>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col className="pb-md-2" md="5">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
-                                {/* <MuiPickersUtilsProvider utils={MomentUtils} locale={moment.locale("es")}>
-                                    <KeyboardDatePicker
-                                        onChange = {function(e){updateCurrentValues("purchase_date", moment(e.toDate()).format("DD/MM/YYYY"))}}
-                                        id = "purchase_date"
-                                        format="DD/MM/yyyy"                              
+            <div className={classes.centeredDiv}>
+            <Toaster/>
+                <Row>
+                    <Col md="6">
+                    <Form onSubmit= {handleSubmit}>
+                    <Card style={{ width: '40rem' }}>
+                        <CardHeader >
+                            <h4 className="title">Crear un ítem de hardware</h4>
+                        </CardHeader>
+                        <CardBody>
+                            <Row>
+                                <Col md="6">
+                                    <FormGroup>
+                                        <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
+                                        <Input className="other_input"
+                                            readOnly = {!isEditable}
+                                            //defaultValue= {currentValues.name}
+                                            onChange = {function(e){ updateCurrentValues("name", e.target.value)}}
+                                            id = "type"
+                                            type="text"
                                     />
-                                </MuiPickersUtilsProvider> */}
-                                <Input className="other_input"
-                                    readOnly = {!isEditable}
-                                    //defaultValue = {currentValues.purchase_date}
-                                    onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
-                                    id = "description"
-                                    type="date"
-                        />
-                            </FormGroup>
-                        </Col>
-                        <Col md="4">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
-                                <Input
-                                    readOnly = {!isEditable}
-                                    //defaultValue = {currencyFormat(currentValues.price)}
-                                    onChange = {function(e){updateCurrentValues("price", e.target.value)}}
-                                    id = "description"
-                                    type="text" />
-                            </FormGroup>
-                        </Col>
-                        <Col md="3">
-                            <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <DisabledInput
-                                    readOnly
-                                    defaultValue = {1}
-                                    id = "version_number"
-                                    type="text"/>
-                            </FormGroup>
-                        </Col>
-                    </Row>
-                </CardBody>
-                <CardFooter className="form_col">
-                    <Button className="btn btn-primary"
-                    disabled = {!enableCreateButton}
-                    color="primary"
-                    type="submit"
-                    >
-                    Guardar        
-                </Button>
-                </CardFooter>
-            </Card>
-            </Form>
-            </Col>
-          </Row>
+                                    </FormGroup>
+                                </Col>
+                                <Col md="6">
+                                    <FormGroup>
+                                    <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
+                                        <Input className="other_input"
+                                            readOnly = {!isEditable}
+                                            //defaultValue= {currentValues.type}
+                                            onChange = {function(e){updateCurrentValues("type", e.target.value)}}
+                                            id = "type"
+                                            type="text"
+                                        />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className="pb-md-2" md="12">
+                                    <FormGroup>
+                                    <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
+                                        <Input
+                                            readOnly = {!isEditable}
+                                            //defaultValue = {currentValues.description}
+                                            onChange = {function(e){updateCurrentValues("description", e.target.value)}}
+                                            id = "description"
+                                            type="text"
+                                    />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col md="6">
+                                    <FormGroup>
+                                        <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
+                                        <Input  className="other_input"
+                                            readOnly = {!isEditable}
+                                            //defaultValue = {currentValues.manufacturer}
+                                            onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
+                                            id = "serial_number"
+                                            type="text"
+                                        />
+                                    </FormGroup>
+                                </Col>
+                                <Col md="6">
+                                    <FormGroup>
+                                    <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
+                                        <Input  className="other_input"
+                                            readOnly = {!isEditable}
+                                            //defaultValue = {currentValues.serial_number}
+                                            onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
+                                            id = "serial_number"
+                                            type="text"
+                                    />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className="pb-md-2" md="5">
+                                    <FormGroup>
+                                    <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
+                                        {/* <MuiPickersUtilsProvider utils={MomentUtils} locale={moment.locale("es")}>
+                                            <KeyboardDatePicker
+                                                onChange = {function(e){updateCurrentValues("purchase_date", moment(e.toDate()).format("DD/MM/YYYY"))}}
+                                                id = "purchase_date"
+                                                format="DD/MM/yyyy"                              
+                                            />
+                                        </MuiPickersUtilsProvider> */}
+                                        <Input className="other_input"
+                                            readOnly = {!isEditable}
+                                            defaultValue={"02/25/2020"}
+                                            onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
+                                            id = "description"
+                                            type="date"
+                                            dateFormat='DD/M/YYYY'
+                                />
+                                    </FormGroup>
+                                </Col>
+                                <Col md="4">
+                                    <FormGroup>
+                                    <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
+                                        <Input
+                                            readOnly = {!isEditable}
+                                            //defaultValue = {currencyFormat(currentValues.price)}
+                                            onChange = {function(e){updateCurrentValues("price", e.target.value)}}
+                                            id = "description"
+                                            type="text" />
+                                    </FormGroup>
+                                </Col>
+                                <Col md="3">
+                                    <FormGroup>
+                                    <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
+                                        <DisabledInput
+                                            readOnly
+                                            defaultValue = {1}
+                                            id = "version_number"
+                                            type="text"/>
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                        </CardBody>
+                        <CardFooter className="form_col">
+                            <Button className="btn btn-primary"
+                            disabled = {!enableCreateButton}
+                            color="primary"
+                            type="submit"
+                            >
+                            Guardar        
+                        </Button>
+                        </CardFooter>
+                    </Card>
+                    </Form>
+                    </Col>
+                </Row>
+            </div>
         </div>
       </>
     );
