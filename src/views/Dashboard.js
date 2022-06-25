@@ -20,7 +20,8 @@ import React from "react";
 import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
-
+import {createChart, chart_options} from "utils/charts";
+import { dbGet } from "utils/backendFetchers";
 // reactstrap components
 import {
   Button,
@@ -49,12 +50,38 @@ import {
   chartExample3,
   chartExample4,
 } from "variables/charts.js";
+import LineGraph from "components/Form/LineGraph";
+import moment from "moment";
 
 function Dashboard(props) {
-  const [bigChartData, setbigChartData] = React.useState("data1");
-  const setBgChartData = (name) => {
-    setbigChartData(name);
-  };
+  const [bigChartData, setbigChartData] = React.useState([]);
+  const [bigChartName, setbigChartName] = React.useState("");
+  const [bigChartLabels, setbigChartLables] = React.useState([]);
+
+  React.useEffect(() => {
+    dbGet(`/incidents`).then((res) => {
+      let mapped = res.map((element) => {
+        return element["created_at"]})
+      console.log("mapped", mapped)
+      let counted = mapped.reduce((prev, curr) => {
+        prev[curr] = (prev[curr] || 0) + 1;
+        return prev;
+      }, {})
+      console.log("counted", counted)
+      let consolidated = Object.entries(counted).map((element) => {
+        return {
+          x: moment(element[0], "DD/MM/YYYY").toDate(),
+          y: element[1],
+        }
+      })
+      console.log("consolidated", consolidated)
+      setbigChartData(consolidated);
+      setbigChartName("Incidentes")
+    }).catch((err) => {
+      console.log(err);
+    })
+  }, [])
+  //console.log("canvas", document.getElementById('canvas').getContext('2d'))
   return (
     <>
       <div className="content">
@@ -80,7 +107,7 @@ function Dashboard(props) {
                         color="info"
                         id="0"
                         size="sm"
-                        onClick={() => setBgChartData("data1")}
+                        onClick={() => setbigChartData("data1")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Incidentes
@@ -97,7 +124,7 @@ function Dashboard(props) {
                         className={classNames("btn-simple", {
                           active: bigChartData === "data2",
                         })}
-                        onClick={() => setBgChartData("data2")}
+                        onClick={() => setbigChartData("data2")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Problemas
@@ -114,7 +141,7 @@ function Dashboard(props) {
                         className={classNames("btn-simple", {
                           active: bigChartData === "data3",
                         })}
-                        onClick={() => setBgChartData("data3")}
+                        onClick={() => setbigChartData("data3")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Cambios
@@ -129,9 +156,11 @@ function Dashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
-                    data={chartExample1[bigChartData]}
-                    options={chartExample1.options}
+                  <LineGraph
+                    data={bigChartData}
+                    name={bigChartName}
+                    frameInMonth={true}
+                    showDataLabelsOnly={true}
                   />
                 </div>
               </CardBody>
