@@ -184,12 +184,13 @@ function ErrorCreation(props) {
                             <Col md = "2">
                          
                             <IconButton
+                                    style={{outline: 'none'}}
                                     size="medium" 
                                     aria-label="delete"
                                     color="primary"
                                     onClick={() => removeFields(index)}
                                     >
-                                    <DeleteIcon/>
+                                    <DeleteIcon className={classes.onlyButtonNoSpacing}/>
                                 </IconButton>
                             </Col>
                             </Row>

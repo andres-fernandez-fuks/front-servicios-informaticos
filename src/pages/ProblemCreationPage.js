@@ -197,13 +197,14 @@ function ProblemCreation(props) {
                             </Col>
                             <Col md="2">
                             <IconButton
-                                    size="medium" 
-                                    aria-label="delete"
-                                    color="primary"
-                                    onClick={() => removeFields(index)}
-                                    >
-                                    <DeleteIcon/>
-                                </IconButton>
+                                style={{outline: 'none'}}
+                                size="medium" 
+                                aria-label="delete"
+                                color="primary"
+                                onClick={() => removeFields(index)}
+                                >
+                                <DeleteIcon className={classes.onlyButtonNoSpacing}/>
+                            </IconButton>
                             </Col>
                             </Row>
                             </div>

@@ -174,8 +174,10 @@ export default makeStyles((theme) => ({
     "& > *": {
       margin: theme.spacing(1),
     },
-    height: 10,
-    marginTop:5
+    paddingBottom:5,
+    active: {
+        border: "none"
+    }
   },
   centeredDiv: {
     display: 'flex',

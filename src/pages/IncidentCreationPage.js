@@ -144,7 +144,7 @@ function IncidentCreation(props) {
       <div className="content">
           <div className={classes.centeredDiv}>
       <Toaster/>
-      <Form onSubmit="return false" className="center-div">
+      <Form >
         <Card style={{ width: '40rem' }}>
           <CardHeader >
             <h4 className="title">Creación de Incidente</h4>
@@ -185,7 +185,8 @@ function IncidentCreation(props) {
               {formFields.map((form, index) => {
                   return (
                   <Grid item md="12">   
-                  <div key={index} > <Row className="row_div">
+                  <div key={index} >
+                    <Row className="row_div">
                     <Col md="10">
                     <Select
                         id={"item" + index+2}
@@ -199,14 +200,14 @@ function IncidentCreation(props) {
                     />
                     </Col>
                     <Col md="2"> 
-                    <IconButton
-                        className={classes.onlyButtonNoSpacing}
+                    <IconButton 
+                        style={{outline: 'none'}}
                         size="medium" 
                         aria-label="delete"
-                        color="inherit"
+                        color="primary"
                         onClick={() => removeFields(index)}
                         >
-                        <DeleteIcon/>
+                        <DeleteIcon className={classes.onlyButtonNoSpacing}/>
                     </IconButton>
                     </Col>
                     </Row>
