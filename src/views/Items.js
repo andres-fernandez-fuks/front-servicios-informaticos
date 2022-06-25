@@ -91,15 +91,19 @@ function ItemsTable() {
             setColumns(columns);
         }).catch(err => {console.log(err)});
     }
-    function RedirectToHardwareItemCreation(){
-      history.push(simple_routes.hardware_creation);
-  }
-    function RedirectToSLAItemCreation(){
-        history.push(simple_routes.sla_creation);
+
+    function redirectToItemCreation() {
+        console.log("CATEGORIA: " + category)
+        debugger;
+        if (category === "Hardware") {
+            history.push(simple_routes.hardware_creation);
+        } else if (category === "Software") {
+            history.push(simple_routes.software_creation);
+        } else if (category === "SLA") {
+            history.push(simple_routes.sla_creation);
+        }
     }
-    function RedirectToSoftwareItemCreation(){
-        history.push(simple_routes.software_creation);
-    }
+
   return (
     <>
       <div className="content">
@@ -166,43 +170,16 @@ function ItemsTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Items &nbsp; &nbsp; &nbsp;
+                <CardTitle tag="h3">Ítems &nbsp; &nbsp; &nbsp;
                 <Button
-                  size="small" 
+                  size="sm" 
                   aria-label="Crear ítem"
-                  variant="contained" 
-                  color="secondary"
+                  color="warning"
                   hidden={!checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.EDIT)}
-                  style={{border: "2px solid black"}}
-                  onClick={() => {RedirectToHardwareItemCreation();}}
+                  onClick={() => {redirectToItemCreation();}}
                   >
-                  <AddIcon />
-                  Hardware
-                </Button>
-                <Button
-                  size="small" 
-                  aria-label="Crear ítem"
-                  variant="contained" 
-                  color="secondary"
-                  style={{border: "2px solid black"}}
-                  onClick={() => {RedirectToSLAItemCreation();}}
-                  hidden={!checkPermissions(TABLES.SLA_ITEM, PERMISSIONS.EDIT)}
-                  >
-                  <AddIcon />
-                  SLA
-                </Button>
-                <Button
-                  size="small" 
-                  aria-label="Crear ítem"
-                  variant="contained" 
-                  color="secondary"
-                  style={{border: "2px solid black"}}
-                  onClick={() => {RedirectToSoftwareItemCreation();}}
-                  hidden={!checkPermissions(TABLES.SOFTWARE_ITEM, PERMISSIONS.EDIT)}
-                  >
-                  <AddIcon />
-                  Software
-                </Button>                
+                  <AddIcon /> Nuevo
+                </Button> 
                 </CardTitle>
               </CardHeader>
               <CardBody>

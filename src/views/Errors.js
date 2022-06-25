@@ -88,19 +88,17 @@ function ErrorsTable() {
             <Card className={classes.card} style={{paddingTop:5}}>
               <CardHeader>
                 <CardTitle
-                tag="h4">Errores &nbsp; &nbsp; &nbsp;
-                <IconButton
-                    size="small"
+                tag="h3">Errores &nbsp; &nbsp;
+                <Button
+                    size="sm"
                     aria-label="Crear Error"
-                    color="info"
+                    color="warning"
                     style={{backgroundColor:"white"}}
                     onClick={() => {RedirectToKnownErrorCreation();}}
                     hidden={!checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.CREATE)}
-
-
                     >
-                    <AddIcon />
-                </IconButton>
+                    <AddIcon /> Nuevo &nbsp;
+                </Button>
                 </CardTitle>
               </CardHeader>
               <CardBody>

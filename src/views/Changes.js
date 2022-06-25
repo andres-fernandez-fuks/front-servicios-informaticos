@@ -160,18 +160,18 @@ function ChangesTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Cambios &nbsp; &nbsp; &nbsp;
-                <IconButton
-                    size="small" 
+                <CardTitle tag="h3">Cambios &nbsp; &nbsp;
+                <Button
+                    size="sm" 
                     aria-label="Crear Cambio"
-                    color="info"
+                    color="warning"
                     style={{backgroundColor:"white"}}
                     onClick={() => {RedirectToProblemCreation();}}
                     hidden={!checkPermissions(TABLES.CHANGE, PERMISSIONS.CREATE)}
 
                     >
-                    <AddIcon />
-                </IconButton>
+                    <AddIcon /> Nuevo &nbsp;
+                </Button>
                 </CardTitle>
               </CardHeader>
               <CardBody>

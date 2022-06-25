@@ -189,23 +189,25 @@ function IncidentsTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h4">Incidentes &nbsp; &nbsp; &nbsp;
-                    <IconButton
-                        size="small" 
+                <CardTitle tag="h3"> Incidentes &nbsp; &nbsp;
+                    <Button
+                        size="sm" 
                         aria-label="Crear Incidente"
-                        color="info"
+                        color="warning"
                         style={{backgroundColor:"white"}}
                         onClick={() => {RedirectToIncidentCreation();}}
                         hidden={!checkPermissions(TABLES.INCIDENT, PERMISSIONS.CREATE)}
                         >
-                        <AddIcon />
-                    </IconButton>
+                        <AddIcon />  Nuevo &nbsp;
+                    </Button>
                 </CardTitle>
               </CardHeader>
               <CardBody>
-              <CustomDataTable data={bigChartData} columns={columns} 
-                    edit_details_path = {INCIDENT_DETAILS_PATH}
-                    />
+              <CustomDataTable
+                data={bigChartData}
+                columns={columns} 
+                edit_details_path = {INCIDENT_DETAILS_PATH}
+              />
               </CardBody>
             </Card>
           </Col>

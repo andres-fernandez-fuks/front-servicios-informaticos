@@ -163,17 +163,16 @@ function ProblemsTable() {
             </Col>
               <CardHeader>
                 <CardTitle
-                tag="h4">Problemas &nbsp; &nbsp; &nbsp;
-                <IconButton
-                    size="small" 
+                tag="h3">Problemas &nbsp; &nbsp;
+                <Button
+                    size="sm" 
                     aria-label="Crear Problema"
-                    color="info"
-                    style={{backgroundColor:"white"}}
+                    color="warning"
                     onClick={() => {RedirectToProblemCreation();}}
                     hidden={!checkPermissions(TABLES.PROBLEM, PERMISSIONS.CREATE)}
                     >
-                    <AddIcon />
-                </IconButton>
+                    <AddIcon /> Nuevo &nbsp;
+                </Button>
                 </CardTitle>
               </CardHeader>
               <CardBody>
