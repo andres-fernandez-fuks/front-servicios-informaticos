@@ -58,8 +58,6 @@ const versionColumns = [
 ]
 
 
-
-
 function KnownErrorDetails(props) {
     const classes = useStyles();
     const history = useHistory();
@@ -93,8 +91,8 @@ function KnownErrorDetails(props) {
 
     React.useEffect(() => {
         dbGet("errors/" + error_id).then(data => {
-            setValues(data);
-            setCurrentValues(data);
+            setValues({...data});
+            setCurrentValues({...data});
             getVersions();
             fetchItemsData();
         }).catch(err => {console.log(err)});
@@ -156,6 +154,7 @@ function KnownErrorDetails(props) {
 //todo ver que el boton de guardar ande
     return (
         <Button className="btn-fill"
+        disabled = {!enableCreateButton}
         color="primary"
         type="submit"
         onClick={(e) =>{e.preventDefault(); submitForm()}}
@@ -182,7 +181,6 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <Input
-                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -194,7 +192,6 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="solution">Solución</Label>
                               <Input
-                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.solution}
                                   onChange = {function(e){updateCurrentValues("solution", e.target.value)}}
                                   id = "solution"
@@ -210,7 +207,6 @@ function KnownErrorDetails(props) {
                               <DisabledInput                                  
                                   readOnly = {!isEditable}
                                   defaultValue = {currentValues.created_by}
-                                  onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
                                   type="text"
                               />
