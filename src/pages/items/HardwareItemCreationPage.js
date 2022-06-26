@@ -60,7 +60,6 @@ export default function HardwareItemCreation() {
     }
 
     function updateCurrentValues(field, new_value) {
-        debugger;
         if (field === "price") new_value = getPrice(new_value);
         if (field === "purchase_date") new_value = moment(new_value).format("DD-MM-YYYY");
         currentValues[field] = new_value;

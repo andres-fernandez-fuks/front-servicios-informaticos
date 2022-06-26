@@ -94,7 +94,6 @@ function ItemsTable() {
 
     function redirectToItemCreation() {
         console.log("CATEGORIA: " + category)
-        debugger;
         if (category === "Hardware") {
             history.push(simple_routes.hardware_creation);
         } else if (category === "Software") {

@@ -3,6 +3,7 @@ import { Bar, Line } from "react-chartjs-2";
 import React from "react";
 
 const default_options = {
+    legend:{display:false},
     maintainAspectRatio: false,
     tooltips: {
         backgroundColor: "#f5f5f5",
@@ -46,6 +47,7 @@ const default_options = {
                 zeroLineColor: "transparent",
             },
             ticks: {
+                precision:0,
                 min: 0,
                 fontColor: "#9a9a9a",
             },
@@ -69,9 +71,17 @@ export default function BarGraph(props) {
     
         let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
 
-        gradientStroke.addColorStop(1, "rgba(72,72,176,0.1)");
-        gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)");
-        gradientStroke.addColorStop(0, "rgba(119,52,169,0)"); //purple colors
+        if (props.color === "green") {
+            gradientStroke.addColorStop(1, "rgba(97, 221, 55,0.1)");
+            gradientStroke.addColorStop(0.4, "rgba(97, 221, 55,0.0)");
+            gradientStroke.addColorStop(0, "rgba(97, 221, 55,0)"); //green colors
+        } else {
+            gradientStroke.addColorStop(1, "rgba(72,72,176,0.1)");
+            gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)");
+            gradientStroke.addColorStop(0, "rgba(119,52,169,0)"); //purple colors
+        }
+
+
         console.log("DATA in bar", data, data.map(d => d.x), data.map(d => d.y))
         return {
             labels : data.map(d => d.x),
@@ -82,7 +92,7 @@ export default function BarGraph(props) {
                     //Plus some config
                     fill: true,
                     backgroundColor: gradientStroke,
-                    borderColor: "#d048b6",
+                    borderColor: props.color === "green" ? "#68DB42" : "#d048b6",
                     borderWidth: 2,
                     borderDash: [],
                     borderDashOffset: 0.0,

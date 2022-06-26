@@ -21,7 +21,6 @@ export function LastYearGraph(props) {
         name={"Gráfico mensual"}
       />
     )
-
 }
 
 function MonthlyGraph(props) {

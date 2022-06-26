@@ -54,7 +54,8 @@ import {
 import LineGraph from "components/Graphs/LineGraph";
 import {LastYearGraph} from "components/Graphs/LastYearGraph";
 import moment from "moment";
-import BarGraph from "components/Form/BarGraph";
+import BarGraph from "components/Graphs/BarGraph";
+import {SolvedByUserGraph} from "components/Graphs/SolvedByUserGraph";
 import { setSourceMapRange } from "typescript";
 
 
@@ -80,11 +81,14 @@ function Dashboard(props) {
   const [centerChartData, setcenterChartData] = React.useState([]);
   const [centerChartName, setcenterChartName] = React.useState("");
   const [solvedRatio, setsolvedRatio] = React.useState(0);
+  const [solvedByUserData, setsolvedByUserData] = React.useState([]);
+  const [category, setCategory] = React.useState("incidents");
 
   React.useEffect(() => {
-    getCreatedByDate("incidents");
-    getCreatedVSSolved("incidents")
-  }, [])
+    getCreatedByDate(category);
+    getCreatedVSSolved(category);
+    getSolvedByUser(category + "/solved")
+  }, [category])
 
   function getCreatedByDate(name){
     dbGet(name).then((res) => {
@@ -102,9 +106,29 @@ function Dashboard(props) {
           y: element[1],
         }
       })
-      console.log("consolidated", consolidated)
       setbigChartData(consolidated);
       setbigChartName(endpoint_names[name])
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  function getSolvedByUser(name){
+    dbGet(name).then((res) => {
+      let mapped = res.map((element) => {
+        return element["taken_by"]})
+      let counted = mapped.reduce((prev, curr) => {
+        prev[curr] = (prev[curr] || 0) + 1;
+        return prev;
+      }, {})
+      let consolidated = Object.entries(counted).map((element) => {
+        return {
+          x: element[0],
+          y: element[1],
+        }
+      })
+      setsolvedByUserData(consolidated);
+      //setbigChartName(endpoint_names[name])
     }).catch((err) => {
       console.log(err);
     })
@@ -155,12 +179,12 @@ function Dashboard(props) {
                       <Button
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "incidents",
+                          active: category === "incidents",
                         })}
                         color="info"
                         id="0"
                         size="sm"
-                        onClick={() => getCreatedByDate("incidents")}
+                        onClick={() => setCategory("incidents")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Incidentes
@@ -175,9 +199,9 @@ function Dashboard(props) {
                         size="sm"
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "problems",
+                          active: category === "problems",
                         })}
-                        onClick={() => getCreatedByDate("problems")}
+                        onClick={() => setCategory("problems")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Problemas
@@ -192,9 +216,9 @@ function Dashboard(props) {
                         size="sm"
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "changes",
+                          active: category === "changes",
                         })}
-                        onClick={() => getCreatedByDate("changes")}
+                        onClick={() => setCategory("changes")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Cambios
@@ -279,15 +303,15 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Completed Tasks</h5>
+                <h5 className="card-category">Resueltos por usuario (top 5)</h5>
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-send text-success" /> 12,100K
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                    <LineGraph
-                      data={[]}
+                    <SolvedByUserGraph
+                      data={solvedByUserData}
                       name={"leftChartName"}
                       frameInMonth={false}
                       showDataLabelsOnly={true}
