@@ -20,7 +20,9 @@ import React from "react";
 import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
-
+import { dbGet } from "utils/backendFetchers";
+import Select from 'react-select'
+import { selectStyles } from "pages/items/SLAItemCreationPage";
 // reactstrap components
 import {
   Button,
@@ -49,12 +51,89 @@ import {
   chartExample3,
   chartExample4,
 } from "variables/charts.js";
+import LineGraph from "components/Form/LineGraph";
+import moment from "moment";
+import BarGraph from "components/Form/BarGraph";
+import { setSourceMapRange } from "typescript";
+
+const endpoint_names  = {
+  "incidents": "Incidentes",
+  "changes": "Cambios",
+  "problems": "Problemas"
+}
+const names_endpoints  = {
+  "Incidentes": "incidents",
+  "Cambios": "changes",
+  "Problemas": "problems" 
+}
+
+const options = [
+  { value: 'Incidentes', label: 'Incidentes' },
+  { value: 'Problemas', label: 'Problemas' },
+]
+
 
 function Dashboard(props) {
-  const [bigChartData, setbigChartData] = React.useState("data1");
-  const setBgChartData = (name) => {
-    setbigChartData(name);
-  };
+  const [bigChartData, setbigChartData] = React.useState([]);
+  const [bigChartName, setbigChartName] = React.useState("");
+  const [centerChartData, setcenterChartData] = React.useState([]);
+  const [centerChartName, setcenterChartName] = React.useState("");
+  const [solvedRatio, setsolvedRatio] = React.useState(0);
+
+  React.useEffect(() => {
+    getCreatedByDate("incidents");
+    getCreatedVSSolved("incidents")
+  }, [])
+
+  function getCreatedByDate(name){
+    dbGet(name).then((res) => {
+      let mapped = res.map((element) => {
+        return element["created_at"]})
+      console.log("mapped", mapped)
+      let counted = mapped.reduce((prev, curr) => {
+        prev[curr] = (prev[curr] || 0) + 1;
+        return prev;
+      }, {})
+      console.log("counted", counted)
+      let consolidated = Object.entries(counted).map((element) => {
+        return {
+          x: new Date(moment(element[0], "DD/MM/YYYY").toDate().toDateString()),
+          y: element[1],
+        }
+      })
+      console.log("consolidated", consolidated)
+      setbigChartData(consolidated);
+      setbigChartName(endpoint_names[name])
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  function getCreatedVSSolved(name){
+    let data = []
+    dbGet(name).then((res) => {
+      let aux = {
+        x: "Creados",
+        y: res.length,
+      }
+      data.push(aux)
+      dbGet(name + "/solved").then((res) => {
+        let aux = {
+          x: "Resueltos",
+          y: res.length,
+        }
+        data.push(aux)
+        console.log("BARDATA", data)
+        setcenterChartData(data);
+        setcenterChartName(endpoint_names[name])
+        setsolvedRatio(data[1]["y"] / data[0]["y"])
+      }).catch((err) => {
+        console.log(err)
+      })
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
   return (
     <>
       <div className="content">
@@ -64,7 +143,7 @@ function Dashboard(props) {
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
-                    <h5 className="card-category">Creados en el último año</h5>
+                    <h5 className="card-category">Creados por fecha</h5>
                     <CardTitle tag="h2">Performance</CardTitle>
                   </Col>
                   <Col sm="6">
@@ -75,12 +154,12 @@ function Dashboard(props) {
                       <Button
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "data1",
+                          active: bigChartData === "incidents",
                         })}
                         color="info"
                         id="0"
                         size="sm"
-                        onClick={() => setBgChartData("data1")}
+                        onClick={() => getCreatedByDate("incidents")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Incidentes
@@ -95,9 +174,9 @@ function Dashboard(props) {
                         size="sm"
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "data2",
+                          active: bigChartData === "problems",
                         })}
-                        onClick={() => setBgChartData("data2")}
+                        onClick={() => getCreatedByDate("problems")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Problemas
@@ -112,9 +191,9 @@ function Dashboard(props) {
                         size="sm"
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "data3",
+                          active: bigChartData === "changes",
                         })}
-                        onClick={() => setBgChartData("data3")}
+                        onClick={() => getCreatedByDate("changes")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Cambios
@@ -129,9 +208,11 @@ function Dashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
-                    data={chartExample1[bigChartData]}
-                    options={chartExample1.options}
+                  <LineGraph
+                    data={bigChartData}
+                    name={bigChartName}
+                    frameInMonth={true}
+                    showDataLabelsOnly={true}
                   />
                 </div>
               </CardBody>
@@ -146,6 +227,7 @@ function Dashboard(props) {
                 <CardTitle tag="h3">
                   <i className="tim-icons icon-bell-55 text-info" /> 763,215
                 </CardTitle>
+                
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
@@ -160,17 +242,32 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Daily Sales</h5>
+                <Row>
+                <Col>
+                <h5 className="card-category">Ratio de resolución</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-delivery-fast text-primary" />{" "}
-                  3,500€
+                  {/*icon-check-2 */}
+                  <i className="tim-icons icon-notes text-primary" />{" "}
+                  {solvedRatio}
                 </CardTitle>
+                </Col>
+                <Col>
+                <Select 
+                  defaultValue = {{ value: 'Incidentes', label: 'Incidentes' }}
+                  styles={selectStyles}
+                  onChange={(new_option) => {getCreatedVSSolved(names_endpoints[new_option.value])}}
+                  options={options}
+                />
+                </Col>
+                </Row>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Bar
-                    data={chartExample3.data}
-                    options={chartExample3.options}
+                  <BarGraph
+                    data={centerChartData}
+                    name={centerChartName}
+                    frameInMonth={true}
+                    showDataLabelsOnly={true}
                   />
                 </div>
               </CardBody>
@@ -186,16 +283,18 @@ function Dashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
-                    data={chartExample4.data}
-                    options={chartExample4.options}
-                  />
-                </div>
-              </CardBody>
+                    <LineGraph
+                      data={[]}
+                      name={"leftChartName"}
+                      frameInMonth={false}
+                      showDataLabelsOnly={true}
+                    />
+                  </div>
+                </CardBody>
             </Card>
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col lg="6" md="12">
             <Card className="card-tasks">
               <CardHeader>
@@ -526,7 +625,7 @@ function Dashboard(props) {
               </CardBody>
             </Card>
           </Col>
-        </Row>
+        </Row> */}
       </div>
     </>
   );
