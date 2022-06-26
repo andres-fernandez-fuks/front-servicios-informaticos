@@ -242,7 +242,8 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <Row><Col>
+                <Row>
+                <Col>
                 <h5 className="card-category">Ratio de resolución</h5>
                 <CardTitle tag="h3">
                   {/*icon-check-2 */}
@@ -293,7 +294,7 @@ function Dashboard(props) {
             </Card>
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col lg="6" md="12">
             <Card className="card-tasks">
               <CardHeader>
@@ -624,7 +625,7 @@ function Dashboard(props) {
               </CardBody>
             </Card>
           </Col>
-        </Row>
+        </Row> */}
       </div>
     </>
   );
