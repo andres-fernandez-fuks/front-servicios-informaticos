@@ -16,7 +16,11 @@ const default_options = {
         position: "nearest",
     },
     responsive: true,
+    legend: {display:false},
     scales: {
+        ticks: {
+            precision: 0
+        },
         xAxes: [
             {
                 type: "time",
@@ -43,23 +47,27 @@ const default_options = {
                 },
             }
         ],
-        yAxes: {
-            title: {
-                display: true,
-                text: "value"
-            },
-            barPercentage: 1.6,
-            gridLines: {
-                drawBorder: false,
-                color: "rgba(29,140,248,0.0)",
-                zeroLineColor: "transparent",
-            },
-            ticks: {
-                padding: 20,
-                fontColor: "#9a9a9a",
-            },
-        }
+        yAxes: [
+            {
+                title: {
+                    display: true,
+                    text: "value"
+                },
+                barPercentage: 1.6,
+                gridLines: {
+                    drawBorder: false,
+                    color: "rgba(29,140,248,0.0)",
+                    zeroLineColor: "transparent",
+                },
+                ticks: {
+                    precision: 0,
+                    padding: 20,
+                    fontColor: "#9a9a9a",
+                },
+            }
+        ]
     }
+
 };
 
 export default function LineGraph(props) {
@@ -108,6 +116,10 @@ export default function LineGraph(props) {
 
     function createOptions() {
         var options = { ...default_options };
+        if (!frameInMonth) {
+            options["scales"]["xAxes"][0]["time"]["unit"] = "month";
+            options["scales"]["xAxes"][0]["time"]["displayFormats"]["month"] = "MMMM YY";
+        }
         if (showDataLabelsOnly){
             console.log("Datalabelsonly")
             options["scales"]["xAxes"][0]["ticks"]["source"] = "data";
@@ -131,6 +143,7 @@ export default function LineGraph(props) {
         }
         return options;
     }
+
     return (
         <>
             <Line

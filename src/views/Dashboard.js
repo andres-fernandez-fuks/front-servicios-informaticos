@@ -51,10 +51,12 @@ import {
   chartExample3,
   chartExample4,
 } from "variables/charts.js";
-import LineGraph from "components/Form/LineGraph";
+import LineGraph from "components/Graphs/LineGraph";
+import {LastYearGraph} from "components/Graphs/LastYearGraph";
 import moment from "moment";
 import BarGraph from "components/Form/BarGraph";
 import { setSourceMapRange } from "typescript";
+
 
 const endpoint_names  = {
   "incidents": "Incidentes",
@@ -71,7 +73,6 @@ const options = [
   { value: 'Incidentes', label: 'Incidentes' },
   { value: 'Problemas', label: 'Problemas' },
 ]
-
 
 function Dashboard(props) {
   const [bigChartData, setbigChartData] = React.useState([]);
@@ -208,7 +209,9 @@ function Dashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <LineGraph
+                  <LastYearGraph
+                    current_year={moment().get("year")}
+                    current_month={moment().get("month")}
                     data={bigChartData}
                     name={bigChartName}
                     frameInMonth={true}
