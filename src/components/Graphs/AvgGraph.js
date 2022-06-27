@@ -1,14 +1,14 @@
-import BarGraph from './BarGraph';
+import ScatterGraph from './ScatterGraph';
 
-
-export function SolvedByUserGraph(props) {
+export function AvgGraph(props) {
     return (
-        <BarGraph
+        <ScatterGraph
         data={props.data}
         name={"Gráfico mensual"}
         frameInMonth={false}
         showDataLabelsOnly={true}
-        color="green"
+        avg={props.avg}
       />
     )
 }
+

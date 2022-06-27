@@ -71,15 +71,9 @@ export default function BarGraph(props) {
     
         let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
 
-        if (props.color === "green") {
-            gradientStroke.addColorStop(1, "rgba(97, 221, 55,0.1)");
-            gradientStroke.addColorStop(0.4, "rgba(97, 221, 55,0.0)");
-            gradientStroke.addColorStop(0, "rgba(97, 221, 55,0)"); //green colors
-        } else {
-            gradientStroke.addColorStop(1, "rgba(72,72,176,0.1)");
-            gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)");
-            gradientStroke.addColorStop(0, "rgba(119,52,169,0)"); //purple colors
-        }
+        gradientStroke.addColorStop(1, "rgba(72,72,176,0.1)");
+        gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)");
+        gradientStroke.addColorStop(0, "rgba(119,52,169,0)");
 
 
         console.log("DATA in bar", data, data.map(d => d.x), data.map(d => d.y))
@@ -92,7 +86,7 @@ export default function BarGraph(props) {
                     //Plus some config
                     fill: true,
                     backgroundColor: gradientStroke,
-                    borderColor: props.color === "green" ? "#68DB42" : "#d048b6",
+                    borderColor: props.color,
                     borderWidth: 2,
                     borderDash: [],
                     borderDashOffset: 0.0,
@@ -103,6 +97,9 @@ export default function BarGraph(props) {
 
     function createOptions() {
         var options = { ...default_options };
+        if (props.noRotation) {
+            options.scales.xAxes[0].ticks.minRotation = 0;
+        }
         return options;
     }
     return (

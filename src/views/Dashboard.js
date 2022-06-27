@@ -56,7 +56,9 @@ import {LastYearGraph} from "components/Graphs/LastYearGraph";
 import moment from "moment";
 import BarGraph from "components/Graphs/BarGraph";
 import {SolvedByUserGraph} from "components/Graphs/SolvedByUserGraph";
+import { AvgGraph } from "components/Graphs/AvgGraph";
 import { setSourceMapRange } from "typescript";
+import "./style.css";
 
 
 const endpoint_names  = {
@@ -82,12 +84,18 @@ function Dashboard(props) {
   const [centerChartName, setcenterChartName] = React.useState("");
   const [solvedRatio, setsolvedRatio] = React.useState(0);
   const [solvedByUserData, setsolvedByUserData] = React.useState([]);
+  const [itemsWithMoreSolvables, setitemsWithMoreSolvables] = React.useState([]);
   const [category, setCategory] = React.useState("incidents");
+  const [avgSolvingTime, setAvgSolvingTime] = React.useState(0);
+  const [avgData, setAvgData] = React.useState([]);
 
   React.useEffect(() => {
     getCreatedByDate(category);
     getCreatedVSSolved(category);
-    getSolvedByUser(category + "/solved")
+    getSolvedByUser(category + "/solved");
+    getItemsWithMoreSolvables(category);
+    getAverageData(category);
+    calculateAverageSolvingTime(category);
   }, [category])
 
   function getCreatedByDate(name){
@@ -113,6 +121,63 @@ function Dashboard(props) {
     })
   }
 
+  function getItemsWithMoreSolvables(name){
+    dbGet("configuration-items/all").then((res) => {
+      var data = res["items"]  
+      let mapped = data.map((element) => {
+        return [element["name"], element["value"]]})
+      let consolidated = mapped.map(element => {
+        return {
+          x: element[0],
+          y: element[1],
+        }
+      })
+      setitemsWithMoreSolvables(consolidated);
+      setbigChartName(endpoint_names[name])
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  function getAverageData(name){
+    dbGet(name).then((res) => {
+      let mapped = res.map((element) => {
+        return element["solving_time"]
+      })
+      let filtered = mapped.filter((element) => {
+        return element != null || element > 0;
+     })
+      let consolidated = filtered.map((element, i) => {
+        return {
+          x: i,
+          y: element,
+        }
+      })
+      setAvgData(consolidated);
+      setbigChartName(endpoint_names[name])
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  function calculateAverageSolvingTime(name) {
+    dbGet(name).then((res) => {
+        let mapped = res.map((element) => {
+          return element["solving_time"]
+        })
+        let filtered = mapped.filter((element) => {
+            return element != null
+        })
+        let avg = filtered.reduce((prev, curr) => {
+            return prev + curr
+        }
+        , 0) / filtered.length
+        setAvgSolvingTime(avg);;
+    }).catch((err) => {
+        console.log(err);
+      })
+  }
+
   function getSolvedByUser(name){
     dbGet(name).then((res) => {
       let mapped = res.map((element) => {
@@ -127,8 +192,12 @@ function Dashboard(props) {
           y: element[1],
         }
       })
+      consolidated.sort((a, b) => {
+        return b.y - a.y;
+        }   // sort descending
+      )
+      consolidated = consolidated.slice(0, 5)
       setsolvedByUserData(consolidated);
-      //setbigChartName(endpoint_names[name])
     }).catch((err) => {
       console.log(err);
     })
@@ -278,14 +347,6 @@ function Dashboard(props) {
                   {solvedRatio}
                 </CardTitle>
                 </Col>
-                <Col>
-                <Select 
-                  defaultValue = {{ value: 'Incidentes', label: 'Incidentes' }}
-                  styles={selectStyles}
-                  onChange={(new_option) => {getCreatedVSSolved(names_endpoints[new_option.value])}}
-                  options={options}
-                />
-                </Col>
                 </Row>
               </CardHeader>
               <CardBody>
@@ -295,6 +356,7 @@ function Dashboard(props) {
                     name={centerChartName}
                     frameInMonth={true}
                     showDataLabelsOnly={true}
+                    color = "purple"
                   />
                 </div>
               </CardBody>
@@ -317,6 +379,51 @@ function Dashboard(props) {
                       showDataLabelsOnly={true}
                     />
                   </div>
+                </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg="8">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Total Shipments</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> 763,215
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                    <BarGraph
+                      data={itemsWithMoreSolvables}
+                      name={"leftChartName"}
+                      frameInMonth={false}
+                      showDataLabelsOnly={true}
+                      noRotation={true}
+                      color = "darkred"
+                    />
+                  </div>
+                </CardBody>
+            </Card>
+          </Col>
+          <Col lg="4">
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Tiempo de resolución promedio</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-bell-55 text-info" /> Promedio: {parseInt(avgSolvingTime)} días
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <AvgGraph
+                    current_year={moment().get("year")}
+                    current_month={moment().get("month")}
+                    data={avgData}
+                    name={bigChartName}
+                    avg={avgSolvingTime}
+                  />
+                </div>
                 </CardBody>
             </Card>
           </Col>
