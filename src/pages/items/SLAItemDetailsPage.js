@@ -273,7 +273,7 @@ export default function SLADetailsPage() {
                                     defaultValue = {currentValues.starting_date}
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
                                     id = "starting_date"
-                                    type="date"
+                                    type="text"
                                 />
                             </FormGroup>
                         </Col>
