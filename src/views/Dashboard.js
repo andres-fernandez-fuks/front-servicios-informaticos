@@ -48,6 +48,8 @@ import moment from "moment";
 import BarGraph from "components/Graphs/BarGraph";
 import {SolvedByUserGraph} from "components/Graphs/SolvedByUserGraph";
 import { AvgGraph } from "components/Graphs/AvgGraph";
+import { PieGraph } from "components/Graphs/PieGraph";
+import { setSourceMapRange } from "typescript";
 import "./style.css";
 
 
@@ -81,6 +83,7 @@ function Dashboard(props) {
   const [leftChartData, setleftChartData] = React.useState([]);
   const [leftChartName, setleftChartName] = React.useState("");
   const [createdLastMonth, setcreatedLastMonth] = React.useState("Cargando...");
+  const [pieData, setPieData] = React.useState([]);
 
   React.useEffect(() => {
     getCreatedByDate(category);
@@ -90,6 +93,7 @@ function Dashboard(props) {
     getAverageData(category);
     calculateAverageSolvingTime(category);
     getCreatedThisWeek(category);
+    getPieData(category);
   }, [category])
 
   function getCreatedByDate(name){
@@ -146,7 +150,24 @@ function Dashboard(props) {
         }
       })
       setAvgData(consolidated);
-      setbigChartName(endpoint_names[name])
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  function getPieData(name){
+    dbGet(name).then((res) => {
+      var solved = 0;
+      var notSolved = 0;
+      res.forEach((element) => {
+        if(element.status === "Resuelto") solved++;
+        else notSolved++;
+      })
+      var data = {
+        labels: ["Resueltos", "No resueltos"],
+        values: [solved, notSolved],
+      }
+      setPieData(data);
     }).catch((err) => {
       console.log(err);
     })
@@ -378,15 +399,15 @@ function Dashboard(props) {
                 <CardTitle tag="h3">
                   {/*icon-check-2 */}
                   <i className="tim-icons icon-notes text-primary" />{" "}
-                  {solvedRatio}
+                  {parseFloat(solvedRatio * 100).toFixed(0)+"%"}
                 </CardTitle>
                 </Col>
                 </Row>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <BarGraph
-                    data={centerChartData}
+                  <PieGraph
+                    data={pieData}
                     name={centerChartName}
                     frameInMonth={true}
                     showDataLabelsOnly={true}
