@@ -32,9 +32,6 @@ const default_options = {
                     tooltipFormat: "DD/MM/YYYY",
                 },
                 ticks: {
-                    //min: new Date(2022, 5, 1),
-                    //max: new Date(2022, 5, 30),
-                    //source: "data",
                     minRotation: 40,
                     padding: 20,
                     fontColor: "#9a9a9a",
@@ -61,6 +58,7 @@ const default_options = {
                 },
                 ticks: {
                     precision: 0,
+                    min: 0,
                     padding: 20,
                     fontColor: "#9a9a9a",
                 },
@@ -71,16 +69,6 @@ const default_options = {
 };
 
 export default function LineGraph(props) {
-    const [data, setData] = React.useState(props.data ? props.data : []);
-    const [frameInMonth, setframeInMonth] = React.useState(props.frameInMonth);
-    const [showDataLabelsOnly, setshowDataLabelsOnly] = React.useState(props.showDataLabelsOnly);
-
-    React.useEffect(() => {
-        setframeInMonth(props.frameInMonth);
-        setData(props.data)
-        setshowDataLabelsOnly(props.showDataLabelsOnly)
-    }, [props.frameInMonth, props.data, props.showDataLabelsOnly]);
-
     function createDataset(name, data, canvas) {       
         let ctx = canvas.getContext("2d");
     
@@ -114,17 +102,16 @@ export default function LineGraph(props) {
         };        
     }
 
-    function createOptions() {
+    function createOptions(data) {
         var options = { ...default_options };
-        if (!frameInMonth) {
-            options["scales"]["xAxes"][0]["time"]["unit"] = "month";
-            options["scales"]["xAxes"][0]["time"]["displayFormats"]["month"] = "MMMM YY";
-        }
-        if (showDataLabelsOnly){
-            console.log("Datalabelsonly")
+        
+        options["scales"]["xAxes"][0]["time"]["unit"] = "month";
+        options["scales"]["xAxes"][0]["time"]["displayFormats"]["month"] = "MMMM YY"
+    
+        if (props.showDataLabelsOnly){
             options["scales"]["xAxes"][0]["ticks"]["source"] = "data";
         }
-        if (frameInMonth && data.length > 0) {
+        if (props.frameInMonth && data.length > 0) {
 
             let first_month = data[0]["x"].getMonth();
             let first_year = data[0]["x"].getFullYear();
@@ -133,8 +120,8 @@ export default function LineGraph(props) {
                 first_month,
                 1
             );
-            let last_month = data[0]["x"].getMonth();
-            let last_year = data[0]["x"].getFullYear();
+            let last_month = data[data.length-1]["x"].getMonth();
+            let last_year = data[data.length-1]["x"].getFullYear();
             options["scales"]["xAxes"][0]["ticks"]["max"] = new Date(
                 last_year,
                 last_month + 1,
@@ -147,8 +134,8 @@ export default function LineGraph(props) {
     return (
         <>
             <Line
-                options={createOptions()}
-                data={(canvas) => createDataset(props.name, data, canvas)}
+                options={createOptions(props.data)}
+                data={(canvas) => createDataset(props.name, props.data, canvas)}
             />
         </>
     );

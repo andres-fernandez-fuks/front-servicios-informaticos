@@ -19,10 +19,7 @@ import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
 import { dbGet } from "utils/backendFetchers";
-import Select from 'react-select'
-import { selectStyles } from "pages/items/SLAItemCreationPage";
 // reactstrap components
 import {
   Button,
@@ -44,20 +41,13 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 
-// core components
-import {
-  chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4,
-} from "variables/charts.js";
+
 import LineGraph from "components/Graphs/LineGraph";
-import {LastYearGraph} from "components/Graphs/LastYearGraph";
+import {LastYearGraph, MonthlyGraph} from "components/Graphs/LastYearGraph";
 import moment from "moment";
 import BarGraph from "components/Graphs/BarGraph";
 import {SolvedByUserGraph} from "components/Graphs/SolvedByUserGraph";
 import { AvgGraph } from "components/Graphs/AvgGraph";
-import { setSourceMapRange } from "typescript";
 import "./style.css";
 
 
@@ -88,6 +78,9 @@ function Dashboard(props) {
   const [category, setCategory] = React.useState("incidents");
   const [avgSolvingTime, setAvgSolvingTime] = React.useState(0);
   const [avgData, setAvgData] = React.useState([]);
+  const [leftChartData, setleftChartData] = React.useState([]);
+  const [leftChartName, setleftChartName] = React.useState("");
+  const [createdLastMonth, setcreatedLastMonth] = React.useState("Cargando...");
 
   React.useEffect(() => {
     getCreatedByDate(category);
@@ -96,18 +89,17 @@ function Dashboard(props) {
     getItemsWithMoreSolvables(category);
     getAverageData(category);
     calculateAverageSolvingTime(category);
+    getCreatedThisWeek(category);
   }, [category])
 
   function getCreatedByDate(name){
     dbGet(name).then((res) => {
       let mapped = res.map((element) => {
         return element["created_at"]})
-      console.log("mapped", mapped)
       let counted = mapped.reduce((prev, curr) => {
         prev[curr] = (prev[curr] || 0) + 1;
         return prev;
       }, {})
-      console.log("counted", counted)
       let consolidated = Object.entries(counted).map((element) => {
         return {
           x: new Date(moment(element[0], "DD/MM/YYYY").toDate().toDateString()),
@@ -202,7 +194,47 @@ function Dashboard(props) {
       console.log(err);
     })
   }
-
+  function getCreatedThisWeek(name){
+      dbGet(name).then((res) => {
+        let mapped = res.map((element) => {
+          return element["created_at"]})
+        let data = mapped.reduce((prev, curr) => {
+          prev[curr] = (prev[curr] || 0) + 1;
+          return prev;
+        }, {})
+        var this_week_data = Object.entries(data).filter((element) => {
+          return moment(element[0], "DD/MM/YYYY").week() == moment().week()
+        }).map((element) => {
+          return { 
+            x: moment(moment(element[0], "DD/MM/YYYY").toDate()).format("dddd DD"),
+            y: element[1],
+            }
+        })
+        let weekdays_with_data = this_week_data.map((element) => {
+          return element["x"]
+        })
+        let created_number = this_week_data.reduce((prev, act)=>{
+          return prev + act["y"]
+        }, 0)
+        for (let i = moment().startOf("week"); i < moment().endOf("week"); i.add(1, "days")) {
+          let date = i.format("dddd DD")
+          if (!weekdays_with_data.includes(date)) {
+            this_week_data.push({
+              x: date,
+              y: 0,
+            })
+          }        
+        }
+        setleftChartData(this_week_data)
+        setleftChartName(endpoint_names[name])
+        setcreatedLastMonth(created_number)
+      }).catch((err) => {
+        console.log(err)
+      })
+  }
+    
+    
+  
   function getCreatedVSSolved(name){
     let data = []
     dbGet(name).then((res) => {
@@ -307,8 +339,6 @@ function Dashboard(props) {
                     current_month={moment().get("month")}
                     data={bigChartData}
                     name={bigChartName}
-                    frameInMonth={true}
-                    showDataLabelsOnly={true}
                   />
                 </div>
               </CardBody>
@@ -319,17 +349,21 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Total Shipments</h5>
+                <h5 className="card-category">Creados la semana en curso</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> 763,215
+                  <i className="tim-icons icon-bell-55 text-info" /> {createdLastMonth}
                 </CardTitle>
                 
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                  <BarGraph
+                    data={leftChartData}
+                    name={leftChartName}
+                    frameInMonth = {false}
+                    showDataLabelsOnly = {false}
+                    noRotation={true}
+                    color = "teal"
                   />
                 </div>
               </CardBody>
@@ -357,6 +391,7 @@ function Dashboard(props) {
                     frameInMonth={true}
                     showDataLabelsOnly={true}
                     color = "purple"
+                    
                   />
                 </div>
               </CardBody>

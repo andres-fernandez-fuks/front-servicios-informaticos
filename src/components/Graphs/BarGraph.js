@@ -20,9 +20,6 @@ const default_options = {
         xAxes: [
             {
                 ticks: {
-                    //min: new Date(2022, 5, 1),
-                    //max: new Date(2022, 5, 30),
-                    //source: "data",
                     minRotation: 40,
                     padding: 20,
                     fontColor: "#9a9a9a",
@@ -31,7 +28,6 @@ const default_options = {
                 gridLines: {
                     drawBorder: false,
                     color: "rgba(29,140,248,0.1)",
-                    //zeroLineColor: "transparent",
                 },
             }
         ],
@@ -40,7 +36,6 @@ const default_options = {
                 display: true,
                 text: "value"
             },
-            //barPercentage: 1.6,
             gridLines: {
                 drawBorder: false,
                 color: "rgba(29,140,248,0.0)",
@@ -75,8 +70,6 @@ export default function BarGraph(props) {
         gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)");
         gradientStroke.addColorStop(0, "rgba(119,52,169,0)");
 
-
-        console.log("DATA in bar", data, data.map(d => d.x), data.map(d => d.y))
         return {
             labels : data.map(d => d.x),
             datasets: [

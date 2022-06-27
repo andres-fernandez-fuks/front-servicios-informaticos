@@ -80,7 +80,7 @@ export default function DotGraph(props) {
         var emptyData = new Array(data.length).fill(0);
         let lineData = emptyData.map((element, i) => {
             return {x: i, y: props.avg};})
-        if (data.length > 0)debugger;
+        ;
         return {
             datasets: [
                 {

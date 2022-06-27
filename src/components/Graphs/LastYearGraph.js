@@ -40,10 +40,10 @@ function MonthlyGraph(props) {
     })
     return (
         <LineGraph
-        data={monthlyData.length > 0 ? monthlyData : []}
-        name={"Gráfico mensual"}
-        frameInMonth={false}
-        showDataLabelsOnly={true}
-      />
+            data={monthlyData.length > 0 ? monthlyData : []}
+            name={"Gráfico mensual"}
+            frameInMonth={false}
+            showDataLabelsOnly={true}
+        />
     )
 }
