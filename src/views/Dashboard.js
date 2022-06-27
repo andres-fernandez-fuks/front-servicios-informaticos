@@ -423,7 +423,7 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Resueltos por usuario (top 5)</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-send text-success" /> 12,100K
+                  <i className="tim-icons icon-user-run text-success" /> 12,100K
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -443,16 +443,16 @@ function Dashboard(props) {
           <Col lg="8">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Total Shipments</h5>
+                <h5 className="card-category">Ítems con más incidentes</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> 763,215
+                  <i className="tim-icons icon-settings-gear-63 text-info" /> Ítem: 
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
                     <BarGraph
                       data={itemsWithMoreSolvables}
-                      name={"leftChartName"}
+                      name={"Ítems con más incidentes"}
                       frameInMonth={false}
                       showDataLabelsOnly={true}
                       noRotation={true}
@@ -467,7 +467,7 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">Tiempo de resolución promedio</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Promedio: {parseInt(avgSolvingTime)} días
+                  <i className="tim-icons icon-watch-time text-info" /> Promedio: {parseInt(avgSolvingTime)} días
                 </CardTitle>
               </CardHeader>
               <CardBody>
