@@ -27,7 +27,7 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "utils/routes.js";
 
-import logo from "assets/img/logo.jpg";
+import logo from "assets/img/logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import { INCIDENT_DETAILS_PATH } from "pages/IncidentDetailsPage.js";
 import { CHANGE_DETAILS_PATH } from "pages/ChangeDetailsPage.js";

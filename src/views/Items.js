@@ -169,7 +169,7 @@ function ItemsTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h3">Ítems &nbsp; &nbsp; &nbsp;
+                <CardTitle tag="h3">Ítems de {category}&nbsp; &nbsp; &nbsp;
                 <Button
                   size="sm" 
                   aria-label="Crear ítem"
