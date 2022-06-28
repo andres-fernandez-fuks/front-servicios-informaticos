@@ -53,14 +53,17 @@ import { SLA_ITEM_DETAILS_PATH } from "pages/items/SLAItemDetailsPage";
 import { HARDWARE_ITEM_EDIT_PATH } from "pages/items/HardwareItemEditPage";
 import { SLA_ITEM_EDIT_PATH } from "pages/items/SLAItemEditPage";
 import { SOFTWARE_ITEM_EDIT_PATH } from "pages/items/SoftwareItemEditPage";
+import { SOFTWARE_ITEM_RESTORE_PATH } from "pages/items/SoftwareItemRestorePage";
 import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
 import HardwareItemCreation from "pages/items/HardwareItemCreationPage.js";
 import HardwareItemEdit from "pages/items/HardwareItemEditPage.js";
 import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
 import SoftwareCreation from "pages/items/SoftwareItemCreationPage";
+import SoftwareItemEdit from "pages/items/SoftwareItemEditPage.js";
+import SoftwareItemRestore from "pages/items/SoftwareItemRestorePage.js";
 import SLAItemDetails from "pages/items/SLAItemDetailsPage.js";
 import SLAItemEdit from "pages/items/SLAItemEditPage.js";
-import SoftwareItemEdit from "pages/items/SoftwareItemEditPage.js";
+
 
 var ps;
 
@@ -141,6 +144,8 @@ function Admin(props) {
       }
     }
   )
+
+  console.log("admin location: ", location.state)
   
   return (
     <BackgroundColorContext.Consumer>
@@ -203,6 +208,10 @@ function Admin(props) {
                 <Route
                 path={'/admin' + SOFTWARE_ITEM_EDIT_PATH}
                 component={SoftwareItemEdit}
+                />
+                <Route
+                path={'/admin' + SOFTWARE_ITEM_RESTORE_PATH}
+                component={SoftwareItemRestore}
                 />
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}

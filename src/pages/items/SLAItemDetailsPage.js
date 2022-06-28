@@ -98,9 +98,10 @@ export default function SLADetailsPage() {
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable
+                        isVersionsTable={true}
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={!localStorage.getItem("wasInChange")}
+                        addRestoreColumn={localStorage.getItem("wasInChange")}
                         function={restoreVersion}
                         button_path={"/admin" + SLA_ITEM_DETAILS_PATH}
                         request_endpoint={"configuration-items/sla/" + values.id + "/restore"}/>

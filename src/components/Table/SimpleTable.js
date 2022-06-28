@@ -82,7 +82,7 @@ export default function SimpleTable(props) {
     }
     );
 
-    if (props.addRestoreColumn === true) {
+    if (props.addRestoreColumn === "true") {
         new_columns.push({
             name: "Restaurar",
             options: {
@@ -96,7 +96,7 @@ export default function SimpleTable(props) {
                 style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "top"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
-                var object_id = tableMeta.rowData[0];
+                var object_id = props.isVersionsTable ? tableMeta.rowData[0] : tableMeta.rowData[0];
                 
                 return (
                 <>
@@ -108,7 +108,7 @@ export default function SimpleTable(props) {
                         component={Link}
                         onClick={() => props.function(props.request_endpoint, props.button_path, object_id)}
                         path >
-                        <RestoreIcon />
+                        <VisibilityIcon />
                     </IconButton>
                     </Tooltip>
                 </>

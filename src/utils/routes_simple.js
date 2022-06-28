@@ -18,6 +18,7 @@ const simple_routes = {
     sla_creation: "/admin" +    SLA_ITEM_CREATION_PATH,
     software_creation: "/admin" + SOFTWARE_ITEM_CREATION_PATH,
     changes: "/admin/changes",
+    change_details: "/admin/change_details",
 
 }
 

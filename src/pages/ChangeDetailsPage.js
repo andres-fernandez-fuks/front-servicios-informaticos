@@ -55,6 +55,7 @@ const itemsColumns = [
     {"name": "name", "label": "Nombre"},
     {"name": "draft_id", "label": "draft_id"},
     {"name": "draft_change_id", "label": "draft_change_id"},
+    {"name": "is_restoring_draft", "label": "is_restoring_draft"},
 ]
 
 const incidentColumns = [
@@ -392,9 +393,10 @@ function ChangeDetails(props) {
                 <ChangeTable data={itemsCiData}
                              columns={itemsColumns}
                              addWatchColumn={true}
-                             excludeColumns={["id", "draft_change_id", "draft_id", "type"]}
+                             excludeColumns={["id", "draft_change_id", "draft_id", "type", "is_restoring_draft"]}
                              details_button_path={"/admin/item_details/"}
                              edit_button_path={"/admin/item_edit/"}
+                             restore_button_path={"/admin/item_restore/"}
                              type_row = {1}
                              change_callback_id = {change_id}
                              use_object_type = {true}

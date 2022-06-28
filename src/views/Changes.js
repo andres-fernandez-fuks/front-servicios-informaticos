@@ -111,11 +111,11 @@ function ChangesTable() {
                 size="sm"
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: category === "Tomados",
+                    active: category === "Aplicados",
                 })}
-                onClick={(e) => fetchData(e, "changes/assigned", "Resuelto")}
+                onClick={(e) => fetchData(e, "changes/solved", "Resuelto")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Tomados">
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Aplicados">
                     Aplicados
                 </span>
                 <span className="d-block d-sm-none">

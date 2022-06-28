@@ -29,8 +29,8 @@ import { dbPost } from "utils/backendFetchers";
 export const SOFTWARE_ITEM_EDIT_PATH = "/item_edit/software";
 
 const columns = [
-{"name": "version", "label": "Versión"},
-{"name": "name", "label": "Nombre"},
+    {"name": "version_number", "label": "Versión"},
+    {"name": "created_at", "label": "Fecha de creación"},
 ]
 
 export default function SoftwareItemDetails() {
@@ -40,13 +40,19 @@ export default function SoftwareItemDetails() {
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = checkPermissions(TABLES.SOFTWARE, PERMISSIONS.UPDATE);
+    const [isEditable, setIsEditable] = React.useState(true);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [showRestoreButton, setShowRestoreButton] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
         price = parseInt(price.replace(/[^0-9]/g, ''));
         return price;
+    }
+
+    function setEditability(is_draft) {
+        var has_permissions = checkPermissions(TABLES.SOFTWARE, PERMISSIONS.UPDATE);
+        setIsEditable(has_permissions && is_draft);
     }
 
     function updateCurrentValues(field, new_value) {
@@ -59,11 +65,14 @@ export default function SoftwareItemDetails() {
         }
     }
 
+
   React.useEffect(() => {
     var change_id = localStorage.getItem("change_id");
     dbGet("configuration-items/software/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
         setValues({...data});
         setCurrentValues({...data});
+        setEditability(data.is_draft);
+        setShowRestoreButton(!data.is_draft);
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -92,25 +101,23 @@ export default function SoftwareItemDetails() {
         delete request_values.draft_id;
         delete request_values.draft_change_id;
         delete request_values.version_number;
+        delete request_values.is_restoring_draft;
+        delete request_values.restore_version_id;
         return request_values;
     }
 
-    const handleSubmit = (event) => {
+    const createDraft = (event) => {
         event.preventDefault();
         var change_id = localStorage.getItem("change_id");
         var path = "configuration-items/software/" + values.id  + "/draft?change_id=" + change_id;
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
+            path = simple_routes.change_details + "/" + change_id;
             toast.success("Borrador guardado correctamente");
-            history.goBack();
+            history.push(path);
         }
         ).catch(err => {console.log(err)});
     }
-
-    function currencyFormat(num) {
-        if (!num) return;
-        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-     }
 
     return (
       <>
@@ -118,7 +125,7 @@ export default function SoftwareItemDetails() {
           <Toaster/>
           <Row>
             <Col md="6">
-            <Form onSubmit= {handleSubmit}>
+            <Form>
             <Card className="incident-card">
                 <CardHeader >
                     <h4 className="title">Detalles del borrador</h4>
@@ -133,7 +140,6 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "name"
                                     type="text"
-                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -145,7 +151,6 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
                                     type="text"
-                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -159,7 +164,6 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
                                     type="text"
-                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -173,7 +177,6 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("provider", e.target.value)}}
                                     id = "provider"
                                     type="text"
-                                    readOnly = {!isEditable}
                                 />
                             </FormGroup>
                         </Col>
@@ -185,7 +188,6 @@ export default function SoftwareItemDetails() {
                                     onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
                                     id = "software_version"
                                     type="text"
-                                    readOnly = {!isEditable}
                             />
                             </FormGroup>
                         </Col>
@@ -193,8 +195,8 @@ export default function SoftwareItemDetails() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
                                 <Input
-                                    readOnly
-                                    defaultValue = {currentValues.version}
+                                    disabled
+                                    defaultValue = {currentValues.current_version_number}
                                     id = "version"
                                     type="text"/>
                             </FormGroup>
@@ -205,10 +207,10 @@ export default function SoftwareItemDetails() {
                     <Button className="btn btn-primary"
                     disabled = {!enableCreateButton}
                     color="primary"
-                    type="submit"
+                    onClick={(event) => {createDraft(event)}}
                     >
                     Guardar        
-                </Button>
+                    </Button>
                 </CardFooter>
             </Card>
             </Form>

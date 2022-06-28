@@ -92,7 +92,6 @@ function IncidentsTable() {
     useEffect(() => {
         dbGet("incidents/not-assigned").then(data => {
             setbigChartData(data);
-            // setColumns(incidentColumns);
         }).catch(err => {console.log(err)});
     }   , []);
     function fetchData(event, endpoint, columns) {
@@ -169,7 +168,7 @@ function IncidentsTable() {
                 </span>
                 </Button>
                 <Button
-                hidden={!checkPermissions(TABLES.INCIDENT, PERMISSIONS.EDIT)}
+                hidden={!checkPermissions(TABLES.INCIDENT, PERMISSIONS.CREATE)}
                 tag="label"
                 className={classNames("btn-simple", {
                     active: category === "Mis incidentes",

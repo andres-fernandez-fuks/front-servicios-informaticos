@@ -13,6 +13,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
+import UpdateIcon from '@mui/icons-material/Update';
+import UpdateDisabledIcon from '@mui/icons-material/UpdateDisabled';
 
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -66,6 +68,24 @@ export default function SimpleTable(props) {
         }
       });
 
+      function determineToastMessage(other_change_draft, draft_change_id) {
+        if (!other_change_draft) {
+          return "Ya se restauró una versión del ítem en este cambio";
+        } else {
+          return "Este ítem está siendo modificado por el cambio " + draft_change_id;
+        }
+      }
+
+      function determineRestoreToastMessage(other_change_draft, draft_change_id, is_restoring_draft) {
+        if (other_change_draft) {
+            return "Este ítem está siendo modificado por el cambio " + draft_change_id;
+        } else if (is_restoring_draft) {
+          return "Ya se restauró una versión del ítem en este cambio";
+        } else {
+            return "El ítem está siendo editado, no se puede restaurar una versión";
+        }
+      }
+
       function insertModifiedButton(tableMeta, props) {
         var draft_id = tableMeta.rowData[4];
         var draft_change_id = tableMeta.rowData[5];
@@ -78,62 +98,8 @@ export default function SimpleTable(props) {
         }
     }
 
-    function insertButtons(tableMeta, props) {
-        var object_id = tableMeta.rowData[0];
-        var draft_change_id = tableMeta.rowData[5];
-        var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
-        var details_path = props.details_button_path + object_type + "/" + object_id;
-        var edit_path = props.edit_button_path + object_type + "/" + object_id;
-        var disabled = draft_change_id && draft_change_id !== parseInt(localStorage.change_id)
-
-        if (['Resuelto', 'Rechazado'].includes(props.change_status) ) {
-            return (
-                <Tooltip title="Detalles">
-                    <IconButton
-                        className={classes.onlyButtonSpacing}
-                        color="inherit"
-                        size="small"
-                        component={Link}
-                        to={details_path}
-                        path >
-                        <VisibilityIcon />
-                    </IconButton>
-                </Tooltip>
-            )
-        }
-        
-        if (disabled) {
-            return (
-                <>
-                <Toaster/>
-                <Tooltip title="Detalles">
-                <IconButton
-                    className={classes.onlyButtonSpacing}
-                    color="inherit"
-                    size="small"
-                    component={Link}
-                    to={details_path}
-                    path >
-                    <VisibilityIcon />
-                </IconButton>
-                </Tooltip>
-                <Tooltip title= {"Hay modificaciones pendientes"}>
-                <IconButton
-                    className={classes.onlyButtonSpacing}
-                    color="inherit"
-                    size="small"
-                    onClick= {() => {
-                        toast.error("El cambio " + draft_change_id + " tiene modificaciones pendientes sobre este CI")
-                    }}
-                    path >
-                    <EditOffIcon />
-                </IconButton>
-                </Tooltip>
-            </>
-            )
-    }
+    function insertDetailsButton(details_path) {
         return (
-        <>
             <Tooltip title="Detalles">
             <IconButton
                 className={classes.onlyButtonSpacing}
@@ -145,23 +111,119 @@ export default function SimpleTable(props) {
                 <VisibilityIcon />
             </IconButton>
             </Tooltip>
-            <Tooltip title= {"Editar"}>
-            <IconButton
-                className={classes.onlyButtonSpacing}
-                color="inherit"
-                size="small"
-                component={Link}
-                to={edit_path}
-                path >
-                <EditIcon />
-            </IconButton>
-            </Tooltip>
-        </>)
-      }
+        )
+    }
 
-       
-      var new_columns = Object.entries(props.columns).map(([key, value]) => {
-        console.log(value.name);
+    function insertEditButton(change_status, edit_enabled, edit_path, draft_change_id, other_change_draft) {
+        if (['Resuelto', 'Rechazado'].includes(change_status) ) { return }
+
+        if (edit_enabled) {
+            return (
+                <>
+                <Tooltip title= {"Editar"}>
+                <IconButton
+                    className={classes.onlyButtonSpacing}
+                    color="inherit"
+                    size="small"
+                    component={Link}
+                    to={{
+                        pathname: edit_path,
+                    }}
+                    path >
+                    <EditIcon />
+                </IconButton>
+                </Tooltip>
+            </>
+            )
+        } else {
+            return (
+                <>
+                <Toaster/>
+                <Tooltip title= {determineToastMessage(other_change_draft, draft_change_id)}>
+                <IconButton
+                    className={classes.onlyButtonSpacing}
+                    color="inherit"
+                    size="small"
+                    onClick= {() => {
+                        toast.error(determineToastMessage(other_change_draft, draft_change_id));
+                    }}
+                    path >
+                    <EditOffIcon />
+                </IconButton>
+                </Tooltip>
+                </>
+            )
+        }
+    }
+
+    function insertRestoreButton(change_status, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft) {
+        if (['Resuelto', 'Rechazado'].includes(change_status) ) { return }
+
+        debugger;
+        if (restore_enabled) {
+            return (
+                <Tooltip title= {"Restaurar versión"}>
+                <IconButton
+                    className={classes.onlyButtonSpacing}
+                    color="inherit"
+                    size="small"
+                    component={Link}
+                    to={{
+                        pathname: restore_path,
+                        state: {allowVersionRestoring: true}
+                    }}
+                    path >
+                    <UpdateIcon/>
+                </IconButton>
+                </Tooltip>
+            )
+        } else {
+            return (
+                <>
+                <Toaster/>
+                <Tooltip title= {determineRestoreToastMessage(other_change_draft, draft_change_id, is_restoring_draft)}>
+                <IconButton
+                    className={classes.onlyButtonSpacing}
+                    color="inherit"
+                    size="small"
+                    component={Link}
+                    onClick= {() => {
+                        toast.error(determineRestoreToastMessage(other_change_draft, draft_change_id, is_restoring_draft));
+                    }}
+                    path >
+                    <UpdateDisabledIcon/>
+                </IconButton>
+                </Tooltip>
+                </>
+            )
+        }
+    }
+
+    function insertButtons(tableMeta, props) {
+        var object_id = tableMeta.rowData[0];
+        var draft_change_id = tableMeta.rowData[5];
+        var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
+        var is_restoring_draft = tableMeta.rowData[6];
+        var details_path = props.details_button_path + object_type + "/" + object_id;
+        var edit_path = props.edit_button_path + object_type + "/" + object_id;
+        var restore_path = props.restore_button_path + object_type + "/" + object_id;
+        var item_has_draft = draft_change_id !== null
+        var other_change_draft = item_has_draft && draft_change_id !== parseInt(localStorage.change_id)
+        var edit_enabled = !other_change_draft && !is_restoring_draft;
+        var restore_enabled = !item_has_draft
+
+        return (
+            <>
+                {insertDetailsButton(details_path)}
+                {insertEditButton(props.change_status, edit_enabled, edit_path, draft_change_id, other_change_draft)}
+                {insertRestoreButton(props.change_status, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft)}
+            </>
+        )
+    }
+
+
+    var new_columns = Object.entries(props.columns).map(([key, value]) => {
+    console.log(value.name);
         return {
             name: value.name,
             label: value.label,
@@ -177,8 +239,7 @@ export default function SimpleTable(props) {
                 }),
             }
         }  
-    }
-    );
+    });
 
     if (props.addRestoreColumn === true) {
         new_columns.push({
