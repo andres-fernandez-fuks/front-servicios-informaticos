@@ -27,14 +27,14 @@ import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
 import {DisabledInput} from "components/Form/DisabledInput.js";  
 
-export const SOFTWARE_ITEM_RESTORE_PATH = "/item_restore/software";
+export const HARDWARE_ITEM_RESTORE_PATH = "/item_restore/hardware";
 
 const columns = [
     {"name": "version_number", "label": "Versión"},
     {"name": "created_at", "label": "Fecha de creación"},
 ]
 
-export default function SoftwareItemRestore() {
+export default function HardwareItemRestore() {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -52,7 +52,7 @@ export default function SoftwareItemRestore() {
     }
 
     function setEditability(is_draft) {
-        var has_permissions = checkPermissions(TABLES.SOFTWARE, PERMISSIONS.UPDATE);
+        var has_permissions = checkPermissions(TABLES.HARDWARE, PERMISSIONS.UPDATE);
         setIsEditable(has_permissions && is_draft);
     }
 
@@ -66,20 +66,42 @@ export default function SoftwareItemRestore() {
         }
     }
 
+    function showSubmitButton() {
+        if (showRestoreButton) {
+            return (
+                <Button className="btn btn-primary"
+                color="info"
+                onClick={(event) => {restoreVersion(event)}}
+                >
+                Restaurar        
+                </Button>
+            )
+        } else {
+            return (
+                <Button className="btn btn-primary"
+                disabled = {!enableCreateButton}
+                color="primary"
+                onClick={(event) => {createDraft(event)}}
+                >
+                Guardar        
+                </Button>
+            )
+        }
+    }
 
-    React.useEffect(() => {
-        var change_id = localStorage.getItem("change_id");
-        dbGet("configuration-items/software/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
-            setValues({...data});
-            setCurrentValues({...data});
-            setEditability(data.is_draft);
-            setShowRestoreButton(!data.is_draft);
-        }).catch(err => {console.log(err)});
-        }   , []);
+  React.useEffect(() => {
+    var change_id = localStorage.getItem("change_id");
+    dbGet("configuration-items/hardware/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
+        setValues({...data});
+        setCurrentValues({...data});
+        setEditability(data.is_draft);
+        setShowRestoreButton(!data.is_draft);
+    }).catch(err => {console.log(err)});
+    }   , []);
 
-        // if (values === '' || values === undefined) {
-        //     fetchValues();
-        // }
+    // if (values === '' || values === undefined) {
+    //     fetchValues();
+    // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
@@ -108,7 +130,7 @@ export default function SoftwareItemRestore() {
 
     const restoreVersion = (event)  => {
         event.preventDefault();
-        var path = "configuration-items/software/" + item_id + "/restore";
+        var path = "configuration-items/hardware/" + item_id + "/restore";
         var version_number = currentValues.current_version_number;
         var change_id = localStorage.getItem("change_id");
         var body = {
@@ -126,7 +148,7 @@ export default function SoftwareItemRestore() {
     const createDraft = (event) => {
         event.preventDefault();
         var change_id = localStorage.getItem("change_id");
-        var path = "configuration-items/software/" + values.id  + "/draft?change_id=" + change_id;
+        var path = "configuration-items/hardware/" + values.id  + "/draft?change_id=" + change_id;
         var request_values = getRequestValues();
         dbPost(path, request_values).then(data => {
             path = simple_routes.change_details + "/" + change_id;
@@ -157,8 +179,8 @@ export default function SoftwareItemRestore() {
                         columns={columns}
                         addRestoreColumn={localStorage.getItem("wasInChange")}
                         function={checkVersion}
-                        button_path={"/admin" + SOFTWARE_ITEM_RESTORE_PATH}
-                        request_endpoint={"configuration-items/software/" + values.id + "/check-version"}/>
+                        button_path={"/admin" + HARDWARE_ITEM_RESTORE_PATH}
+                        request_endpoint={"configuration-items/hardware/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>
@@ -174,7 +196,7 @@ export default function SoftwareItemRestore() {
             <Form>
             <Card className="incident-card">
                 <CardHeader >
-                    <h4 className="title">Detalles del borrador</h4>
+                    <h4 className="title">Crear borrador</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
@@ -182,9 +204,10 @@ export default function SoftwareItemRestore() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }} for="type">Nombre</Label>
                                 <DisabledInput className="other_input"
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
-                                    id = "name"
+                                    id = "type"
                                     type="text"
                             />
                             </FormGroup>
@@ -193,6 +216,7 @@ export default function SoftwareItemRestore() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
                                 <DisabledInput className="other_input"
+                                    readOnly = {!isEditable}
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -206,6 +230,7 @@ export default function SoftwareItemRestore() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                                 <DisabledInput
+                                    readOnly = {!isEditable}
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -215,41 +240,69 @@ export default function SoftwareItemRestore() {
                         </Col>
                     </Row>
                     <Row>
-                        <Col md="5">
+                        <Col md="6">
                             <FormGroup>
-                                <Label style={{ color:"#1788bd" }}>Proveedor</Label>
-                                <DisabledInput
-                                    defaultValue = {currentValues.provider}
-                                    onChange = {function(e){updateCurrentValues("provider", e.target.value)}}
-                                    id = "provider"
+                                <Label style={{ color:"#1788bd" }} for="serial_number">Proveedor</Label>
+                                <DisabledInput  className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currentValues.manufacturer}
+                                    onChange = {function(e){updateCurrentValues("manufacturer", e.target.value)}}
+                                    id = "serial_number"
                                     type="text"
                                 />
                             </FormGroup>
                         </Col>
-                        <Col md="5">
+                        <Col md="6">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }}>Versión del Software</Label>
-                                <DisabledInput
-                                    defaultValue = {currentValues.software_version}
-                                    onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
-                                    id = "software_version"
+                            <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
+                                <DisabledInput  className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currentValues.serial_number}
+                                    onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
+                                    id = "serial_number"
                                     type="text"
                             />
                             </FormGroup>
                         </Col>
-                        <Col md="2">
+                    </Row>
+                    <Row>
+                        <Col className="pb-md-2" md="5">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
+                                <DisabledInput className="other_input"
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currentValues.purchase_date}
+                                    onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
+                                    id = "description"
+                                    type="text"
+                        />
+                            </FormGroup>
+                        </Col>
+                        <Col md="4">
+                            <FormGroup>
+                            <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
+                                <DisabledInput
+                                    readOnly = {!isEditable}
+                                    defaultValue = {currencyFormat(currentValues.price)}
+                                    onChange = {function(e){updateCurrentValues("price", e.target.value)}}
+                                    id = "description"
+                                    type="text" />
+                            </FormGroup>
+                        </Col>
+                        <Col md="3">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
                                 <DisabledInput
+                                    readOnly
                                     defaultValue = {currentValues.current_version_number}
-                                    id = "version"
+                                    id = "description"
                                     type="text"/>
                             </FormGroup>
                         </Col>
                     </Row>
                 </CardBody>
                 <CardFooter className="form_col">
-                    <Button className="btn btn-primary"
+                <Button className="btn btn-primary"
                     color="info"
                     onClick={(event) => {restoreVersion(event)}}
                     >

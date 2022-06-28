@@ -111,46 +111,14 @@ export default function SLADetailsPage() {
         }
     }
 
-    function getRequestValues() {
-        var request_values = {...currentValues};
-        delete request_values.versions;
-        delete request_values.version_number;
-        delete request_values.created_at;
-        delete request_values.updated_at;
-        delete request_values.id;
-        delete request_values.is_deleted;
-        delete request_values.item_class;
-        return request_values;
-    }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        var path = "configuration-items/sla/" + values.id + "/version";
-        var request_values = getRequestValues();
-        dbPost(path, request_values).then(data => {
-            
-            history.push("/admin" + SLA_ITEM_DETAILS_PATH + "/" + data.id);
-            window.location.reload();
-        }
-        ).catch(err => {console.log(err)});
-    }
-
-
-    function updateType(new_type) {
-        setValues({...values, type:new_type})
-    }
-
-    function currencyFormat(num) {
-        if (!num) return;
-        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-     }
     return (
       <>
         <div className="content">
           <Toaster />
           <Row>
             <Col md="6">
-            <Form onSubmit= {handleSubmit}>
+            <Form>
             <Card>
                 <CardHeader >
                     <h4 className="title">Detalles del SLA</h4>

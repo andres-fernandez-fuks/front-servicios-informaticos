@@ -144,6 +144,7 @@ export default function SimpleTable(props) {
                     className={classes.onlyButtonSpacing}
                     color="inherit"
                     size="small"
+                    component={Link}
                     onClick= {() => {
                         toast.error(determineToastMessage(other_change_draft, draft_change_id));
                     }}
@@ -170,7 +171,6 @@ export default function SimpleTable(props) {
                     component={Link}
                     to={{
                         pathname: restore_path,
-                        state: {allowVersionRestoring: true}
                     }}
                     path >
                     <UpdateIcon/>

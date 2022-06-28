@@ -91,7 +91,7 @@ export default function SoftwareItemDetails(props) {
                         addRestoreColumn={localStorage.getItem("wasInChange")}
                         function={checkVersion}
                         button_path={"/admin" + SOFTWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/software/" + values.id + "/check-version"}/>
+                        request_endpoint={"configuration-items/software/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>

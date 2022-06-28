@@ -1,17 +1,14 @@
 import React from "react";
 import Grid from '@mui/material/Grid';
-
 import { dbGet, dbPatch } from 'utils/backendFetchers';
-import "pages/items/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
-import clsx from "clsx";
-import CurrencyInput from "react-currency-input-field";
-import { formatValue } from 'react-currency-input-field';
+import toast, { Toaster } from 'react-hot-toast';
 import {units, selectStyles} from './SLAItemCreationPage';
 import Select from 'react-select'
-import toast, { Toaster } from 'react-hot-toast';
+
+
 // reactstrap components
 import {
   Button,
@@ -28,33 +25,37 @@ import {
   Col,
 } from "reactstrap";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
-
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
+import {DisabledInput} from "components/Form/DisabledInput.js";  
 
-export const SLA_ITEM_EDIT_PATH = "/item_edit/sla";
+export const SLA_ITEM_RESTORE_PATH = "/item_restore/sla";
 
 const columns = [
-    {"name": "version", "label": "Versión"},
-    {"name": "name", "label": "Nombre"},
+    {"name": "version_number", "label": "Versión"},
+    {"name": "created_at", "label": "Fecha de creación"},
 ]
 
-export default function SLADetailsPage() {
-
-    
+export default function SLAItemRestore() {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = checkPermissions(TABLES.SLA_ITEM, PERMISSIONS.UPDATE)
+    const [isEditable, setIsEditable] = React.useState(true);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [showRestoreButton, setShowRestoreButton] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
         price = parseInt(price.replace(/[^0-9]/g, ''));
         return price;
+    }
+
+    function setEditability(is_draft) {
+        var has_permissions = checkPermissions(TABLES.SLA, PERMISSIONS.UPDATE);
+        setIsEditable(has_permissions && is_draft);
     }
 
     function updateCurrentValues(field, new_value) {
@@ -67,22 +68,25 @@ export default function SLADetailsPage() {
         }
     }
 
-  React.useEffect(() => {
-    var change_id = localStorage.getItem("change_id");
-    dbGet("configuration-items/sla/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
-        setValues({...data});
-        setCurrentValues({...data});
-    }).catch(err => {console.log(err)});
-    }   , []);
 
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
+    React.useEffect(() => {
+        var change_id = localStorage.getItem("change_id");
+        dbGet("configuration-items/sla/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
+            setValues({...data});
+            setCurrentValues({...data});
+            setEditability(data.is_draft);
+            setShowRestoreButton(!data.is_draft);
+        }).catch(err => {console.log(err)});
+        }   , []);
+
+        // if (values === '' || values === undefined) {
+        //     fetchValues();
+        // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
-        delete request_values.change
         delete request_values.change_id;
+        delete request_values.change;
         delete request_values.last_version;
         delete request_values.item_type;
         delete request_values.current_version_number;
@@ -100,23 +104,25 @@ export default function SLADetailsPage() {
         delete request_values.draft_id;
         delete request_values.draft_change_id;
         delete request_values.version_number;
-        delete request_values.is_restoring_draft;
-        delete request_values.restore_version_id;
         return request_values;
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        var change_id = localStorage.getItem("change_id");
-        var path = "configuration-items/sla/" + values.id + "/draft?change_id=" + change_id;
-        var request_values = getRequestValues();
-        dbPost(path, request_values).then(data => {
-            toast.success("Borrador guardado correctamente");
-            history.goBack();
-        }
-        ).catch(err => {console.log(err)});
-    }
 
+    const restoreVersion = (event)  => {
+        event.preventDefault();
+        var path = "configuration-items/sla/" + item_id + "/restore";
+        var version_number = currentValues.current_version_number;
+        var change_id = localStorage.getItem("change_id");
+        var body = {
+            "version": version_number,
+            "change_id": change_id
+        }
+        dbPost(path, body).then(data => {
+            path = simple_routes.change_details+ "/" + change_id;
+            toast.success("La versión se restaurará cuando se aplique el cambio");
+            history.push(path);
+        }).catch(err => {console.log(err)});
+    }
 
     function updateMeasurementUnit(new_measurement_unit){
         //Llama al actualizador del values pasandole todos los datos
@@ -125,15 +131,57 @@ export default function SLADetailsPage() {
             {...currentValues, measurement_unit:new_measurement_unit}
             ))
       }
-    
-      
+
+
+    const createDraft = (event) => {
+        event.preventDefault();
+        var change_id = localStorage.getItem("change_id");
+        var path = "configuration-items/sla/" + values.id  + "/draft?change_id=" + change_id;
+        var request_values = getRequestValues();
+        dbPost(path, request_values).then(data => {
+            path = simple_routes.change_details + "/" + change_id;
+            toast.success("Borrador guardado correctamente");
+            history.push(path);
+        }
+        ).catch(err => {console.log(err)});
+    }
+
+    function currencyFormat(num) {
+        if (!num) return;
+        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+     }
+
+    function checkVersion(request_path, redirect_path, version_number) {
+        dbGet(request_path + "/" + version_number).then(data => {
+            setValues({...data});
+            setCurrentValues({...data});
+            setEditability(data.is_draft);
+            setShowRestoreButton(!data.is_draft);
+        }).catch(err => {console.log(err)});
+    }  
+
+    function getVersions() {
+        if (values.versions && values.versions.length > 0) {
+            return <SimpleTable
+                        data={values.versions}
+                        columns={columns}
+                        addRestoreColumn={localStorage.getItem("wasInChange")}
+                        function={checkVersion}
+                        button_path={"/admin" + SLA_ITEM_RESTORE_PATH}
+                        request_endpoint={"configuration-items/sla/" + values.id + "/check-version"}/>
+        }
+        else if (values.versions && values.versions.length === 0) {
+            return <div className="version_row">No hay otras versiones del ítem</div>
+        }
+    }
+
     return (
       <>
         <div className="content">
-          <Toaster />
+          <Toaster/>
           <Row>
             <Col md="6">
-            <Form onSubmit= {handleSubmit}>
+            <Form>
             <Card>
                 <CardHeader >
                     <h4 className="title">Detalles del borrador</h4>
@@ -299,6 +347,16 @@ export default function SLADetailsPage() {
             </Form>
             </Col>
             <Col md="6">
+              <Card className="incident-card">
+                <CardBody>
+                <div>
+                <h4 className="title">Otras versiones</h4>
+                    <div className="versions">
+                        {getVersions()}
+                    </div>
+                </div>
+                </CardBody>
+              </Card>
             </Col>
           </Row>
         </div>

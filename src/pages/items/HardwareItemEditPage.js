@@ -94,6 +94,8 @@ export default function App() {
         delete request_values.draft_id;
         delete request_values.draft_change_id;
         delete request_values.version_number;
+        delete request_values.is_restoring_draft;
+        delete request_values.restore_version_id;
         return request_values;
     }
 
