@@ -115,7 +115,7 @@ export default function SimpleTable(props) {
     }
 
     function insertEditButton(change_status, edit_enabled, edit_path, draft_change_id, other_change_draft) {
-        if (['Resuelto', 'Rechazado'].includes(change_status) ) { return }
+        if (change_status !== 'Pendiente') { return }
 
         if (edit_enabled) {
             return (
@@ -158,7 +158,7 @@ export default function SimpleTable(props) {
     }
 
     function insertRestoreButton(change_status, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft) {
-        if (['Resuelto', 'Rechazado'].includes(change_status) ) { return }
+        if (change_status !== 'Pendiente') { return }
 
         debugger;
         if (restore_enabled) {
