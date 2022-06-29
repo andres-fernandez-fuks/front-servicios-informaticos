@@ -44,6 +44,7 @@ export default function SoftwareItemDetails(props) {
     const [currentValues, setCurrentValues] = React.useState("");
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [counter, setCounter] = React.useState(-1);
     
     const location = useLocation();
     const {allowVersionRestoring} = location.state || {allowVersionRestoring: false};
@@ -79,6 +80,7 @@ export default function SoftwareItemDetails(props) {
         dbPost(request_path + "/" + version_number).then(data => {
             setValues({...data});
             setCurrentValues({...data});
+            setCounter(counter - 1);
         }).catch(err => {console.log(err)});
     }  
 
@@ -219,6 +221,16 @@ export default function SoftwareItemDetails(props) {
                         </Col>
                     </Row>
                 </CardBody>
+                <CardFooter style={{justifyContent:"center"}}>
+                <center>
+                <Button className="btn-fill"
+                        color="warning"
+                        onClick={() =>history.go(counter ? counter : -1)}
+                        >
+                        Volver        
+                </Button>
+                </center>
+                </CardFooter>
             </Card>
             </Form>
             </Col>

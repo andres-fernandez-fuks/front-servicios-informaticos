@@ -146,7 +146,7 @@ function IncidentDetails(props) {
             <>
                 <Button className="btn-fill" align="left"
                 hidden = {!isBlocked}
-                color="warning"
+                color="danger"
                 type="button"
                 onClick={() => unblockIncident()}
                 >
@@ -154,7 +154,7 @@ function IncidentDetails(props) {
                 </Button>
                 <Button className="btn-fill" align="left"
                 hidden = {isBlocked}
-                color="warning"
+                color="danger"
                 type="button"
                 onClick={() => blockIncident()}
                 >
@@ -174,7 +174,7 @@ function IncidentDetails(props) {
         return;
     }
         return (
-            <>  
+            <Row style={{justifyContent:"center"}}>  
             <Button className="btn-fill"
             hidden={isTaken}
             color="primary"
@@ -182,7 +182,7 @@ function IncidentDetails(props) {
             onClick={() => takeIncident()}
             >
             Tomar        
-            </Button>
+            </Button> &nbsp;
             <Grid align="center">
             <Tooltip title={isBlocked ? "Incidente bloqueado" : "" }>
                 <span>
@@ -198,8 +198,14 @@ function IncidentDetails(props) {
                 </span>
             </Tooltip>
                 {addBlockButton()}
+                <Button className="btn-fill"
+                        color="warning"
+                        onClick={() => history.goBack()}
+                        >
+                        Volver        
+                </Button>
                 </Grid>
-            </>
+            </Row>
         )
   }
 

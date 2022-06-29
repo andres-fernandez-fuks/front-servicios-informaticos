@@ -44,6 +44,7 @@ export default function SoftwareItemRestore() {
     const [isEditable, setIsEditable] = React.useState(true);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [showRestoreButton, setShowRestoreButton] = React.useState(false);
+    const [counter, setCounter] = React.useState(0);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -147,6 +148,7 @@ export default function SoftwareItemRestore() {
             setCurrentValues({...data});
             setEditability(data.is_draft);
             setShowRestoreButton(!data.is_draft);
+            setCounter(counter + 1);
         }).catch(err => {console.log(err)});
     }  
 

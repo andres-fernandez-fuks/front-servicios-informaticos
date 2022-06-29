@@ -223,9 +223,9 @@ function ChangeDetails(props) {
     function addBlockButton() {
         if (!isEditable) return
             return (
-                <>
+                <>  
                     <Button className="btn-fill"
-                    hidden = {!isBlocked}
+                    hidden = {!isTaken || !isBlocked}
                     color="warning"
                     type="button"
                     onClick={() => unblockChange()}
@@ -233,7 +233,7 @@ function ChangeDetails(props) {
                     Desbloquear        
                     </Button>
                     <Button className="btn-fill"
-                    hidden = {isBlocked}
+                    hidden = {!isTaken || isBlocked}
                     color="warning"
                     type="button"
                     onClick={() => blockChange()}
@@ -258,12 +258,20 @@ function ChangeDetails(props) {
     if (values.status === "Resuelto" || values.status === "Rechazado") {
         return;
     }
-    if (isTaken) {
         return (
-        <Grid align="center">
+        <Row style={{justifyContent:"center"}}>
+            <Button className="btn-fill" align="right"
+                hidden={isTaken}
+                color="success"
+                type="button"
+                onClick={() => takeChange()}
+                >
+                Tomar        
+            </Button>
             <Tooltip title={defineTooltipMessage()}>
             <span>
                 <Button
+                hidden = {!isTaken}
                 disabled = {!allItemsModified || isBlocked}
                 className="btn-fill"
                 color="info"
@@ -278,6 +286,7 @@ function ChangeDetails(props) {
             <Tooltip title={isBlocked ? "Cambio bloqueado" : ""}>
                 <span>
                     <Button
+                    hidden = {!isTaken}
                     disabled = {isBlocked}
                     className="btn-fill"
                     color="danger"
@@ -289,23 +298,14 @@ function ChangeDetails(props) {
                 </span>
             </Tooltip>
             {addBlockButton()}
-
-        </Grid>
+            <Button className="btn-fill"
+                color="primary"
+                onClick={() => history.goBack()}
+                >
+                Volver        
+            </Button>
+        </Row>
         )
-    }
-    if (values.taken_by !== undefined) {
-    return (
-        <Grid align="center">
-        <Button className="btn-fill" align="right"
-        color="success"
-        type="button"
-        onClick={() => takeChange()}
-        >
-        Tomar        
-        </Button>
-        
-        </Grid>)
-    }
   }
 
   return (
@@ -325,7 +325,6 @@ function ChangeDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <DisabledInput
-                                  
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -338,8 +337,7 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Estado</Label>
-                              <DisabledInput
-                                  
+                              <DisabledInput className="other_input"
                                   defaultValue= {currentValues.status}
                                   onChange = {function(e){updateCurrentValues("status", e.target.value)}}
                                   id = "type"
@@ -350,8 +348,7 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
-                              <DisabledInput
-                                  
+                              <DisabledInput className="other_input"
                                   defaultValue= {currentValues.priority}
                                   onChange = {function(e){updateCurrentValues("priority", e.target.value)}}
                                   id = "type"

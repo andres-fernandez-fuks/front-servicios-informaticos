@@ -42,6 +42,7 @@ import SimpleTable from "components/Table/SimpleTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import { DisabledInput } from "components/Form/DisabledInput";
 import toast, { Toaster } from 'react-hot-toast';
+import moment from "moment";
 
 
 export const KNOWN_ERROR_DETAILS_PATH = "/known_error_details";
@@ -134,7 +135,6 @@ function KnownErrorDetails(props) {
         cleaned_data["created_by"] = data["created_by"]
         cleaned_data["description"] = data["description"]
         cleaned_data["solution"] = data["solution"]
-        cleaned_data["created_at"] = data["created_at"]
         return cleaned_data
     }
 

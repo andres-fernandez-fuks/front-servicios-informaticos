@@ -211,6 +211,12 @@ export default function SoftwareItemDetails() {
                     >
                     Guardar        
                     </Button>
+                    <Button className="btn-fill"
+                        color="warning"
+                        onClick={() => history.goBack()}
+                        >
+                        Volver        
+                    </Button>
                 </CardFooter>
             </Card>
             </Form>

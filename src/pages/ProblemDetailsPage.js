@@ -43,9 +43,11 @@ import Tooltip from "@material-ui/core/Tooltip";
 import SimpleTable from "components/Table/SimpleTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import CommentsTracking from "components/Form/comment_tracking";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+
 export const PROBLEM_DETAILS_PATH = "/problem_details";
-
-
 const tableData = [];
 const incidentColumns = [
     {"name": "id", "label": "ID"},
@@ -71,6 +73,7 @@ function ProblemDetails(props) {
     const [isBlocked, setIsBlocked] = React.useState(false);
     const [isTaken, setIsTaken] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(true);
+    const [counter, setCounter] = React.useState(0);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -137,10 +140,10 @@ function ProblemDetails(props) {
     const takeChange = (data) => { 
         var patch_data = {taken_by:localStorage.getItem("username")}
         dbPatch("problems/" + problem_id, patch_data).then(data => {
-            setCurrentValues(data)
+            setCurrentValues(data);
+            sendComment("Problema tomado");
+            setIsTaken(true);
         });
-        sendComment("Problema tomado");
-        setIsTaken(true);
     }
 
     function addBlockButton() {
@@ -148,16 +151,16 @@ function ProblemDetails(props) {
             return (
                 <>
                     <Button className="btn-fill" align="left"
-                    hidden = {!isBlocked}
-                    color="warning"
+                    hidden = {!isTaken || !isBlocked}
+                    color="danger"
                     type="submit"
                     onClick={() => unblockProblem()}
                     >
                     Desbloquear        
                     </Button>
                     <Button className="btn-fill" align="left"
-                    hidden = {isBlocked}
-                    color="warning"
+                    hidden = {!isTaken || isBlocked}
+                    color="danger"
                     type="submit"
                     onClick={() => blockProblem()}
                     >
@@ -176,35 +179,39 @@ function ProblemDetails(props) {
     if (values.status === "Resuelto") {
         return;
     }
-    if (!values.taken_by) {
-        return (
-        <Button className="btn-fill"
-        hidden={isTaken}
-        color="primary"
-        type="submit"
-        onClick={() => takeChange()}
-        >
-        Tomar        
-        </Button>)
-    }
-    if (values.taken_by !== undefined) {
+
     return (
-        <Grid align="center">
-        <Tooltip title={isBlocked ? "Problema bloqueado" : "" }>
-            <span>
-                <Button className="btn-fill" align="right"
-                disabled = {isBlocked}
-                color="info"
-                type="submit"
-                onClick={() => solveProblem()}
+        <Row style={{justifyContent:"center"}}>
+            <Button className="btn-fill"
+            hidden={isTaken}
+            color="primary"
+            type="submit"
+            onClick={() => takeChange()}
+            >
+            Tomar        
+            </Button>
+            <Tooltip title={isBlocked ? "Problema bloqueado" : "" }>
+                <span>
+                    <Button className="btn-fill" align="right"
+                        hidden={!isTaken}
+                        disabled = {isBlocked}
+                        color="info"
+                        type="submit"
+                        onClick={() => solveProblem()}
+                    >
+                    Resolver        
+                    </Button>
+                </span>
+            </Tooltip>
+            {addBlockButton()}
+            <Button className="btn-fill"
+                color="warning"
+                onClick={() => history.goBack()}
                 >
-                Resolver        
-                </Button>
-            </span>
-        </Tooltip>
-        {addBlockButton()}
-        </Grid>)
-    }
+                Volver        
+            </Button>
+        </Row>)
+    
   }
 
   const sendComment = (comment) => {
@@ -231,8 +238,21 @@ function ProblemDetails(props) {
           <Col md="6">
           <Form onSubmit= {(e)=>e.preventDefault()}>
           <Card className="problem-card">
-              <CardHeader >
-                  <h4 className="title">Detalles del problema</h4>
+              <CardHeader>
+                <Row>
+                    <Col md="10">
+                        <h4 className="title">Detalles del problema</h4>
+                  </Col>
+                    <Col  md="2">
+                  <IconButton
+                        className={classes.onlyButtonSpacing}
+                        color="secondary"
+                        size="large"
+                        path >
+                        <ArrowBackIcon />
+                    </IconButton>
+                  </Col>
+                  </Row>
               </CardHeader>
               <CardBody >
                 <div>
@@ -241,7 +261,6 @@ function ProblemDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <DisabledInput
-                                  
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -310,11 +329,12 @@ function ProblemDetails(props) {
                              addWatchColumn={true}
                              excludeIdColumn={true} 
                              button_path={"/admin/incidents_details/"}
-                             use_object_type = {false}/>
+                             use_object_type = {false}
+                             />
             </div>
               </CardBody>
               <CardFooter className="form_col">
-              {addButtons()}
+                {addButtons()}
               </CardFooter>
           </Card>
           </Form>

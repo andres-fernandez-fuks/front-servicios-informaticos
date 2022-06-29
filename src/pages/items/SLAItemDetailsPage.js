@@ -48,6 +48,7 @@ export default function SLADetailsPage() {
     const [currentValues, setCurrentValues] = React.useState("");
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [counter, setCounter] = React.useState(-1);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -86,14 +87,14 @@ export default function SLADetailsPage() {
             }).catch(err => {console.log(err)});
     }
 
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
+    function checkVersion(request_path, redirect_path, version_number) {
+        dbPost(request_path + "/" + version_number).then(data => {
+            setValues({...data});
+            setCurrentValues({...data});
+            setCounter(counter - 1);
         }).catch(err => {console.log(err)});
-}  
+    }  
+
 
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
@@ -102,7 +103,7 @@ export default function SLADetailsPage() {
                         data={values.versions}
                         columns={columns}
                         addRestoreColumn={localStorage.getItem("wasInChange")}
-                        function={restoreVersion}
+                        function={checkVersion}
                         button_path={"/admin" + SLA_ITEM_DETAILS_PATH}
                         request_endpoint={"configuration-items/sla/" + values.id + "/restore"}/>
         }
@@ -282,6 +283,16 @@ export default function SLADetailsPage() {
                         </Col>
                     </Row>
                 </CardBody>
+                <CardFooter style={{justifyContent:"center"}}>
+                <center>
+                <Button className="btn-fill"
+                        color="warning"
+                        onClick={() => history.go(counter ? counter : -1)}
+                        >
+                        Volver        
+                </Button>
+                </center>
+                </CardFooter>
             </Card>
             </Form>
             </Col>

@@ -177,7 +177,7 @@ function ItemsTable() {
                   hidden={!checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.EDIT)}
                   onClick={() => {redirectToItemCreation();}}
                   >
-                  <AddIcon /> Nuevo
+                  <AddIcon /> Nuevo &nbsp;
                 </Button> 
                 </CardTitle>
               </CardHeader>
