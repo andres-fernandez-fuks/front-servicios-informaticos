@@ -230,7 +230,7 @@ function KnownErrorDetails(props) {
                              columns={columns}
                              addWatchColumn={true}
                              excludeIdColumn={true}
-                             button_path={"/admin/incidents_details/"}
+                             button_path={"/admin/incident_details/"}
                              use_object_type = {false}/>
             </div>
               </CardBody>

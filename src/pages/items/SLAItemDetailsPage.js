@@ -88,13 +88,12 @@ export default function SLADetailsPage() {
     }
 
     function checkVersion(request_path, redirect_path, version_number) {
-        dbPost(request_path + "/" + version_number).then(data => {
+        dbGet(request_path + "/" + version_number).then(data => {
             setValues({...data});
             setCurrentValues({...data});
             setCounter(counter - 1);
         }).catch(err => {console.log(err)});
     }  
-
 
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
@@ -102,10 +101,10 @@ export default function SLADetailsPage() {
                         isVersionsTable={true}
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={localStorage.getItem("wasInChange")}
+                        addRestoreColumn={true}
                         function={checkVersion}
                         button_path={"/admin" + SLA_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/sla/" + values.id + "/restore"}/>
+                        request_endpoint={"configuration-items/sla/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>

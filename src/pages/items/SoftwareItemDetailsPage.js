@@ -84,13 +84,12 @@ export default function SoftwareItemDetails(props) {
         }).catch(err => {console.log(err)});
     }  
 
-
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={localStorage.getItem("wasInChange")}
+                        addRestoreColumn={true}
                         function={checkVersion}
                         button_path={"/admin" + SOFTWARE_ITEM_DETAILS_PATH}
                         request_endpoint={"configuration-items/software/" + values.id + "/version"}/>

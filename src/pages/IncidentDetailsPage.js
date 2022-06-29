@@ -45,7 +45,7 @@ import CommentsTracking from "components/Form/comment_tracking";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import Tooltip from "@material-ui/core/Tooltip";
 
-export const INCIDENT_DETAILS_PATH = "/incidents_details";
+export const INCIDENT_DETAILS_PATH = "/incident_details";
 const tableData = [];
 const ciItemColumns = [
     {"name": "id", "label": "ID"},
@@ -143,7 +143,7 @@ function IncidentDetails(props) {
   function addBlockButton() {
     if (!isEditable || !isTaken) return;
         return (
-            <>
+            <>  {isBlocked ? <>&nbsp;</> : <></>}
                 <Button className="btn-fill" align="left"
                 hidden = {!isBlocked}
                 color="danger"
@@ -175,15 +175,14 @@ function IncidentDetails(props) {
     }
         return (
             <Row style={{justifyContent:"center"}}>  
-            <Button className="btn-fill"
-            hidden={isTaken}
-            color="primary"
-            type="button"
-            onClick={() => takeIncident()}
-            >
-            Tomar        
-            </Button> &nbsp;
-            <Grid align="center">
+                <Button className="btn-fill"
+                hidden={isTaken}
+                color="primary"
+                type="button"
+                onClick={() => takeIncident()}
+                >
+                Tomar        
+                </Button>
             <Tooltip title={isBlocked ? "Incidente bloqueado" : "" }>
                 <span>
                 <Button className="btn-fill" align="right"
@@ -204,7 +203,6 @@ function IncidentDetails(props) {
                         >
                         Volver        
                 </Button>
-                </Grid>
             </Row>
         )
   }

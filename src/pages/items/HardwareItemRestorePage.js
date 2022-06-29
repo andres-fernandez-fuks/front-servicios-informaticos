@@ -177,7 +177,7 @@ export default function HardwareItemRestore() {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={localStorage.getItem("wasInChange")}
+                        addRestoreColumn={true}
                         function={checkVersion}
                         button_path={"/admin" + HARDWARE_ITEM_RESTORE_PATH}
                         request_endpoint={"configuration-items/hardware/" + values.id + "/version"}/>

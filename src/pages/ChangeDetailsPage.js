@@ -58,9 +58,10 @@ const itemsColumns = [
     {"name": "is_restoring_draft", "label": "is_restoring_draft"},
 ]
 
-const incidentColumns = [
+const incidentAndProblemsColumns = [
     {"name": "id", "label": "ID"},
     {"name": "type_show", "label": "Tipo"},
+    {"name": "type", "label": "type"},
     {"name": "description", "label": "Descripción"}
 ]
 
@@ -107,9 +108,11 @@ function ChangeDetails(props) {
 
             incidents_data.map(i => {
                 i['type_show'] = "Incidente"
+                i['type'] = "incident"
             })
             problems_data.map(i => {
                 i['type_show'] = "Problema"
+                i['type'] = "problem"
             })
             
             data["hardware_configuration_items"].map(i => {
@@ -224,6 +227,7 @@ function ChangeDetails(props) {
         if (!isEditable) return
             return (
                 <>  
+                    {isBlocked ? <>&nbsp;</> : <></>}
                     <Button className="btn-fill"
                     hidden = {!isTaken || !isBlocked}
                     color="warning"
@@ -268,7 +272,7 @@ function ChangeDetails(props) {
                 >
                 Tomar        
             </Button>
-            <Tooltip title={defineTooltipMessage()}>
+            <Tooltip title={defineTooltipMessage()} style={{paddingRight:"1px"}}>
             <span>
                 <Button
                 hidden = {!isTaken}
@@ -282,7 +286,7 @@ function ChangeDetails(props) {
                 </Button>
             </span>
             </Tooltip>
-            &nbsp;
+            &nbsp; 
             <Tooltip title={isBlocked ? "Cambio bloqueado" : ""}>
                 <span>
                     <Button
@@ -405,11 +409,11 @@ function ChangeDetails(props) {
                 <Grid>
                 <h4 className="title">Incidentes y problemas</h4>
                 <SimpleTable data={itemsData}
-                             columns={incidentColumns}
-                             //addWatchColumn={true}
-                             excludeIdColumn={true} 
-                             //button_path={"/admin/incidents_details/"}
-                             use_object_type = {false}/>
+                             columns={incidentAndProblemsColumns}
+                             addWatchColumn={true}
+                             excludeColumns={["id", "type"]}
+                             button_path={"_details"}
+                             use_solvable_type = {true}/>
                 </Grid>
             </div>
               </CardBody>

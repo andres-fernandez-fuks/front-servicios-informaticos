@@ -71,12 +71,12 @@ export default function App() {
     dbGet("configuration-items/hardware/" + item_id).then(data => {
         setValues({...data});
         setCurrentValues({...data});
-        getVersions();
+        //getVersions();
     }).catch(err => {console.log(err)});
     }   , []);
 
     function checkVersion(request_path, redirect_path, version_number) {
-        dbPost(request_path + "/" + version_number).then(data => {
+        dbGet(request_path + "/" + version_number).then(data => {
             setValues({...data});
             setCurrentValues({...data});
             setCounter(counter - 1);
@@ -94,10 +94,10 @@ export default function App() {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={localStorage.getItem("wasInChange")}
+                        addRestoreColumn={true}
                         function={checkVersion}
                         button_path={"/admin" + HARDWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/hardware/" + values.id + "/restore"}/>
+                        request_endpoint={"configuration-items/hardware/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>

@@ -145,11 +145,7 @@ export default function SLAItemRestore() {
         }
         ).catch(err => {console.log(err)});
     }
-
-    function currencyFormat(num) {
-        if (!num) return;
-        return '$ ' + num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-     }
+    
 
     function checkVersion(request_path, redirect_path, version_number) {
         dbGet(request_path + "/" + version_number).then(data => {
@@ -168,7 +164,7 @@ export default function SLAItemRestore() {
                         addRestoreColumn={localStorage.getItem("wasInChange")}
                         function={checkVersion}
                         button_path={"/admin" + SLA_ITEM_RESTORE_PATH}
-                        request_endpoint={"configuration-items/sla/" + values.id + "/check-version"}/>
+                        request_endpoint={"configuration-items/sla/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>

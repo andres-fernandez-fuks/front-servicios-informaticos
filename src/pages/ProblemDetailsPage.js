@@ -149,7 +149,8 @@ function ProblemDetails(props) {
     function addBlockButton() {
         if (!isEditable) return
             return (
-                <>
+                 <> 
+                    {isBlocked ? <>&nbsp;</> : <></>}
                     <Button className="btn-fill" align="left"
                     hidden = {!isTaken || !isBlocked}
                     color="danger"
@@ -328,7 +329,7 @@ function ProblemDetails(props) {
                              columns={columns}
                              addWatchColumn={true}
                              excludeIdColumn={true} 
-                             button_path={"/admin/incidents_details/"}
+                             button_path={"/admin/incident_details/"}
                              use_object_type = {false}
                              />
             </div>
