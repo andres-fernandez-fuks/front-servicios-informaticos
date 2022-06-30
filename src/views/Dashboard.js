@@ -267,6 +267,16 @@ function Dashboard(props) {
         }
     })
 
+    for (var i in day_names) {
+        if (solvables_by_week_day[i] === undefined) {
+            consolidated.push({
+                x: day_names[i],
+                y: 0,
+            })
+        }
+    }
+
+
     let max_day = Object.entries(solvables_by_week_day).reduce((a, b) => a[1] > b[1] ? a : b)[0]
 
     setleftChartData(consolidated);
@@ -382,7 +392,7 @@ function Dashboard(props) {
               <CardHeader>
                 <h5 className="card-category">{endpoint_names[category]} Creados por día de semana</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> Día de más creación: {maxCreationDay}
+                  <i className="tim-icons icon-bell-55 text-info" /> Día con más {endpoint_names[category].toLowerCase()}: {maxCreationDay}
                 </CardTitle>
                 
               </CardHeader>
