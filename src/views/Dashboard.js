@@ -244,7 +244,7 @@ function Dashboard(props) {
       )
       consolidated = consolidated.slice(0, 5)
       setsolvedByUserData(consolidated);
-      setMostSolvingUser(consolidated[0].x);
+      setMostSolvingUser(consolidated[0] ? consolidated[0].x : 'No hay incidentes resueltos');
   }
 
   function getCreatedThisWeek(){
