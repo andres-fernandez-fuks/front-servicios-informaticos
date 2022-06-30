@@ -270,7 +270,6 @@ function Dashboard(props) {
           y: res.length,
         }
         data.push(aux)
-        console.log("BARDATA", data)
         setcenterChartData(data);
         setcenterChartName(endpoint_names[name])
         setsolvedRatio(data[1]["y"] / data[0]["y"])

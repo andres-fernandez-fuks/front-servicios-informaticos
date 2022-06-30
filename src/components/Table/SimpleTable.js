@@ -82,7 +82,6 @@ export default function SimpleTable(props) {
         }  
     }
     );
-    debugger;
     if (props.addRestoreColumn) {
         new_columns.push({
             name: "Restaurar",
@@ -133,7 +132,6 @@ export default function SimpleTable(props) {
                 style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "middle"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
-                debugger;
                 var object_id = tableMeta.rowData[0];
                 console.log("ID DE OBJETO: " + object_id);
                 var path;

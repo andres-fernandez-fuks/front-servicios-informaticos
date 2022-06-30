@@ -78,6 +78,7 @@ export default function SLADetailsPage() {
         setValues({...data});
         setCurrentValues({...data});
         getVersions();
+        console.log(currentValues)
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -207,6 +208,7 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
                                 <Select 
+                                    value = {{value: currentValues.measurement_unit, label: currentValues.measurement_unit}}
                                     styles={selectStyles}
                                     isDisabled = {!isEditable}
                                     id="measurement_unit"

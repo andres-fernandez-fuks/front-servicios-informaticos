@@ -180,7 +180,7 @@ export default function SLAItemRestore() {
             <Form>
             <Card>
                 <CardHeader >
-                    <h4 className="title">Detalles del borrador</h4>
+                    <h4 className="title">Restaurar SLA</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
@@ -267,6 +267,7 @@ export default function SLAItemRestore() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
                                 <Select 
+                                    value = {{value: currentValues.measurement_unit, label: currentValues.measurement_unit}}
                                     styles={selectStyles}
                                     isDisabled = {!isEditable}
                                     id="measurement_unit"

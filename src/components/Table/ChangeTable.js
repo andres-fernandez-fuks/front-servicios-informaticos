@@ -160,7 +160,6 @@ export default function SimpleTable(props) {
     function insertRestoreButton(change_status, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft) {
         if (change_status !== 'Pendiente') { return }
 
-        debugger;
         if (restore_enabled) {
             return (
                 <Tooltip title= {"Restaurar versión"}>
