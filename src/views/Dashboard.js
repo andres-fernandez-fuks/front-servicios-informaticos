@@ -160,7 +160,6 @@ function Dashboard(props) {
     if (!itemsData) return;
 
     var data = itemsData["items"]
-    console.log("DATA: ", data)
     let mapped = data.map((element) => {
       return [element["name"], element["value"]]})
     let consolidated = mapped.map(element => {
@@ -260,23 +259,18 @@ function Dashboard(props) {
 
     const day_names = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado", "Domingo"]
 
+    for (var i in day_names) {
+      if (solvables_by_week_day[i] === undefined) {
+          solvables_by_week_day[i] = 0;
+      }
+    }
+
     let consolidated = Object.entries(solvables_by_week_day).map((element) => {
         return {
             x: day_names[element[0]],
             y: element[1],
         }
     })
-
-    for (var i in day_names) {
-        if (solvables_by_week_day[i] === undefined) {
-            consolidated.push({
-                x: day_names[i],
-                y: 0,
-            })
-        }
-    }
-
-
     let max_day = Object.entries(solvables_by_week_day).reduce((a, b) => a[1] > b[1] ? a : b)[0]
 
     setleftChartData(consolidated);
@@ -296,7 +290,6 @@ function Dashboard(props) {
         y: solvableSolvedData.length,
       }
       data.push(aux2)
-      console.log("BARDATA", data)
       setcenterChartData(data);
       setcenterChartName(endpoint_names[name])
       setsolvedRatio(data[1]["y"] / data[0]["y"])
