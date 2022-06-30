@@ -81,10 +81,6 @@ export default function HardwareItemRestore() {
     }).catch(err => {console.log(err)});
     }   , []);
 
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
-
     function getRequestValues() {
         var request_values = {...currentValues};
         delete request_values.change_id;
@@ -179,7 +175,7 @@ export default function HardwareItemRestore() {
             <Form>
             <Card className="incident-card">
                 <CardHeader >
-                    <h4 className="title">Crear borrador</h4>
+                    <h4 className="title">Restaurar ítem de hardware</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>

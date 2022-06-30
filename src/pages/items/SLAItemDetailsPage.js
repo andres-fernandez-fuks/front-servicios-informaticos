@@ -78,6 +78,7 @@ export default function SLADetailsPage() {
         setValues({...data});
         setCurrentValues({...data});
         getVersions();
+        console.log(currentValues)
     }).catch(err => {console.log(err)});
     }   , []);
 

@@ -80,9 +80,6 @@ export default function SoftwareItemRestore() {
         }).catch(err => {console.log(err)});
         }   , []);
 
-        // if (values === '' || values === undefined) {
-        //     fetchValues();
-        // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
@@ -178,7 +175,7 @@ export default function SoftwareItemRestore() {
             <Form>
             <Card className="incident-card">
                 <CardHeader >
-                    <h4 className="title">Detalles del borrador</h4>
+                    <h4 className="title">Restaurar ítem de software</h4>
                 </CardHeader>
                 <CardBody>
                     <Row>
