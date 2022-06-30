@@ -25,6 +25,7 @@ import {
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
+import { DisabledInput } from "components/Form/DisabledInput";
 
 export const SOFTWARE_ITEM_EDIT_PATH = "/item_edit/software";
 
@@ -194,8 +195,7 @@ export default function SoftwareItemDetails() {
                         <Col md="2">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <Input
-                                    disabled
+                                <DisabledInput
                                     defaultValue = {currentValues.current_version_number}
                                     id = "version"
                                     type="text"/>
