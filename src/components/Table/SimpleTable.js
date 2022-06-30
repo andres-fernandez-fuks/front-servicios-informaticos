@@ -85,7 +85,7 @@ export default function SimpleTable(props) {
     
     if (props.addRestoreColumn) {
         new_columns.push({
-            name: "Restaurar",
+            name: props.isKnownErrorTable ? "Restaurar" : "Detalles",
             options: {
             download: false,
             filter: false,
@@ -99,21 +99,21 @@ export default function SimpleTable(props) {
             customBodyRender: (value, tableMeta, updateValue) => {
                 var object_id = props.isVersionsTable ? tableMeta.rowData[0] : tableMeta.rowData[0];
                 
-                return (
-                <>
-                    <Tooltip title="Restaurar">
-                    <IconButton
-                        className={classes.onlyButtonSpacing}
-                        color="inherit"
-                        size="small"
-                        component={Link}
-                        onClick={() => props.function(props.request_endpoint, props.button_path, object_id)}
-                        path >
-                        <VisibilityIcon />
-                    </IconButton>
-                    </Tooltip>
-                </>
-                );
+            return (
+            <>
+                <Tooltip title="Restaurar">
+                <IconButton
+                    className={classes.onlyButtonSpacing}
+                    color="inherit"
+                    size="small"
+                    component={Link}
+                    onClick={() => props.function(props.request_endpoint, props.button_path, object_id)}
+                    path >
+                    {props.isKnownErrorTable ? <RestoreIcon/> : <VisibilityIcon/>}
+                </IconButton>
+                </Tooltip>
+            </>
+            );
             },
             },
         });

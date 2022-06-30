@@ -123,7 +123,9 @@ function KnownErrorDetails(props) {
                 addRestoreColumn={true}
                 function={restoreVersion}
                 button_path={"/admin" + KNOWN_ERROR_DETAILS_PATH}
-                request_endpoint={"errors/" + values.id + "/restore"}/>
+                request_endpoint={"errors/" + values.id + "/restore"}
+                isKnownErrorTable={true}
+                  />
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>
