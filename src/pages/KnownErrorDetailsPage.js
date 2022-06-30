@@ -120,7 +120,7 @@ function KnownErrorDetails(props) {
             return <SimpleTable
                 data={values.versions}
                 columns={versionColumns}
-                addRestoreColumn={!localStorage.getItem("wasInChange")}
+                addRestoreColumn={true}
                 function={restoreVersion}
                 button_path={"/admin" + KNOWN_ERROR_DETAILS_PATH}
                 request_endpoint={"errors/" + values.id + "/restore"}/>
