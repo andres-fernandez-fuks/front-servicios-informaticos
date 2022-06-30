@@ -90,7 +90,7 @@ function Dashboard(props) {
   const [maxCreationDay, setMaxCreationDay] = React.useState("Cargando...");
   const [maxItemWithSolvables, setMaxItemWithSolvables] = React.useState("Cargando...");
   const [mostSolvingUser, setMostSolvingUser] = React.useState("Cargando...");
-
+  const [creadosUltimoAño, setCreadosUltimoAño] = React.useState("Cargando...");
   React.useEffect(() => {
     getSolvableData(category);
     getSolvableSolvedData(category);
@@ -154,6 +154,9 @@ function Dashboard(props) {
         }
       })
       setbigChartData(consolidated);
+      setCreadosUltimoAño(consolidated.reduce((prev, curr) => {
+        return prev + curr.y;
+      }, 0 ))
   }
 
   function getItemsWithMoreSolvables(name){
@@ -220,7 +223,7 @@ function Dashboard(props) {
           return prev + curr
       }
       , 0) / filtered.length
-      setAvgSolvingTime(avg);
+      setAvgSolvingTime(avg ? avg : 0);
   }
 
   function getSolvedByUser(){
@@ -243,7 +246,7 @@ function Dashboard(props) {
       )
       consolidated = consolidated.slice(0, 5)
       setsolvedByUserData(consolidated);
-      setMostSolvingUser(consolidated[0] ? consolidated[0].x : 'No hay incidentes resueltos');
+      setMostSolvingUser(consolidated[0] ? consolidated[0].x : `No hay ${endpoint_names[category]} resueltos`);
   }
 
   function getCreatedThisWeek(){
@@ -304,7 +307,7 @@ function Dashboard(props) {
                 <Row>
                   <Col className="text-left" sm="6">
                     <h5 className="card-category">{endpoint_names[category]} creados por mes en el último año</h5>
-                    <CardTitle tag="h2">Performance</CardTitle>
+                    <CardTitle tag="h2">Totales creados en el último año: {creadosUltimoAño}</CardTitle>
                   </Col>
                   <Col sm="6">
                     <ButtonGroup
