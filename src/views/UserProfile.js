@@ -32,6 +32,7 @@ import {
 } from "reactstrap";
 import {dbGet} from "utils/backendFetchers";
 import SimpleTable from "components/Table/SimpleTable";
+import { DisabledInput } from "components/Form/DisabledInput";
 
 
 function UserProfile() {
@@ -66,7 +67,7 @@ function UserProfile() {
                     <Col className="px-md-1" md="6">
                       <FormGroup>
                         <label>Nombre de usuario</label>
-                        <Input
+                        <DisabledInput
                           value={values["username"]}
                           placeholder="Nombre de usuario"
                           type="text"
@@ -78,7 +79,7 @@ function UserProfile() {
                         <label htmlFor="exampleInputEmail1">
                           Correo electrónico
                         </label>
-                        <Input 
+                        <DisabledInput 
                           value = {values["email"]}
                           placeholder="ejemplo@mail.com" 
                           type="email" />
@@ -89,7 +90,7 @@ function UserProfile() {
                     <Col className="pr-md-1" md="6">
                       <FormGroup>
                         <label>Nombre</label>
-                        <Input
+                        <DisabledInput
                           value={values["name"]}
                           placeholder="Nombre"
                           type="text"
@@ -99,7 +100,7 @@ function UserProfile() {
                     <Col className="pl-md-1" md="6">
                       <FormGroup>
                         <label>Apellido</label>
-                        <Input
+                        <DisabledInput
                           value={values["lastname"]}
                           placeholder="Apellido"
                           type="text"
