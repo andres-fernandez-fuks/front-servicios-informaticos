@@ -79,7 +79,7 @@ function ChangeDetails(props) {
     var change_id = paths[paths.length - 1]
     const [isBlocked, setIsBlocked] = React.useState(false);
     localStorage.setItem("wasInChange", true)
-    const [allItemsModified, setAllItemsModified] = React.useState(true);
+    const [hasModifications, setHasModifications] = React.useState(false);
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [isTaken, setIsTaken] = React.useState(false);
 
@@ -118,7 +118,7 @@ function ChangeDetails(props) {
             data["hardware_configuration_items"].map(i => {
                 i['type_show'] = "Hardware"
                 i['type'] = "hardware"
-                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
+                if (i['draft_id'] && i['draft_change_id'] == this_change_id) setHasModifications(true);
                 ci.push(i)
                 console.log(i)
             })
@@ -126,7 +126,7 @@ function ChangeDetails(props) {
             data["software_configuration_items"].map(i => {
                 i['type_show'] = "Software"
                 i['type'] = "software"
-                if (!i['draft_change_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
+                if (i['draft_id'] && i['draft_change_id'] == this_change_id) setHasModifications(true);
                 ci.push(i)
                 console.log(i)
             })
@@ -134,7 +134,7 @@ function ChangeDetails(props) {
             data["sla_configuration_items"].map(i => {
                 i['type_show'] = "SLA"
                 i['type'] = "sla"
-                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
+                if (i['draft_id'] && i['draft_change_id'] == this_change_id) setHasModifications(true);
                 ci.push(i)
                 console.log(i)
             })
@@ -249,9 +249,9 @@ function ChangeDetails(props) {
     }
 
     function defineTooltipMessage() {
-        if (allItemsModified && !isBlocked) return "";
+        if (hasModifications && !isBlocked) return "";
         if (isBlocked) return "Cambio bloqueado";
-        return "Quedan ítems por modificar"; 
+        return "Tiene que modificar por lo menos un ítem"; 
     }
 
   function addButtons() {
@@ -276,7 +276,7 @@ function ChangeDetails(props) {
             <span>
                 <Button
                 hidden = {!isTaken}
-                disabled = {!allItemsModified || isBlocked}
+                disabled = {!hasModifications || isBlocked}
                 className="btn-fill"
                 color="info"
                 type="button"
