@@ -286,7 +286,7 @@ function ChangeDetails(props) {
                 </Button>
             </span>
             </Tooltip>
-            &nbsp; 
+            {isTaken ? <> &nbsp; </> : <></>}
             <Tooltip title={isBlocked ? "Cambio bloqueado" : ""}>
                 <span>
                     <Button
@@ -376,7 +376,7 @@ function ChangeDetails(props) {
                       </Col>
                       <Col md="6">
                           <FormGroup>
-                          <Label style={{ color:"#1788bd" }}>Resuelto por</Label>
+                          <Label style={{ color:"#1788bd" }}>Tomado por</Label>
                               <DisabledInput  className="other_input"
                                   readOnly
                                   defaultValue = {currentValues.taken_by}
@@ -401,7 +401,8 @@ function ChangeDetails(props) {
                              type_row = {1}
                              change_callback_id = {change_id}
                              use_object_type = {true}
-                             change_status = {values.status}
+                             change_status = {[values.status]} // si se pasa como puntero, se actualiza solo en la tabla
+                             taken_by = {[values.taken_by]} // si se pasa como puntero, se actualiza solo en la tabla
                              />
                 </Grid>
                 </div>

@@ -84,21 +84,64 @@ function Dashboard(props) {
   const [leftChartName, setleftChartName] = React.useState("");
   const [createdLastMonth, setcreatedLastMonth] = React.useState("Cargando...");
   const [pieData, setPieData] = React.useState([]);
+  const [solvableData, setSolvableData] = React.useState(null);
+  const [solvableSolvedData, setSolvableSolvedData] = React.useState(null);
+  const [itemsData, setItemsData] = React.useState(null);
+  const [maxCreationDay, setMaxCreationDay] = React.useState("Cargando...");
+  const [maxItemWithSolvables, setMaxItemWithSolvables] = React.useState("Cargando...");
+  const [mostSolvingUser, setMostSolvingUser] = React.useState("Cargando...");
 
   React.useEffect(() => {
-    getCreatedByDate(category);
-    getCreatedVSSolved(category);
-    getSolvedByUser(category + "/solved");
-    getItemsWithMoreSolvables(category);
-    getAverageData(category);
-    calculateAverageSolvingTime(category);
-    getCreatedThisWeek(category);
-    getPieData(category);
+    getSolvableData(category);
+    getSolvableSolvedData(category);
+    getItemsData();
   }, [category])
 
-  function getCreatedByDate(name){
-    dbGet(name).then((res) => {
-      let mapped = res.map((element) => {
+  React.useEffect(() => {
+    getCreatedByDate();
+    getCreatedVSSolved();
+    getCreatedThisWeek();
+    getPieData();
+    }, [solvableData])
+
+  React.useEffect(() => {
+    getCreatedVSSolved();
+    getSolvedByUser();
+    getAverageData();
+    calculateAverageSolvingTime();
+    }, [solvableSolvedData])
+
+  React.useEffect(() => {
+    getItemsWithMoreSolvables(category);
+    }, [itemsData])
+
+  function getSolvableData(category) {
+    dbGet(category).then((data) => {
+        setSolvableData(data);
+    }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  function getSolvableSolvedData(category) {
+    dbGet(category + "/solved").then((data) => {
+        setSolvableSolvedData(data);
+    }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  function getItemsData() {
+    dbGet("configuration-items/all").then((data) => {
+        setItemsData(data);
+    }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  function getCreatedByDate(){
+    if (!solvableData) return;
+    let mapped = solvableData.map((element) => {
         return element["created_at"]})
       let counted = mapped.reduce((prev, curr) => {
         prev[curr] = (prev[curr] || 0) + 1;
@@ -111,33 +154,32 @@ function Dashboard(props) {
         }
       })
       setbigChartData(consolidated);
-      setbigChartName(endpoint_names[name])
-    }).catch((err) => {
-      console.log(err);
-    })
   }
 
   function getItemsWithMoreSolvables(name){
-    dbGet("configuration-items/all").then((res) => {
-      var data = res["items"]  
-      let mapped = data.map((element) => {
-        return [element["name"], element["value"]]})
-      let consolidated = mapped.map(element => {
-        return {
-          x: element[0],
-          y: element[1],
-        }
-      })
-      setitemsWithMoreSolvables(consolidated);
-      setbigChartName(endpoint_names[name])
-    }).catch((err) => {
-      console.log(err);
+    if (!itemsData) return;
+
+    var data = itemsData["items"]
+    console.log("DATA: ", data)
+    let mapped = data.map((element) => {
+      return [element["name"], element["value"]]})
+    let consolidated = mapped.map(element => {
+      return {
+        x: element[0],
+        y: element[1],
+      }
     })
+
+    let max_item = data[0].name
+    setMaxItemWithSolvables(max_item)
+    setitemsWithMoreSolvables(consolidated);
+    setbigChartName(endpoint_names[name])
   }
 
-  function getAverageData(name){
-    dbGet(name).then((res) => {
-      let mapped = res.map((element) => {
+  function getAverageData(){
+    if (!solvableSolvedData) return;
+
+    let mapped = solvableSolvedData.map((element) => {
         return element["solving_time"]
       })
       let filtered = mapped.filter((element) => {
@@ -150,50 +192,41 @@ function Dashboard(props) {
         }
       })
       setAvgData(consolidated);
-    }).catch((err) => {
-      console.log(err);
-    })
   }
 
-  function getPieData(name){
-    dbGet(name).then((res) => {
-      var solved = 0;
-      var notSolved = 0;
-      res.forEach((element) => {
-        if(element.status === "Resuelto") solved++;
-        else notSolved++;
+  function getPieData(){
+    if (!solvableData) return;
+    var solved = 0;
+    var notSolved = 0;
+    solvableData.forEach((element) => {
+      if(element.status === "Resuelto") solved++;
+      else notSolved++;
+    })
+    var data = {
+      labels: ["Resueltos", "No resueltos"],
+      values: [solved, notSolved],
+    }
+    setPieData(data);
+  }
+
+  function calculateAverageSolvingTime() {
+    if (!solvableSolvedData) return;
+    let mapped = solvableSolvedData.map((element) => {
+        return element["solving_time"]
       })
-      var data = {
-        labels: ["Resueltos", "No resueltos"],
-        values: [solved, notSolved],
+      let filtered = mapped.filter((element) => {
+          return element != null
+      })
+      let avg = filtered.reduce((prev, curr) => {
+          return prev + curr
       }
-      setPieData(data);
-    }).catch((err) => {
-      console.log(err);
-    })
+      , 0) / filtered.length
+      setAvgSolvingTime(avg);
   }
 
-  function calculateAverageSolvingTime(name) {
-    dbGet(name).then((res) => {
-        let mapped = res.map((element) => {
-          return element["solving_time"]
-        })
-        let filtered = mapped.filter((element) => {
-            return element != null
-        })
-        let avg = filtered.reduce((prev, curr) => {
-            return prev + curr
-        }
-        , 0) / filtered.length
-        setAvgSolvingTime(avg);;
-    }).catch((err) => {
-        console.log(err);
-      })
-  }
-
-  function getSolvedByUser(name){
-    dbGet(name).then((res) => {
-      let mapped = res.map((element) => {
+  function getSolvedByUser(){
+    if (!solvableSolvedData) return;
+    let mapped = solvableSolvedData.map((element) => {
         return element["taken_by"]})
       let counted = mapped.reduce((prev, curr) => {
         prev[curr] = (prev[curr] || 0) + 1;
@@ -211,74 +244,52 @@ function Dashboard(props) {
       )
       consolidated = consolidated.slice(0, 5)
       setsolvedByUserData(consolidated);
-    }).catch((err) => {
-      console.log(err);
+      setMostSolvingUser(consolidated[0].x);
+  }
+
+  function getCreatedThisWeek(){
+    if (!solvableData) return;
+
+    let solvables_by_week_day = {};
+
+    solvableData.forEach((element) => {
+        let date = moment(element["created_at"], "DD/MM/YYYY").weekday();
+        date = date === 0 ? 6 : date - 1;
+        solvables_by_week_day[date] = (solvables_by_week_day[date] || 0) + 1;
     })
-  }
-  function getCreatedThisWeek(name){
-      dbGet(name).then((res) => {
-        let mapped = res.map((element) => {
-          return element["created_at"]})
-        let data = mapped.reduce((prev, curr) => {
-          prev[curr] = (prev[curr] || 0) + 1;
-          return prev;
-        }, {})
-        var this_week_data = Object.entries(data).filter((element) => {
-          return moment(element[0], "DD/MM/YYYY").week() == moment().week()
-        }).map((element) => {
-          return { 
-            x: moment(moment(element[0], "DD/MM/YYYY").toDate()).format("dddd DD"),
+
+    const day_names = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado", "Domingo"]
+
+    let consolidated = Object.entries(solvables_by_week_day).map((element) => {
+        return {
+            x: day_names[element[0]],
             y: element[1],
-            }
-        })
-        let weekdays_with_data = this_week_data.map((element) => {
-          return element["x"]
-        })
-        let created_number = this_week_data.reduce((prev, act)=>{
-          return prev + act["y"]
-        }, 0)
-        for (let i = moment().startOf("week"); i < moment().endOf("week"); i.add(1, "days")) {
-          let date = i.format("dddd DD")
-          if (!weekdays_with_data.includes(date)) {
-            this_week_data.push({
-              x: date,
-              y: 0,
-            })
-          }        
         }
-        setleftChartData(this_week_data)
-        setleftChartName(endpoint_names[name])
-        setcreatedLastMonth(created_number)
-      }).catch((err) => {
-        console.log(err)
-      })
+    })
+
+    let max_day = Object.entries(solvables_by_week_day).reduce((a, b) => a[1] > b[1] ? a : b)[0]
+
+    setleftChartData(consolidated);
+    setMaxCreationDay(day_names[max_day]);
   }
-    
-    
   
   function getCreatedVSSolved(name){
+    if (!solvableData || !solvableSolvedData) return;
     let data = []
-    dbGet(name).then((res) => {
-      let aux = {
+    let aux = {
         x: "Creados",
-        y: res.length,
+        y: solvableData.length,
       }
       data.push(aux)
-      dbGet(name + "/solved").then((res) => {
-        let aux = {
-          x: "Resueltos",
-          y: res.length,
-        }
-        data.push(aux)
-        setcenterChartData(data);
-        setcenterChartName(endpoint_names[name])
-        setsolvedRatio(data[1]["y"] / data[0]["y"])
-      }).catch((err) => {
-        console.log(err)
-      })
-    }).catch((err) => {
-      console.log(err)
-    })
+      let aux2 = {
+        x: "Resueltos",
+        y: solvableSolvedData.length,
+      }
+      data.push(aux2)
+      console.log("BARDATA", data)
+      setcenterChartData(data);
+      setcenterChartName(endpoint_names[name])
+      setsolvedRatio(data[1]["y"] / data[0]["y"])
   }
   return (
     <>
@@ -289,7 +300,7 @@ function Dashboard(props) {
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
-                    <h5 className="card-category">Creados por fecha</h5>
+                    <h5 className="card-category">{endpoint_names[category]} creados por mes en el último año</h5>
                     <CardTitle tag="h2">Performance</CardTitle>
                   </Col>
                   <Col sm="6">
@@ -369,9 +380,9 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Creados la semana en curso</h5>
+                <h5 className="card-category">{endpoint_names[category]} Creados por día de semana</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> {createdLastMonth}
+                  <i className="tim-icons icon-bell-55 text-info" /> Día de más creación: {maxCreationDay}
                 </CardTitle>
                 
               </CardHeader>
@@ -420,9 +431,9 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Resueltos por usuario (top 5)</h5>
+                <h5 className="card-category">{endpoint_names[category]} resueltos por usuario (top 5)</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-user-run text-success" /> 12,100K
+                  <i className="tim-icons icon-user-run text-success" /> Top: {mostSolvingUser}
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -442,9 +453,9 @@ function Dashboard(props) {
           <Col lg="8">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Ítems con más incidentes</h5>
+                <h5 className="card-category">Ítems con más {endpoint_names[category]}</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-settings-gear-63 text-info" /> Ítem: 
+                  <i className="tim-icons icon-settings-gear-63 text-info" /> Ítem: {maxItemWithSolvables}
                 </CardTitle>
               </CardHeader>
               <CardBody>
@@ -483,338 +494,6 @@ function Dashboard(props) {
             </Card>
           </Col>
         </Row>
-        {/* <Row>
-          <Col lg="6" md="12">
-            <Card className="card-tasks">
-              <CardHeader>
-                <h6 className="title d-inline">Tasks(5)</h6>
-                <p className="card-category d-inline"> today</p>
-                <UncontrolledDropdown>
-                  <DropdownToggle
-                    caret
-                    className="btn-icon"
-                    color="link"
-                    data-toggle="dropdown"
-                    type="button"
-                  >
-                    <i className="tim-icons icon-settings-gear-63" />
-                  </DropdownToggle>
-                  <DropdownMenu aria-labelledby="dropdownMenuLink" right>
-                    <DropdownItem
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Action
-                    </DropdownItem>
-                    <DropdownItem
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Another action
-                    </DropdownItem>
-                    <DropdownItem
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Something else
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </CardHeader>
-              <CardBody>
-                <div className="table-full-width table-responsive">
-                  <Table>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Update the Documentation</p>
-                          <p className="text-muted">
-                            Dwuamish Head, Seattle, WA 8:47 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip636901683"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip636901683"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input
-                                defaultChecked
-                                defaultValue=""
-                                type="checkbox"
-                              />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">GDPR Compliance</p>
-                          <p className="text-muted">
-                            The GDPR is a regulation that requires businesses to
-                            protect the personal data and privacy of Europe
-                            citizens for transactions that occur within EU
-                            member states.
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip457194718"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip457194718"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Solve the issues</p>
-                          <p className="text-muted">
-                            Fifty percent of all respondents said they would be
-                            more likely to shop at a company
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip362404923"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip362404923"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Release v2.0.0</p>
-                          <p className="text-muted">
-                            Ra Ave SW, Seattle, WA 98116, SUA 11:19 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip818217463"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip818217463"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Export the processed files</p>
-                          <p className="text-muted">
-                            The report also shows that consumers will not easily
-                            forgive a company once a breach exposing their
-                            personal data occurs.
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip831835125"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip831835125"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Arival at export process</p>
-                          <p className="text-muted">
-                            Capitol Hill, Seattle, WA 12:34 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip217595172"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip217595172"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg="6" md="12">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">Simple Table</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-center">Salary</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
-                      <td>Oud-Turnhout</td>
-                      <td className="text-center">$36,738</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                      <td>Sinaai-Waas</td>
-                      <td className="text-center">$23,789</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                      <td>Baileux</td>
-                      <td className="text-center">$56,142</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                      <td>Overland Park</td>
-                      <td className="text-center">$38,735</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                      <td>Feldkirchen in Kärnten</td>
-                      <td className="text-center">$63,542</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$78,615</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$98,615</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row> */}
       </div>
     </>
   );

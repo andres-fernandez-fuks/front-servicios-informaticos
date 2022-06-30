@@ -25,7 +25,8 @@ import {
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
-import {DisabledInput} from "components/Form/DisabledInput.js";  
+import {DisabledInput} from "components/Form/DisabledInput.js";
+import Tooltip from "@material-ui/core/Tooltip";
 
 export const HARDWARE_ITEM_RESTORE_PATH = "/item_restore/hardware";
 
@@ -44,6 +45,9 @@ export default function HardwareItemRestore() {
     const [isEditable, setIsEditable] = React.useState(true);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [showRestoreButton, setShowRestoreButton] = React.useState(false);
+    const [counter, setCounter] = React.useState(-1);
+    const [actualCurrentVersion, setActualCurrentVersion] = React.useState(null);
+    
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -66,29 +70,6 @@ export default function HardwareItemRestore() {
         }
     }
 
-    function showSubmitButton() {
-        if (showRestoreButton) {
-            return (
-                <Button className="btn btn-primary"
-                color="info"
-                onClick={(event) => {restoreVersion(event)}}
-                >
-                Restaurar        
-                </Button>
-            )
-        } else {
-            return (
-                <Button className="btn btn-primary"
-                disabled = {!enableCreateButton}
-                color="primary"
-                onClick={(event) => {createDraft(event)}}
-                >
-                Guardar        
-                </Button>
-            )
-        }
-    }
-
   React.useEffect(() => {
     var change_id = localStorage.getItem("change_id");
     dbGet("configuration-items/hardware/" + item_id + "/draft?change_id=" + change_id, {change_id:change_id}).then(data => {
@@ -96,6 +77,7 @@ export default function HardwareItemRestore() {
         setCurrentValues({...data});
         setEditability(data.is_draft);
         setShowRestoreButton(!data.is_draft);
+        if (!actualCurrentVersion) setActualCurrentVersion(data.current_version_number);
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -165,6 +147,7 @@ export default function HardwareItemRestore() {
             setCurrentValues({...data});
             setEditability(data.is_draft);
             setShowRestoreButton(!data.is_draft);
+            setCounter(counter - 1);
         }).catch(err => {console.log(err)});
     }  
 
@@ -298,12 +281,24 @@ export default function HardwareItemRestore() {
                     </Row>
                 </CardBody>
                 <CardFooter className="form_col">
-                <Button className="btn btn-primary"
-                    color="info"
-                    onClick={(event) => {restoreVersion(event)}}
+                <Tooltip title={currentValues.current_version_number === actualCurrentVersion ? "Versión actual del ítem" : ""}>
+                    <span>
+                        <Button className="btn btn-primary"
+                            color="info"
+                            onClick={(event) => {restoreVersion(event)}}
+                            disabled = {currentValues.current_version_number === actualCurrentVersion}
+                            >
+                            Restaurar        
+                        </Button>
+                    </span>
+                </Tooltip>
+                &nbsp;
+                <Button className="btn-fill"
+                    color="warning"
+                    onClick={() => history.go(counter ? counter : -1)}
                     >
-                    Restaurar        
-                    </Button>
+                    Volver        
+                </Button>
                 </CardFooter>
             </Card>
             </Form>

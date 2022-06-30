@@ -130,7 +130,6 @@ export default function SLADetailsPage() {
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Nombre</Label>
                                 <DisabledInput
-                                    
                                     defaultValue= {currentValues.name}
                                     onChange = {function(e){updateCurrentValues("name", e.target.value)}}
                                     id = "type"
@@ -154,9 +153,9 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >¿Crucial?</Label>
                             <br></br> &nbsp; &nbsp; &nbsp;
-                                <DisabledInput
+                                <Input
                                     id = "is_crucial"
-                                    disabled = {!isEditable}
+                                    disabled
                                     onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
                                     checked = {currentValues.is_crucial}
                                     type="checkbox"/>
@@ -207,8 +206,8 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
-                                <Select 
-                                    value = {{value: currentValues.measurement_unit, label: currentValues.measurement_unit}}
+                                <DisabledInput
+                                    defaultValue = {currentValues.measurement_unit}
                                     styles={selectStyles}
                                     isDisabled = {!isEditable}
                                     id="measurement_unit"
@@ -219,7 +218,7 @@ export default function SLADetailsPage() {
                         </Col>
                         <Col md="6">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
+                            <Label style={{ color:"#1788bd" }} for="type">Valor de la medida</Label>
                                 <DisabledInput
                                     
                                     defaultValue= {currentValues.measurement_value}

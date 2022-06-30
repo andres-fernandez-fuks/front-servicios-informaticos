@@ -259,10 +259,10 @@ export default function App() {
                 <CardFooter style={{justifyContent:"center"}}>
                 <center>
                 <Button className="btn-fill"
-                        color="warning"
-                        onClick={() => history.go(counter ? counter : -1)}
-                        >
-                        Volver        
+                    color="warning"
+                    onClick={() => history.go(counter ? counter : -1)}
+                    >
+                    Volver        
                 </Button>
                 </center>
                 </CardFooter>

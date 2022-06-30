@@ -82,6 +82,7 @@ export default function SimpleTable(props) {
         }  
     }
     );
+    
     if (props.addRestoreColumn) {
         new_columns.push({
             name: "Restaurar",
