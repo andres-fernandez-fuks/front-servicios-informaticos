@@ -142,7 +142,7 @@ function Admin(props) {
     function checkIfLoggedIn() {
       if (window.location.pathname == simple_routes.login) {
         return
-      } else if (localStorage.getItem("token") === null) {
+      } else if (!localStorage.getItem("token")) {
         window.location.pathname = simple_routes.login;
       }
     }
