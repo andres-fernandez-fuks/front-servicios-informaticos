@@ -80,6 +80,7 @@ export default function DotGraph(props) {
         var emptyData = new Array(data.length).fill(0);
         let lineData = emptyData.map((element, i) => {
             return {x: i, y: props.avg};})
+        lineData[data.length] = {x: data.length, y: props.avg};
         return {
             datasets: [
                 {
@@ -107,8 +108,9 @@ export default function DotGraph(props) {
         if (props.noRotation) {
             options.scales.xAxes[0].ticks.minRotation = 0;
         }
-        options.scales.xAxes[0].ticks.suggestedMax = props.data.length;
-        options.scales.yAxes[0].ticks.suggestedMax = max;
+        options.scales.xAxes[0].ticks.suggestedMax = props.data.length + 1;
+        options.scales.xAxes[1].ticks.suggestedMax = props.data.length + 1;
+        options.scales.yAxes[0].ticks.suggestedMax = max + 1;
         return options;
     }
     return (
