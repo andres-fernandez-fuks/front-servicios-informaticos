@@ -114,8 +114,8 @@ export default function SimpleTable(props) {
         )
     }
 
-    function insertEditButton(change_status, edit_enabled, edit_path, draft_change_id, other_change_draft) {
-        if (change_status !== 'Pendiente') { return }
+    function insertEditButton(show_buttons, edit_enabled, edit_path, draft_change_id, other_change_draft) {
+        if (!show_buttons) { return }
 
         if (edit_enabled) {
             return (
@@ -157,10 +157,9 @@ export default function SimpleTable(props) {
         }
     }
 
-    function insertRestoreButton(change_status, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft) {
-        if (change_status !== 'Pendiente') { return }
+    function insertRestoreButton(show_buttons, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft) {
+        if (!show_buttons) { return }
 
-        debugger;
         if (restore_enabled) {
             return (
                 <Tooltip title= {"Restaurar versión"}>
@@ -211,12 +210,13 @@ export default function SimpleTable(props) {
         var other_change_draft = item_has_draft && draft_change_id !== parseInt(localStorage.change_id)
         var edit_enabled = !other_change_draft && !is_restoring_draft;
         var restore_enabled = !item_has_draft
+        var show_buttons = props.change_status[0] === "Pendiente" && props.taken_by[0]
 
         return (
             <>
                 {insertDetailsButton(details_path)}
-                {insertEditButton(props.change_status, edit_enabled, edit_path, draft_change_id, other_change_draft)}
-                {insertRestoreButton(props.change_status, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft)}
+                {insertEditButton(show_buttons, edit_enabled, edit_path, draft_change_id, other_change_draft)}
+                {insertRestoreButton(show_buttons, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft)}
             </>
         )
     }

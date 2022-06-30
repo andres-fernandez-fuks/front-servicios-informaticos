@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
 import toast, { Toaster } from 'react-hot-toast';
-
+import Tooltip from "@material-ui/core/Tooltip";
 
 // reactstrap components
 import {
@@ -44,7 +44,8 @@ export default function SoftwareItemRestore() {
     const [isEditable, setIsEditable] = React.useState(true);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
     const [showRestoreButton, setShowRestoreButton] = React.useState(false);
-    const [counter, setCounter] = React.useState(0);
+    const [counter, setCounter] = React.useState(-1);
+    const [actualCurrentVersion, setActualCurrentVersion] = React.useState(null);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -75,6 +76,7 @@ export default function SoftwareItemRestore() {
             setCurrentValues({...data});
             setEditability(data.is_draft);
             setShowRestoreButton(!data.is_draft);
+            if (!actualCurrentVersion) setActualCurrentVersion(data.current_version_number);
         }).catch(err => {console.log(err)});
         }   , []);
 
@@ -148,7 +150,7 @@ export default function SoftwareItemRestore() {
             setCurrentValues({...data});
             setEditability(data.is_draft);
             setShowRestoreButton(!data.is_draft);
-            setCounter(counter + 1);
+            setCounter(counter - 1);
         }).catch(err => {console.log(err)});
     }  
 
@@ -160,7 +162,7 @@ export default function SoftwareItemRestore() {
                         addRestoreColumn={localStorage.getItem("wasInChange")}
                         function={checkVersion}
                         button_path={"/admin" + SOFTWARE_ITEM_RESTORE_PATH}
-                        request_endpoint={"configuration-items/software/" + values.id + "/check-version"}/>
+                        request_endpoint={"configuration-items/software/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>
@@ -251,11 +253,23 @@ export default function SoftwareItemRestore() {
                     </Row>
                 </CardBody>
                 <CardFooter className="form_col">
-                    <Button className="btn btn-primary"
-                    color="info"
-                    onClick={(event) => {restoreVersion(event)}}
-                    >
-                    Restaurar        
+                    <Tooltip title={currentValues.current_version_number === actualCurrentVersion ? "Versión actual del ítem" : ""}>
+                        <span>
+                            <Button className="btn btn-primary"
+                                color="info"
+                                onClick={(event) => {restoreVersion(event)}}
+                                disabled = {currentValues.current_version_number === actualCurrentVersion}
+                                >
+                                Restaurar        
+                            </Button>
+                        </span>
+                    </Tooltip>
+                    &nbsp;
+                    <Button className="btn-fill"
+                        color="warning"
+                        onClick={() => history.go(counter ? counter : -1)}
+                        >
+                        Volver        
                     </Button>
                 </CardFooter>
             </Card>

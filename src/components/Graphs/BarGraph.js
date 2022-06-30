@@ -27,7 +27,7 @@ const default_options = {
                 barPercentage: 0.3,
                 gridLines: {
                     drawBorder: false,
-                    color: "rgba(29,140,248,0.1)",
+                    color: "transparent",
                 },
             }
         ],
@@ -38,7 +38,7 @@ const default_options = {
             },
             gridLines: {
                 drawBorder: false,
-                color: "rgba(29,140,248,0.0)",
+                color: "transparent",
                 zeroLineColor: "transparent",
             },
             ticks: {

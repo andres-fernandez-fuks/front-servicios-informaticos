@@ -39,7 +39,7 @@ const default_options = {
                 barPercentage: 1.6,
                 gridLines: {
                     drawBorder: false,
-                    color: "rgba(29,140,248,0.1)",
+                    color: "transparent",
                     zeroLineColor: "transparent",
                 },
             }
@@ -52,7 +52,7 @@ const default_options = {
                 },
                 barPercentage: 1.6,
                 gridLines: {
-                    drawBorder: false,
+                    drawBorder: true,
                     color: "rgba(29,140,248,0.0)",
                     zeroLineColor: "transparent",
                 },

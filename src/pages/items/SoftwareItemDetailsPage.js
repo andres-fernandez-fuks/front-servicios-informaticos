@@ -77,7 +77,7 @@ export default function SoftwareItemDetails(props) {
 
 
     function checkVersion(request_path, redirect_path, version_number) {
-        dbPost(request_path + "/" + version_number).then(data => {
+        dbGet(request_path + "/" + version_number).then(data => {
             setValues({...data});
             setCurrentValues({...data});
             setCounter(counter - 1);
