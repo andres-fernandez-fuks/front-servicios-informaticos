@@ -204,7 +204,7 @@ export default function SLAItemRestore() {
                         <Col md="4">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Cliente</Label>
-                                <Input
+                                <DisabledInput
                                     defaultValue= {currentValues.client}
                                     onChange = {function(e){updateCurrentValues("client", e.target.value)}}
                                     id = "client"
@@ -217,7 +217,7 @@ export default function SLAItemRestore() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >¿Crucial?</Label>
                             <br></br> &nbsp; &nbsp; &nbsp;
-                                <Input
+                                <DisabledInput
                                     id = "is_crucial"
                                     onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
                                     checked = {currentValues.is_crucial}
@@ -231,7 +231,7 @@ export default function SLAItemRestore() {
                         <Col className="pb-md-2" md="12">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
-                                <Input
+                                <DisabledInput
                                     defaultValue = {currentValues.description}
                                     onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                     id = "description"
@@ -245,7 +245,7 @@ export default function SLAItemRestore() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo de servicio</Label>
-                                <Input className="other_input"
+                                <DisabledInput
                                     defaultValue= {currentValues.service_type}
                                     onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
                                     id = "service_type"
@@ -257,7 +257,7 @@ export default function SLAItemRestore() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Gerente</Label>
-                                <Input className="other_input"
+                                <DisabledInput
                                     defaultValue= {currentValues.service_manager}
                                     onChange = {function(e){updateCurrentValues("service_manager", e.target.value)}}
                                     id = "service_manager"
@@ -271,20 +271,17 @@ export default function SLAItemRestore() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
-                                <Select 
-                                    value = {{value: currentValues.measurement_unit, label: currentValues.measurement_unit}}
-                                    styles={selectStyles}
-                                    isDisabled = {!isEditable}
+                                <DisabledInput 
+                                    value = {currentValues.measurement_unit}
+                                    readOnly = {!isEditable}
                                     id="measurement_unit"
-                                    onChange={function(new_option){updateMeasurementUnit(new_option.value)}}
-                                    options={units}
                                 />
                             </FormGroup>
                         </Col>
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Valor de la medida (numérico)</Label>
-                                <Input className="other_input"
+                                <DisabledInput
                                     defaultValue= {currentValues.measurement_value}
                                     onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
                                     onKeyPress={(event) => {
@@ -303,7 +300,7 @@ export default function SLAItemRestore() {
                         <Col md="4">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Fecha de inicio</Label>
-                                <Input  className="other_input"
+                                <DisabledInput
                                     defaultValue = {currentValues.starting_date}
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
                                     id = "starting_date"
@@ -315,7 +312,7 @@ export default function SLAItemRestore() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }}>Fecha de fin</Label>
-                                <Input  className="other_input"
+                                <DisabledInput
                                     defaultValue = {currentValues.ending_date}
                                     onChange = {function(e){updateCurrentValues("ending_date", e.target.value)}}
                                     id = "ending_date"
@@ -327,7 +324,7 @@ export default function SLAItemRestore() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >Versión</Label>
-                                <Input
+                                <DisabledInput
                                     readOnly
                                     defaultValue = "Borrador"
                                     id = "description"
