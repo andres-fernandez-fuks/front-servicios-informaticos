@@ -72,8 +72,8 @@ export default function DotGraph(props) {
 
     React.useEffect(() => {
         setframeInMonth(props.frameInMonth);
-        setData(props.data)
-        setshowDataLabelsOnly(props.showDataLabelsOnly)
+        setData(props.data);
+        setshowDataLabelsOnly(props.showDataLabelsOnly);
     }, [props.frameInMonth, props.data, props.showDataLabelsOnly]);
 
     function createDataset(name, data, avg) {
@@ -102,11 +102,13 @@ export default function DotGraph(props) {
     }
 
     function createOptions() {
+        var max = Math.max.apply(Math, props.data.map(function(o) { return o.y; }))
         var options = { ...default_options };
         if (props.noRotation) {
             options.scales.xAxes[0].ticks.minRotation = 0;
         }
         options.scales.xAxes[0].ticks.suggestedMax = props.data.length;
+        options.scales.yAxes[0].ticks.suggestedMax = max;
         return options;
     }
     return (

@@ -186,7 +186,7 @@ function Dashboard(props) {
      })
       let consolidated = filtered.map((element, i) => {
         return {
-          x: i,
+          x: i+1,
           y: element,
         }
       })
