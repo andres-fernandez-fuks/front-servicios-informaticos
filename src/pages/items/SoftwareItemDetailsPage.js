@@ -27,6 +27,7 @@ import {DisabledInput} from "components/Form/DisabledInput.js";
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
+import ItemMultiTable from "components/Form/ItemMultiTable";
 
 export const SOFTWARE_ITEM_DETAILS_PATH = "/item_details/software";
 
@@ -233,17 +234,15 @@ export default function SoftwareItemDetails(props) {
             </Card>
             </Form>
             </Col>
-            <Col md="6">
-              <Card className="incident-card">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
+            <Col md="6" className="multi-table-parent-col">
+                <ItemMultiTable
+                    item_id = {item_id}
+                    item_type = "software"
+                    item_details_path = {SOFTWARE_ITEM_DETAILS_PATH}
+                    check_version_function = {checkVersion}
+                    versions = {values.versions}
+                    comments = {values.comments}
+                />
             </Col>
           </Row>
         </div>

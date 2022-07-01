@@ -9,6 +9,7 @@ import useStyles from "styles"
 import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
+import CommentsTracking from "components/Form/comment_tracking";
 
 
 // reactstrap components
@@ -31,6 +32,8 @@ import {DisabledInput} from "components/Form/DisabledInput.js";
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
+import MultiTable from "components/Form/MultiTable";
+import ItemMultiTable from "components/Form/ItemMultiTable";
 
 export const ITEM_DETAILS_PATH = "/item_details";
 export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
@@ -81,13 +84,7 @@ export default function App() {
             setCurrentValues({...data});
             setCounter(counter - 1);
         }).catch(err => {console.log(err)});
-    }   
-
-    console.log("Values: ", values)
-
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
+    }
 
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
@@ -100,7 +97,7 @@ export default function App() {
                         request_endpoint={"configuration-items/hardware/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
-            return <div className="version_row">No hay otras versiones del ítem</div>
+            
         }
     }
 
@@ -201,7 +198,6 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
                                 <DisabledInput  className="other_input"
-                                    
                                     defaultValue = {currentValues.serial_number}
                                     onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
                                     id = "serial_number"
@@ -269,17 +265,15 @@ export default function App() {
             </Card>
             </Form>
             </Col>
-            <Col md="6">
-              <Card className="incident-card">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
+            <Col md="6" className="multi-table-parent-col">
+                <ItemMultiTable
+                    item_id = {item_id}
+                    item_type = "hardware"
+                    item_details_path = {HARDWARE_ITEM_DETAILS_PATH}
+                    check_version_function = {checkVersion}
+                    versions = {values.versions}
+                    comments = {values.comments}
+                />
             </Col>
           </Row>
         </div>

@@ -11,7 +11,7 @@ const default_options = {
     tooltips: {
         callbacks: {
             label: function(context) {
-                return context.yLabel;
+                return context.yLabel === 0 ? "0" : context.yLabel;
             }
         },
         backgroundColor: "#f5f5f5",
@@ -20,7 +20,7 @@ const default_options = {
         bodySpacing: 4,
         xPadding: 12,
         mode: "point",
-        intersect: 0,
+        intersect: true,
         position: "nearest",
         value: "yLabel"
     },

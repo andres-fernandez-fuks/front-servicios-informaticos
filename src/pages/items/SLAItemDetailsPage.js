@@ -31,6 +31,7 @@ import {DisabledInput} from "components/Form/DisabledInput.js";
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
+import ItemMultiTable from "components/Form/ItemMultiTable";
 
 export const SLA_ITEM_DETAILS_PATH = "/item_details/sla";
 
@@ -77,8 +78,6 @@ export default function SLADetailsPage() {
     dbGet("configuration-items/sla/" + item_id).then(data => {
         setValues({...data});
         setCurrentValues({...data});
-        getVersions();
-        console.log(currentValues)
     }).catch(err => {console.log(err)});
     }   , []);
 
@@ -94,22 +93,6 @@ export default function SLADetailsPage() {
             setCurrentValues({...data});
             setCounter(counter - 1);
         }).catch(err => {console.log(err)});
-    }  
-
-    function getVersions() {
-        if (values.versions && values.versions.length > 0) {
-            return <SimpleTable
-                        isVersionsTable={true}
-                        data={values.versions}
-                        columns={columns}
-                        addRestoreColumn={true}
-                        function={checkVersion}
-                        button_path={"/admin" + SLA_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/sla/" + values.id + "/version"}/>
-        }
-        else if (values.versions && values.versions.length === 0) {
-            return <div className="version_row">No hay otras versiones del ítem</div>
-        }
     }
 
 
@@ -296,17 +279,15 @@ export default function SLADetailsPage() {
             </Card>
             </Form>
             </Col>
-            <Col md="6">
-              <Card className="card-user">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
+            <Col md="6" className="multi-table-parent-col">
+                <ItemMultiTable
+                    item_id = {item_id}
+                    item_type = "sla"
+                    item_details_path = {SLA_ITEM_DETAILS_PATH}
+                    check_version_function = {checkVersion}
+                    versions = {values.versions}
+                    comments = {values.comments}
+                />
             </Col>
           </Row>
         </div>
