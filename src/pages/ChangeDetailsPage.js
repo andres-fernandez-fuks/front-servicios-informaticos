@@ -260,7 +260,16 @@ function ChangeDetails(props) {
       return;
     }
     if (values.status === "Resuelto" || values.status === "Rechazado") {
-        return;
+        return (
+            <Row style={{justifyContent:"center"}}>
+                <Button className="btn-fill"
+                    color="primary"
+                    onClick={() => history.goBack()}
+                    >
+                    Volver        
+                </Button>
+            </Row>
+        )
     }
         return (
         <Row style={{justifyContent:"center"}}>

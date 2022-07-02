@@ -178,7 +178,14 @@ function ProblemDetails(props) {
         return;
     }
     if (values.status === "Resuelto") {
-        return;
+        return (
+            <Button className="btn-fill"
+            color="warning"
+            onClick={() => history.goBack()}
+            >
+            Volver        
+            </Button>
+        )
     }
 
     return (
@@ -240,20 +247,7 @@ function ProblemDetails(props) {
           <Form onSubmit= {(e)=>e.preventDefault()}>
           <Card className="problem-card">
               <CardHeader>
-                <Row>
-                    <Col md="10">
-                        <h4 className="title">Detalles del problema</h4>
-                  </Col>
-                    <Col  md="2">
-                  <IconButton
-                        className={classes.onlyButtonSpacing}
-                        color="secondary"
-                        size="large"
-                        path >
-                        <ArrowBackIcon />
-                    </IconButton>
-                  </Col>
-                  </Row>
+                <h4 className="title">Detalles del problema</h4>
               </CardHeader>
               <CardBody >
                 <div>

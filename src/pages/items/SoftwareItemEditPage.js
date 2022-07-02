@@ -104,6 +104,7 @@ export default function SoftwareItemDetails() {
         delete request_values.version_number;
         delete request_values.is_restoring_draft;
         delete request_values.restore_version_id;
+        delete request_values.comments;
         return request_values;
     }
 

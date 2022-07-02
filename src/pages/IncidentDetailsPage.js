@@ -171,7 +171,14 @@ function IncidentDetails(props) {
         return;
     }
     if (values.status === "Resuelto") {
-        return;
+        return (
+            <Button className="btn-fill"
+            color="warning"
+            onClick={() => history.goBack()}
+            >
+            Volver        
+            </Button>
+        )
     }
         return (
             <Row style={{justifyContent:"center"}}>  
@@ -183,6 +190,7 @@ function IncidentDetails(props) {
                 >
                 Tomar        
                 </Button>
+                {!isTaken ? <>&nbsp;</> : <></>}
             <Tooltip title={isBlocked ? "Incidente bloqueado" : "" }>
                 <span>
                 <Button className="btn-fill" align="right"

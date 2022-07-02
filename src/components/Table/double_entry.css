@@ -1,0 +1,11 @@
+.permissions-table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+  }
+  .permissions-th {
+    border:1px black solid;
+    padding: 0.165em 0.5em;
+    align-content: center;
+    color: white;
+  }

@@ -306,7 +306,7 @@ export default function SimpleTable(props) {
         download: false,
         filter: false,
         sort: false,
-        display: props.change_status !== 'Resuelto', // solamente se muestra si el cambio no está resuelto
+        display: props.change_status[0] !== 'Resuelto' && props.change_status[0] !== 'Rechazado',
         setCellHeaderProps: () => {
             return {  };
         },
