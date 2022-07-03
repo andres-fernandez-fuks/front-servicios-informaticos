@@ -82,6 +82,7 @@ function ChangeDetails(props) {
     const [hasModifications, setHasModifications] = React.useState(false);
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [isTaken, setIsTaken] = React.useState(false);
+    const [isTakenByUser, setIsTakenByUser] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -151,7 +152,8 @@ function ChangeDetails(props) {
             setCurrentValues(data);
             fetchItemsData();
             setIsBlocked(data["is_blocked"]);
-            setIsTaken(data["taken_by"] !== null)
+            setIsTaken(data["taken_by"] !== null);
+            setIsTakenByUser(data["taken_by"] === localStorage.getItem("user_id"));
             localStorage.setItem("change_id", change_id);
         }).catch(err => {console.log(err)});
         }   , []);
@@ -182,6 +184,7 @@ function ChangeDetails(props) {
         dbPatch("changes/" + change_id, patch_data).then(data => {
             setCurrentValues(data);
             setIsTaken(true);
+            setIsTakenByUser(true);
       });
         sendComment("Cambio tomado");
     }
@@ -229,7 +232,7 @@ function ChangeDetails(props) {
                 <>  
                     {isBlocked ? <>&nbsp;</> : <></>}
                     <Button className="btn-fill"
-                    hidden = {!isTaken || !isBlocked}
+                    hidden = {!isTaken || !isBlocked || !isTakenByUser}
                     color="warning"
                     type="button"
                     onClick={() => unblockChange()}
@@ -237,7 +240,7 @@ function ChangeDetails(props) {
                     Desbloquear        
                     </Button>
                     <Button className="btn-fill"
-                    hidden = {!isTaken || isBlocked}
+                    hidden = {!isTaken || isBlocked || !isTakenByUser}
                     color="warning"
                     type="button"
                     onClick={() => blockChange()}
@@ -255,11 +258,10 @@ function ChangeDetails(props) {
     }
 
   function addButtons() {
-    if (!isEditable) return
     if (values === '') {
       return;
     }
-    if (values.status === "Resuelto" || values.status === "Rechazado") {
+    if (!isEditable || values.status === "Resuelto" || values.status === "Rechazado") {
         return (
             <Row style={{justifyContent:"center"}}>
                 <Button className="btn-fill"
@@ -284,7 +286,7 @@ function ChangeDetails(props) {
             <Tooltip title={defineTooltipMessage()} style={{paddingRight:"1px"}}>
             <span>
                 <Button
-                hidden = {!isTaken}
+                hidden = {!isTaken || !isTakenByUser}
                 disabled = {!hasModifications || isBlocked}
                 className="btn-fill"
                 color="info"
@@ -299,7 +301,7 @@ function ChangeDetails(props) {
             <Tooltip title={isBlocked ? "Cambio bloqueado" : ""}>
                 <span>
                     <Button
-                    hidden = {!isTaken}
+                    hidden = {!isTaken || !isTakenByUser}
                     disabled = {isBlocked}
                     className="btn-fill"
                     color="danger"

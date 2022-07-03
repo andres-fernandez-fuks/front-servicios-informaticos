@@ -72,6 +72,7 @@ function ProblemDetails(props) {
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [isBlocked, setIsBlocked] = React.useState(false);
     const [isTaken, setIsTaken] = React.useState(false);
+    const [isTakenByUser, setIsTakenByUser] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(true);
     const [counter, setCounter] = React.useState(0);
 
@@ -107,6 +108,7 @@ function ProblemDetails(props) {
             setIsBlocked(data["is_blocked"]);
             setIsTaken(data["taken_by"] !== null);
             setIsLoading(false);
+            setIsTakenByUser(data.taken_by === localStorage.getItem("username"));
             console.log("comentarios: ", data)
         }).catch(err => {console.log(err)});
         }   , []);
@@ -143,6 +145,7 @@ function ProblemDetails(props) {
             setCurrentValues(data);
             sendComment("Problema tomado");
             setIsTaken(true);
+            setIsTakenByUser(true);
         });
     }
 
@@ -152,7 +155,7 @@ function ProblemDetails(props) {
                  <> 
                     {isBlocked ? <>&nbsp;</> : <></>}
                     <Button className="btn-fill" align="left"
-                    hidden = {!isTaken || !isBlocked}
+                    hidden = {!isTaken || !isBlocked || !isTakenByUser}
                     color="danger"
                     type="submit"
                     onClick={() => unblockProblem()}
@@ -160,7 +163,7 @@ function ProblemDetails(props) {
                     Desbloquear        
                     </Button>
                     <Button className="btn-fill" align="left"
-                    hidden = {!isTaken || isBlocked}
+                    hidden = {!isTaken || isBlocked || !isTakenByUser}
                     color="danger"
                     type="submit"
                     onClick={() => blockProblem()}
@@ -173,11 +176,8 @@ function ProblemDetails(props) {
 
   function addButtons() {
     if (isLoading) return;
-    if (!isEditable) return
-      if (values === '') {
-        return;
-    }
-    if (values.status === "Resuelto") {
+    if (values === '') return;
+    if (!isEditable || values.status === "Resuelto") {
         return (
             <Button className="btn-fill"
             color="warning"
@@ -201,7 +201,7 @@ function ProblemDetails(props) {
             <Tooltip title={isBlocked ? "Problema bloqueado" : "" }>
                 <span>
                     <Button className="btn-fill" align="right"
-                        hidden={!isTaken}
+                        hidden={!isTaken || !isTakenByUser}
                         disabled = {isBlocked}
                         color="info"
                         type="submit"

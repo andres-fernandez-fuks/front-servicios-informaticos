@@ -72,7 +72,8 @@ function KnownErrorDetails(props) {
     var error_id = paths[paths.length - 1]
     const [bigChartData, setbigChartData] = React.useState(tableData);
     const [columns, setColumns] = React.useState(incidentColumns);
-    const [formFields, setFormFields] = React.useState([{}])
+    const [formFields, setFormFields] = React.useState([{}]);
+    const [counter, setCounter] = React.useState(-1);
 
     function updateCurrentValues(field, new_value) {
         currentValues[field] = new_value;
@@ -99,19 +100,12 @@ function KnownErrorDetails(props) {
         }).catch(err => {console.log(err)});
         }   , []);
 
-    function fetchValues() {
-        dbGet("errors/" + error_id).then(data => {
-            setValues(data);
-            getVersions()
-            //setCurrentValues(data);
-        }).catch(err => {console.log(err)});
-    }
-
     function restoreVersion(request_path, redirect_path, version_id) {
         dbPost(request_path, {"version": version_id}).then(data => {
             setValues(data);
-            setCurrentValues(data)
-            toast.success("Se ha restaurado la versión '" + version_id +"' correctamente")
+            setCurrentValues(data);
+            setCounter(counter -1);
+            toast.success("Se ha restaurado la versión '" + version_id +"' correctamente");
         }).catch(err => {console.log(err)});
     }
 
@@ -149,21 +143,29 @@ function KnownErrorDetails(props) {
     }
 
   function addButtons() {
-    if (!isEditable) return
-      if (values === '') {
-      fetchValues();
-    }
-//todo ver que el boton de guardar ande
+    if (values === '') return;
+
     return (
+        <>
         <Button className="btn-fill"
-        disabled = {!enableCreateButton}
-        color="primary"
-        type="submit"
-        onClick={(e) =>{e.preventDefault(); submitForm()}}
+            hidden={!isEditable}
+            disabled = {!enableCreateButton}
+            color="primary"
+            type="submit"
+            onClick={(e) =>{e.preventDefault(); submitForm()}}
+            >
+            Guardar
+        </Button>
+        <Button
+            className="btn-fill"
+            color="warning"
+            onClick={(e) =>{history.go(counter)}}
         >
-        Guardar
-        </Button>)
-    }
+            Volver
+        </Button>
+        </>
+    )
+  }
 
   return (
     <>
@@ -172,7 +174,7 @@ function KnownErrorDetails(props) {
         <Row>
           <Col md="6">
           <Form>
-          <Card className="error-card">
+          <Card style={{paddingBottom:"33px"}}>
               <CardHeader >
                   <h4 className="title">Detalles del Error</h4>
               </CardHeader>

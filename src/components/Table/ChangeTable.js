@@ -210,7 +210,7 @@ export default function SimpleTable(props) {
         var other_change_draft = item_has_draft && draft_change_id !== parseInt(localStorage.change_id)
         var edit_enabled = !other_change_draft && !is_restoring_draft;
         var restore_enabled = !item_has_draft
-        var show_buttons = props.change_status[0] === "Pendiente" && props.taken_by[0]
+        var show_buttons = props.change_status[0] === "Pendiente" && props.taken_by[0] === localStorage.username;
 
         return (
             <>
@@ -306,7 +306,7 @@ export default function SimpleTable(props) {
         download: false,
         filter: false,
         sort: false,
-        display: props.change_status[0] !== 'Resuelto' && props.change_status[0] !== 'Rechazado',
+        display: props.change_status[0] !== 'Resuelto' && props.change_status[0] !== 'Rechazado' && props.taken_by[0] === localStorage.username,
         setCellHeaderProps: () => {
             return {  };
         },
