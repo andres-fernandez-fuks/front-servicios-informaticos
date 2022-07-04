@@ -153,7 +153,7 @@ function ChangeDetails(props) {
             fetchItemsData();
             setIsBlocked(data["is_blocked"]);
             setIsTaken(data["taken_by"] !== null);
-            setIsTakenByUser(data["taken_by"] === localStorage.getItem("user_id"));
+            setIsTakenByUser(data["taken_by"] === localStorage.getItem("username"));
             localStorage.setItem("change_id", change_id);
         }).catch(err => {console.log(err)});
         }   , []);
