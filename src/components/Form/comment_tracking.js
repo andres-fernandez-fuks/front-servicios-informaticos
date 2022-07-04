@@ -10,6 +10,7 @@ export default function CommentsTracking(props) {
     const [comments, setComments] = React.useState(props.comments ? props.comments: []);
     const [newComments, setNewComments] = React.useState([]);
     const [flushNewComments, setFlushNewComments] = React.useState(false);
+
     React.useEffect(() => {
         setComments(props.comments)
         setFlushNewComments(props.flushLocalComments)
@@ -31,7 +32,7 @@ export default function CommentsTracking(props) {
         )
     }
     
-    function CommentHistory() {
+    function CommentHistory(props) {
         return (
             <>
             {props.comments && 
