@@ -226,6 +226,8 @@ function ChangeDetails(props) {
         
     }
 
+    console.log("TAKEN BY USER: ", isTakenByUser)
+
     function addBlockButton() {
         if (!isEditable) return
             return (
@@ -286,14 +288,14 @@ function ChangeDetails(props) {
             <Tooltip title={defineTooltipMessage()} style={{paddingRight:"1px"}}>
             <span>
                 <Button
-                hidden = {!isTaken || !isTakenByUser}
-                disabled = {!hasModifications || isBlocked}
-                className="btn-fill"
-                color="info"
-                type="button"
-                onClick={() => applyChange()}
-                >
-                Aplicar        
+                    hidden = {!isTaken || !isTakenByUser}
+                    disabled = {!hasModifications || isBlocked}
+                    className="btn-fill"
+                    color="info"
+                    type="button"
+                    onClick={() => applyChange()}
+                    >
+                    Aplicar        
                 </Button>
             </span>
             </Tooltip>
@@ -412,8 +414,8 @@ function ChangeDetails(props) {
                              type_row = {1}
                              change_callback_id = {change_id}
                              use_object_type = {true}
-                             change_status = {[values.status]} // si se pasa como puntero, se actualiza solo en la tabla
-                             taken_by = {[values.taken_by]} // si se pasa como puntero, se actualiza solo en la tabla
+                             change_status = {[currentValues.status]} // si se pasa como puntero, se actualiza solo en la tabla
+                             taken_by = {[currentValues.taken_by]} // si se pasa como puntero, se actualiza solo en la tabla
                              />
                 </Grid>
                 </div>

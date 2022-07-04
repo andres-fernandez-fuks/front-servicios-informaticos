@@ -20,6 +20,18 @@ import toast, { Toaster } from 'react-hot-toast';
 
 export default function SimpleTable(props) {
 
+    const [changeStatus, setChangeStatus] = React.useState(null);
+    const [changeTakenBy, setChangeTakenBy] = React.useState(null);
+
+    React.useEffect(() => {
+        console.log("ENTRO ACA")
+        console.log(props.change_status[0])
+        console.log(props.taken_by[0])
+        if (props.change_status.length) setChangeStatus(props.change_status[0]);
+        if (props.taken_by.length) setChangeTakenBy(props.taken_by[0]);
+
+    } , [props.change_status, props.taken_by]);
+
     var classes = useStyles();
 
     const getMuiTheme = () => createTheme({
@@ -115,7 +127,6 @@ export default function SimpleTable(props) {
     }
 
     function insertEditButton(show_buttons, edit_enabled, edit_path, draft_change_id, other_change_draft) {
-        if (!show_buttons) { return }
 
         if (edit_enabled) {
             return (
@@ -123,6 +134,7 @@ export default function SimpleTable(props) {
                 <Tooltip title= {"Editar"}>
                 <IconButton
                     className={classes.onlyButtonSpacing}
+                    hidden = {changeStatus !== "Pendiente" || changeTakenBy !== localStorage.username}
                     color="inherit"
                     size="small"
                     component={Link}
@@ -142,6 +154,7 @@ export default function SimpleTable(props) {
                 <Tooltip title= {determineToastMessage(other_change_draft, draft_change_id)}>
                 <IconButton
                     className={classes.onlyButtonSpacing}
+                    hidden = {changeStatus !== "Pendiente" || changeTakenBy !== localStorage.username}
                     color="inherit"
                     size="small"
                     component={Link}
@@ -158,13 +171,13 @@ export default function SimpleTable(props) {
     }
 
     function insertRestoreButton(show_buttons, restore_enabled, restore_path, other_change_draft, draft_change_id, is_restoring_draft) {
-        if (!show_buttons) { return }
 
         if (restore_enabled) {
             return (
                 <Tooltip title= {"Restaurar versión"}>
                 <IconButton
                     className={classes.onlyButtonSpacing}
+                    hidden = {changeStatus !== "Pendiente" || changeTakenBy !== localStorage.username}
                     color="inherit"
                     size="small"
                     component={Link}
@@ -183,6 +196,7 @@ export default function SimpleTable(props) {
                 <Tooltip title= {determineRestoreToastMessage(other_change_draft, draft_change_id, is_restoring_draft)}>
                 <IconButton
                     className={classes.onlyButtonSpacing}
+                    hidden = {changeStatus !== "Pendiente" || changeTakenBy !== localStorage.username}
                     color="inherit"
                     size="small"
                     component={Link}
@@ -210,7 +224,7 @@ export default function SimpleTable(props) {
         var other_change_draft = item_has_draft && draft_change_id !== parseInt(localStorage.change_id)
         var edit_enabled = !other_change_draft && !is_restoring_draft;
         var restore_enabled = !item_has_draft
-        var show_buttons = props.change_status[0] === "Pendiente" && props.taken_by[0] === localStorage.username;
+        var show_buttons = changeStatus === "Pendiente" && changeTakenBy === localStorage.username;
 
         return (
             <>
@@ -223,7 +237,6 @@ export default function SimpleTable(props) {
 
 
     var new_columns = Object.entries(props.columns).map(([key, value]) => {
-    console.log(value.name);
         return {
             name: value.name,
             label: value.label,
@@ -306,7 +319,7 @@ export default function SimpleTable(props) {
         download: false,
         filter: false,
         sort: false,
-        display: props.change_status[0] !== 'Resuelto' && props.change_status[0] !== 'Rechazado' && props.taken_by[0] === localStorage.username,
+        display: changeStatus !== 'Resuelto' && changeStatus !== 'Rechazado' && changeTakenBy === localStorage.username,
         setCellHeaderProps: () => {
             return {  };
         },

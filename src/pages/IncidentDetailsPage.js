@@ -137,10 +137,10 @@ function IncidentDetails(props) {
   function takeIncident() { 
       var patch_data = {taken_by:localStorage.getItem("username")}
       dbPatch("incidents/" + incident_id, patch_data);
-      updateCurrentValues("taken_by", localStorage.getItem("username"));
       sendComment("Incidente tomado");
       setIsTaken(true);
       setIsTakenByUser(true);
+      setCurrentValues({...currentValues, taken_by:localStorage.getItem("username")});
   }
 
   function addBlockButton() {
@@ -183,7 +183,7 @@ function IncidentDetails(props) {
         return (
             <Row style={{justifyContent:"center"}}>  
                 <Button className="btn-fill"
-                hidden={isTaken || takenByUser}
+                hidden={isTaken}
                 color="primary"
                 type="button"
                 onClick={() => takeIncident()}
