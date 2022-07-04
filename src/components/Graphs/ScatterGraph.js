@@ -2,17 +2,26 @@ import { Scatter } from 'react-chartjs-2';
 //import "chartjs-adapter-moment";
 import React from "react";
 import DataExpressionMixin from 'devextreme/ui/editor/ui.data_expression';
+import { ContextToolbox } from 'devextreme-react/diagram';
 
 const default_options = {
     width: 500,
     legend: {
-      display: false
+      display: true
     },
     tooltips: {
         callbacks: {
-            label: function(context) {
-                return context.yLabel === 0 ? "0" : context.yLabel;
-            }
+            label: function(context, data) {
+              let datasetIndex = context.datasetIndex;
+              if (datasetIndex === 0) {
+                let id = "ID: " + data.datasets[datasetIndex].data[context.index].id;
+                let time = `Tiempo: ${context.yLabel} días`;
+                return `${id} - ${time}`;
+              } else if (datasetIndex === 1){
+                return `Promedio: ${context.yLabel} días`;
+              }
+              
+          }
         },
         backgroundColor: "#f5f5f5",
         titleFontColor: "#333",
@@ -55,7 +64,7 @@ const default_options = {
             lineWidth: 0
           },
           ticks: {
-            display: false
+            display: true
           }
         }
       ],
@@ -87,16 +96,17 @@ export default function DotGraph(props) {
                     label: name,
                     data: data,
                     pointBackgroundColor: '#FF6384',
-                    //Plus some config
+                    backgroundColor: '#FF6384',
+
                 },
                 {
                     type: 'line',
-                    label: 'Dataset 2',
+                    label: 'Promedio',
                     data: lineData,
                     borderColor: 'rgb(53, 162, 235)',
                     fill:false,
-                    pointRadius: 0,
-                    borderWidth: 1,
+                    pointRadius: 1,
+                    borderWidth: 2,
                   },
             ],
         };        
@@ -111,6 +121,7 @@ export default function DotGraph(props) {
         options.scales.xAxes[0].ticks.suggestedMax = props.data.length + 1;
         options.scales.xAxes[1].ticks.suggestedMax = props.data.length + 1;
         options.scales.yAxes[0].ticks.suggestedMax = max + 1;
+        options.scales.yAxes[0].ticks.suggestedMin = 0;
         return options;
     }
     return (

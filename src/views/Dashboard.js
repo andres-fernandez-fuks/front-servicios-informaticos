@@ -182,15 +182,16 @@ function Dashboard(props) {
     if (!solvableSolvedData) return;
 
     let mapped = solvableSolvedData.map((element) => {
-        return element["solving_time"]
+        return {solving_time:element["solving_time"], id:element["id"]}
       })
       let filtered = mapped.filter((element) => {
-        return element != null || element > 0;
+        return element["solving_time"] != null || element["solving_time"] > 0;
      })
       let consolidated = filtered.map((element, i) => {
         return {
           x: i+1,
-          y: element,
+          y: element["solving_time"],
+          id: element["id"]
         }
       })
       setAvgData(consolidated);

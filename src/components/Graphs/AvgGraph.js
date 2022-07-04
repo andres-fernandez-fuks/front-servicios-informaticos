@@ -4,7 +4,7 @@ export function AvgGraph(props) {
     return (
         <ScatterGraph
         data={props.data}
-        name={"Gráfico mensual"}
+        name={"Tiempo de resolución"}
         frameInMonth={false}
         showDataLabelsOnly={true}
         avg={props.avg}
