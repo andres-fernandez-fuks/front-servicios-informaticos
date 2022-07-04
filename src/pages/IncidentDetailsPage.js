@@ -80,7 +80,7 @@ function IncidentDetails(props) {
 
     function updateCurrentValues(field, new_value) {
         if (field === "price") new_value = getPrice(new_value);
-        currentValues[field] = new_value;
+        setCurrentValues(prevState => ({...currentValues, [field]: new_value}));
         if (JSON.stringify(currentValues) !== JSON.stringify(values)) {
             setEnableCreateButton(true);
         } else {
@@ -137,7 +137,7 @@ function IncidentDetails(props) {
   function takeIncident() { 
       var patch_data = {taken_by:localStorage.getItem("username")}
       dbPatch("incidents/" + incident_id, patch_data);
-      // history.push(simple_routes.incidents);
+      updateCurrentValues("taken_by", localStorage.getItem("username"));
       sendComment("Incidente tomado");
       setIsTaken(true);
       setIsTakenByUser(true);
@@ -183,7 +183,7 @@ function IncidentDetails(props) {
         return (
             <Row style={{justifyContent:"center"}}>  
                 <Button className="btn-fill"
-                hidden={isTaken || !takenByUser}
+                hidden={isTaken || takenByUser}
                 color="primary"
                 type="button"
                 onClick={() => takeIncident()}
