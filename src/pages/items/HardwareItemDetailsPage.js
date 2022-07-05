@@ -9,6 +9,7 @@ import useStyles from "styles"
 import clsx from "clsx";
 import CurrencyInput from "react-currency-input-field";
 import { formatValue } from 'react-currency-input-field';
+import CommentsTracking from "components/Form/comment_tracking";
 
 
 // reactstrap components
@@ -31,6 +32,8 @@ import {DisabledInput} from "components/Form/DisabledInput.js";
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
+import MultiTable from "components/Form/MultiTable";
+import ItemMultiTable from "components/Form/ItemMultiTable";
 
 export const ITEM_DETAILS_PATH = "/item_details";
 export const HARDWARE_ITEM_DETAILS_PATH = "/item_details/hardware";
@@ -49,6 +52,7 @@ export default function App() {
     const [currentValues, setCurrentValues] = React.useState("");
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [counter, setCounter] = React.useState(-1);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -70,37 +74,30 @@ export default function App() {
     dbGet("configuration-items/hardware/" + item_id).then(data => {
         setValues({...data});
         setCurrentValues({...data});
-        getVersions();
+        //getVersions();
     }).catch(err => {console.log(err)});
     }   , []);
 
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
+    function checkVersion(request_path, redirect_path, version_number) {
+        dbGet(request_path + "/" + version_number).then(data => {
+            setValues({...data});
+            setCurrentValues({...data});
+            setCounter(counter - 1);
         }).catch(err => {console.log(err)});
-}  
-
-    console.log("Values: ", values)
-
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
+    }
 
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={!localStorage.getItem("wasInChange")}
-                        function={restoreVersion}
+                        addRestoreColumn={true}
+                        function={checkVersion}
                         button_path={"/admin" + HARDWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/hardware/" + values.id + "/restore"}/>
+                        request_endpoint={"configuration-items/hardware/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
-            return <div className="version_row">No hay otras versiones del ítem</div>
+            
         }
     }
 
@@ -201,7 +198,6 @@ export default function App() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="serial_number">Número de serie</Label>
                                 <DisabledInput  className="other_input"
-                                    
                                     defaultValue = {currentValues.serial_number}
                                     onChange = {function(e){updateCurrentValues("serial_number", e.target.value)}}
                                     id = "serial_number"
@@ -246,7 +242,7 @@ export default function App() {
                         </Col>
                         <Col md="12">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado (creación)</Label>
                                 <DisabledInput
                                     readOnly
                                     defaultValue = {currentValues.change && currentValues.change.description}
@@ -256,20 +252,28 @@ export default function App() {
                         </Col>
                     </Row>
                 </CardBody>
+                <CardFooter style={{justifyContent:"center"}}>
+                <center>
+                <Button className="btn-fill"
+                    color="warning"
+                    onClick={() => history.go(counter ? counter : -1)}
+                    >
+                    Volver        
+                </Button>
+                </center>
+                </CardFooter>
             </Card>
             </Form>
             </Col>
-            <Col md="6">
-              <Card className="incident-card">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
+            <Col md="6" className="multi-table-parent-col">
+                <ItemMultiTable
+                    item_id = {item_id}
+                    item_type = "hardware"
+                    item_details_path = {HARDWARE_ITEM_DETAILS_PATH}
+                    check_version_function = {checkVersion}
+                    versions = {values.versions}
+                    comments = {values.comments}
+                />
             </Col>
           </Row>
         </div>

@@ -94,7 +94,6 @@ function ItemsTable() {
 
     function redirectToItemCreation() {
         console.log("CATEGORIA: " + category)
-        debugger;
         if (category === "Hardware") {
             history.push(simple_routes.hardware_creation);
         } else if (category === "Software") {
@@ -170,7 +169,7 @@ function ItemsTable() {
             </ButtonGroup>
             </Col>
               <CardHeader>
-                <CardTitle tag="h3">Ítems &nbsp; &nbsp; &nbsp;
+                <CardTitle tag="h3">Ítems de {category}&nbsp; &nbsp; &nbsp;
                 <Button
                   size="sm" 
                   aria-label="Crear ítem"
@@ -178,7 +177,7 @@ function ItemsTable() {
                   hidden={!checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.EDIT)}
                   onClick={() => {redirectToItemCreation();}}
                   >
-                  <AddIcon /> Nuevo
+                  <AddIcon /> Nuevo &nbsp;
                 </Button> 
                 </CardTitle>
               </CardHeader>

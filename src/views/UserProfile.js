@@ -32,19 +32,59 @@ import {
 } from "reactstrap";
 import {dbGet} from "utils/backendFetchers";
 import SimpleTable from "components/Table/SimpleTable";
+import DoubleEntryTable from "components/Table/DoubleEntryTable";
+import { DisabledInput } from "components/Form/DisabledInput";
+import { data } from "jquery";
+
+function mapPermissions(permissions) {
+    if (!permissions.length) return null;
+    var has_total_access = permissions[0] === "total_access";
+    var incident_permissions = {"Lectura": 1, "Creación": has_total_access, "Edición": has_total_access, "Eliminación": 0};
+    var problem_permissions = {"Lectura": 1, "Creación": has_total_access, "Edición": has_total_access, "Eliminación": 0};
+    var change_permissions = {"Lectura": 1, "Creación": has_total_access, "Edición": has_total_access, "Eliminación": 0};
+    var item_permissions = {"Lectura": 1, "Creación": has_total_access, "Edición": has_total_access, "Eliminación": 0};
+    var error_permissions = {"Lectura": 1, "Creación": has_total_access, "Edición": has_total_access, "Eliminación": 0};
+    var total_permissions = {
+        "Ítems": item_permissions,
+        "Incidentes": incident_permissions,
+        "Problemas": problem_permissions,
+        "Cambios": change_permissions,                       
+        "Errores": error_permissions
+    };
+
+
+    if (has_total_access) return total_permissions;
+
+    const TABLE_TRANSLATION = {
+        "incidents": "Incidentes", "problems": "Problemas", "changes": "Cambios", "items": "Items", "errors": "Errores"
+    }
+
+    const PERMISSION_TRANSLATION = { "see": "Lectura", "create": "Creación", "update": "Edición", "delete": "Eliminación" }
+
+    permissions.forEach(permission => {
+        var table = TABLE_TRANSLATION[permission.split("_")[0]];
+        var permission_type = PERMISSION_TRANSLATION[permission.split("_")[1]];
+        total_permissions[table][permission_type] = 1;
+    });
+
+    return total_permissions;
+}
 
 
 function UserProfile() {
 
   const [values, setValues] = React.useState("");
-  const [roles, setRoles] = React.useState([]);
+  const [role, setRole] = React.useState("");
+  const [permissions, setPermissions] = React.useState([]);
 
   React.useEffect(() => {
-    dbGet("/profile").then(data => {
+    var user_id = localStorage.getItem("user_id");
+    dbGet(`users/${user_id}/profile`).then(data => {
         setValues(data);
-        setRoles([data["role"]]);
+        setRole(data.role);
+        setPermissions(data.role.permissions);
     }).catch(err => {console.log(err)});
-    }   , []);
+    }, [] );
 
   //setRoles(values["role"].name);
   console.log("PROFILE VALUES: ", values)
@@ -55,32 +95,30 @@ function UserProfile() {
     <>
       <div className="content">
         <Row>
-          <Col md={8}>
-            <Card>
+          <Col md={6}>
+            <Card style={{paddingTop:"10px", paddingBottom:"38px"}}>
               <CardHeader>
                 <h5 className="title">Mi perfil</h5>
               </CardHeader>
-              <CardBody>
-                <Form>
+              <CardBody >
+                <Form style={{paddingTop:"30px"}}>
                   <Row>
-                    <Col className="px-md-1" md="6">
+                    <Col className="pr-md-1" md="6">
                       <FormGroup>
-                        <label>Nombre de usuario</label>
-                        <Input
+                        <label style={{fontSize:13}}>Nombre de usuario</label>
+                        <DisabledInput
                           value={values["username"]}
-                          placeholder="Nombre de usuario"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
                     <Col className="pl-md-1" md="6">
                       <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
+                        <label style={{fontSize:13}} htmlFor="exampleInputEmail1">
                           Correo electrónico
                         </label>
-                        <Input 
+                        <DisabledInput 
                           value = {values["email"]}
-                          placeholder="ejemplo@mail.com" 
                           type="email" />
                       </FormGroup>
                     </Col>
@@ -88,20 +126,18 @@ function UserProfile() {
                   <Row>
                     <Col className="pr-md-1" md="6">
                       <FormGroup>
-                        <label>Nombre</label>
-                        <Input
+                        <label style={{fontSize:13}}>Nombre</label>
+                        <DisabledInput
                           value={values["name"]}
-                          placeholder="Nombre"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
                     <Col className="pl-md-1" md="6">
                       <FormGroup>
-                        <label>Apellido</label>
-                        <Input
+                        <label style={{fontSize:13}}>Apellido</label>
+                        <DisabledInput
                           value={values["lastname"]}
-                          placeholder="Apellido"
                           type="text"
                         />
                       </FormGroup>
@@ -111,14 +147,13 @@ function UserProfile() {
               </CardBody>
             </Card>
           </Col>
-          <Col md="4">
+          <Col md="6">
             <Card className="card-user">
               <CardBody>
                 <CardText />
-                  <h5 className="title">Roles asignados</h5>
-                  <SimpleTable data={roles} columns={roles_columns}>
-                  </SimpleTable>
-
+                  <h5 className="title">Rol asignado: {role.name}</h5>
+                  <div style={{color:"white", paddingBottom:"10px"}}> <center>Permisos</center></div>
+                  <DoubleEntryTable permissions={mapPermissions(permissions)} />
               </CardBody>
             </Card>
           </Col>

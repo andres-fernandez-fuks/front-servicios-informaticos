@@ -132,9 +132,10 @@ function ProblemCreation(props) {
       formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
-      dbPost("problems", formData);
-      history.push(simple_routes.problems);
-      toast.success("Problema creado correctamente")
+      dbPost("problems", formData).then(data => {
+        toast.success("Problema creado correctamente");
+        history.push(simple_routes.problems);
+      }).catch(err => { console.log(err) });
   }
 
 

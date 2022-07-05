@@ -63,7 +63,7 @@ function ChangesTable() {
         history.push(simple_routes.changeCreation);
     };
     useEffect(() => {
-        dbGet("changes/not-assigned").then(data => {
+        dbGet("changes/pending").then(data => {
             setbigChartData(data);
         }).catch(err => {console.log(err)});
     }   , []);
@@ -96,7 +96,7 @@ function ChangesTable() {
                 className={classNames("btn-simple", {
                     active: category === "No tomados",
                 })}
-                onClick={(e) => fetchData(e, "changes/not-assigned")}
+                onClick={(e) => fetchData(e, "changes/pending")}
                 >
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="No tomados">
                     Pendientes
@@ -111,11 +111,11 @@ function ChangesTable() {
                 size="sm"
                 tag="label"
                 className={classNames("btn-simple", {
-                    active: category === "Tomados",
+                    active: category === "Aplicados",
                 })}
-                onClick={(e) => fetchData(e, "changes/assigned", "Resuelto")}
+                onClick={(e) => fetchData(e, "changes/solved", "Resuelto")}
                 >
-                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Tomados">
+                <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block" aria-label="Aplicados">
                     Aplicados
                 </span>
                 <span className="d-block d-sm-none">

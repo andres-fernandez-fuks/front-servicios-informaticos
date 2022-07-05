@@ -45,7 +45,7 @@ import CommentsTracking from "components/Form/comment_tracking";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import Tooltip from "@material-ui/core/Tooltip";
 
-export const INCIDENT_DETAILS_PATH = "/incidents_details";
+export const INCIDENT_DETAILS_PATH = "/incident_details";
 const tableData = [];
 const ciItemColumns = [
     {"name": "id", "label": "ID"},
@@ -69,6 +69,7 @@ function IncidentDetails(props) {
     var incident_id = paths[paths.length - 1]
     const [columns, setColumns] = React.useState(ciItemColumns);
     const [isTaken, setIsTaken] = React.useState(false);
+    const [takenByUser, setIsTakenByUser] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(true);
 
     function getPrice(price_string) {
@@ -79,7 +80,7 @@ function IncidentDetails(props) {
 
     function updateCurrentValues(field, new_value) {
         if (field === "price") new_value = getPrice(new_value);
-        currentValues[field] = new_value;
+        setCurrentValues(prevState => ({...currentValues, [field]: new_value}));
         if (JSON.stringify(currentValues) !== JSON.stringify(values)) {
             setEnableCreateButton(true);
         } else {
@@ -102,6 +103,7 @@ function IncidentDetails(props) {
             setIsBlocked(data["is_blocked"])
             setIsTaken(data["taken_by"] !== null);
             setIsLoading(false);
+            setIsTakenByUser(data["taken_by"] === localStorage.getItem("username"));
         }).catch(err => {console.log(err)});
         }   , []);
 
@@ -135,18 +137,19 @@ function IncidentDetails(props) {
   function takeIncident() { 
       var patch_data = {taken_by:localStorage.getItem("username")}
       dbPatch("incidents/" + incident_id, patch_data);
-      // history.push(simple_routes.incidents);
       sendComment("Incidente tomado");
       setIsTaken(true);
+      setIsTakenByUser(true);
+      setCurrentValues({...currentValues, taken_by:localStorage.getItem("username")});
   }
 
   function addBlockButton() {
-    if (!isEditable || !isTaken) return;
+    if (!isEditable || !isTaken || !takenByUser) return;
         return (
-            <>
+            <>  {isBlocked ? <>&nbsp;</> : <></>}
                 <Button className="btn-fill" align="left"
                 hidden = {!isBlocked}
-                color="warning"
+                color="danger"
                 type="button"
                 onClick={() => unblockIncident()}
                 >
@@ -154,7 +157,7 @@ function IncidentDetails(props) {
                 </Button>
                 <Button className="btn-fill" align="left"
                 hidden = {isBlocked}
-                color="warning"
+                color="danger"
                 type="button"
                 onClick={() => blockIncident()}
                 >
@@ -166,28 +169,32 @@ function IncidentDetails(props) {
 
   function addButtons() {
     if (isLoading) return;
-    if (!isEditable) return
-      if (values === '') {
-        return;
-    }
-    if (values.status === "Resuelto") {
-        return;
+    if (values === '') return;
+    if (!isEditable || values.status === "Resuelto") {
+        return (
+            <Button className="btn-fill"
+            color="warning"
+            onClick={() => history.goBack()}
+            >
+            Volver        
+            </Button>
+        )
     }
         return (
-            <>  
-            <Button className="btn-fill"
-            hidden={isTaken}
-            color="primary"
-            type="button"
-            onClick={() => takeIncident()}
-            >
-            Tomar        
-            </Button>
-            <Grid align="center">
+            <Row style={{justifyContent:"center"}}>  
+                <Button className="btn-fill"
+                hidden={isTaken}
+                color="primary"
+                type="button"
+                onClick={() => takeIncident()}
+                >
+                Tomar        
+                </Button>
+                {!isTaken ? <>&nbsp;</> : <></>}
             <Tooltip title={isBlocked ? "Incidente bloqueado" : "" }>
                 <span>
                 <Button className="btn-fill" align="right"
-                hidden={!isTaken}
+                hidden={!isTaken || !takenByUser}
                 disabled = {isBlocked}
                 color="info"
                 type="button"
@@ -198,8 +205,13 @@ function IncidentDetails(props) {
                 </span>
             </Tooltip>
                 {addBlockButton()}
-                </Grid>
-            </>
+                <Button className="btn-fill"
+                    color="warning"
+                    onClick={() => history.goBack()}
+                    >
+                    Volver        
+                </Button>
+            </Row>
         )
   }
 

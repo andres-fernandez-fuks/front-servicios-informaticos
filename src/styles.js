@@ -22,7 +22,7 @@ export default makeStyles((theme) => ({
     alignItems: "center"
   },
   card: {
-    minHeight: "100%",
+    minHeight: "820px",
     maxHeight: "100%",
     display: "flex",
     flexDirection: "column",

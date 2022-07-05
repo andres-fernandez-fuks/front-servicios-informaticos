@@ -75,9 +75,6 @@ export default function SLADetailsPage() {
     }).catch(err => {console.log(err)});
     }   , []);
 
-    // if (values === '' || values === undefined) {
-    //     fetchValues();
-    // }
 
     function getRequestValues() {
         var request_values = {...currentValues};
@@ -100,6 +97,9 @@ export default function SLADetailsPage() {
         delete request_values.draft_id;
         delete request_values.draft_change_id;
         delete request_values.version_number;
+        delete request_values.is_restoring_draft;
+        delete request_values.restore_version_id;
+        delete request_values.comments;
         return request_values;
     }
 
@@ -221,10 +221,11 @@ export default function SLADetailsPage() {
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
                                 <Select 
+                                    value = {{value: currentValues.measurement_unit, label: currentValues.measurement_unit}}
                                     styles={selectStyles}
                                     isDisabled = {!isEditable}
                                     id="measurement_unit"
-                                    onChange={function(new_option){updateMeasurementUnit(new_option.value)}}
+                                    onChange={function(e){updateCurrentValues("measurement_unit", e.value)}}
                                     options={units}
                                 />
                             </FormGroup>
@@ -292,6 +293,12 @@ export default function SLADetailsPage() {
                     >
                     Guardar        
                 </Button>
+                <Button className="btn-fill"
+                    color="warning"
+                    onClick={() => history.goBack()}
+                    >
+                    Volver        
+              </Button>
                 </CardFooter>
             </Card>
             </Form>

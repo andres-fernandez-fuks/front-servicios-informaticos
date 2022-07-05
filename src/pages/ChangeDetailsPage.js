@@ -55,11 +55,13 @@ const itemsColumns = [
     {"name": "name", "label": "Nombre"},
     {"name": "draft_id", "label": "draft_id"},
     {"name": "draft_change_id", "label": "draft_change_id"},
+    {"name": "is_restoring_draft", "label": "is_restoring_draft"},
 ]
 
-const incidentColumns = [
+const incidentAndProblemsColumns = [
     {"name": "id", "label": "ID"},
     {"name": "type_show", "label": "Tipo"},
+    {"name": "type", "label": "type"},
     {"name": "description", "label": "Descripción"}
 ]
 
@@ -77,9 +79,10 @@ function ChangeDetails(props) {
     var change_id = paths[paths.length - 1]
     const [isBlocked, setIsBlocked] = React.useState(false);
     localStorage.setItem("wasInChange", true)
-    const [allItemsModified, setAllItemsModified] = React.useState(true);
+    const [hasModifications, setHasModifications] = React.useState(false);
     const [flushLocalComments, setFlushLocalComments] = React.useState(false);
     const [isTaken, setIsTaken] = React.useState(false);
+    const [isTakenByUser, setIsTakenByUser] = React.useState(false);
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -106,15 +109,17 @@ function ChangeDetails(props) {
 
             incidents_data.map(i => {
                 i['type_show'] = "Incidente"
+                i['type'] = "incident"
             })
             problems_data.map(i => {
                 i['type_show'] = "Problema"
+                i['type'] = "problem"
             })
             
             data["hardware_configuration_items"].map(i => {
                 i['type_show'] = "Hardware"
                 i['type'] = "hardware"
-                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
+                if (i['draft_id'] && i['draft_change_id'] == this_change_id) setHasModifications(true);
                 ci.push(i)
                 console.log(i)
             })
@@ -122,7 +127,7 @@ function ChangeDetails(props) {
             data["software_configuration_items"].map(i => {
                 i['type_show'] = "Software"
                 i['type'] = "software"
-                if (!i['draft_change_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
+                if (i['draft_id'] && i['draft_change_id'] == this_change_id) setHasModifications(true);
                 ci.push(i)
                 console.log(i)
             })
@@ -130,7 +135,7 @@ function ChangeDetails(props) {
             data["sla_configuration_items"].map(i => {
                 i['type_show'] = "SLA"
                 i['type'] = "sla"
-                if (!i['draft_id'] || i['draft_change_id'] !== this_change_id) setAllItemsModified(false);
+                if (i['draft_id'] && i['draft_change_id'] == this_change_id) setHasModifications(true);
                 ci.push(i)
                 console.log(i)
             })
@@ -147,7 +152,8 @@ function ChangeDetails(props) {
             setCurrentValues(data);
             fetchItemsData();
             setIsBlocked(data["is_blocked"]);
-            setIsTaken(data["taken_by"] !== null)
+            setIsTaken(data["taken_by"] !== null);
+            setIsTakenByUser(data["taken_by"] === localStorage.getItem("username"));
             localStorage.setItem("change_id", change_id);
         }).catch(err => {console.log(err)});
         }   , []);
@@ -178,6 +184,7 @@ function ChangeDetails(props) {
         dbPatch("changes/" + change_id, patch_data).then(data => {
             setCurrentValues(data);
             setIsTaken(true);
+            setIsTakenByUser(true);
       });
         sendComment("Cambio tomado");
     }
@@ -219,12 +226,15 @@ function ChangeDetails(props) {
         
     }
 
+    console.log("TAKEN BY USER: ", isTakenByUser)
+
     function addBlockButton() {
         if (!isEditable) return
             return (
-                <>
+                <>  
+                    {isBlocked ? <>&nbsp;</> : <></>}
                     <Button className="btn-fill"
-                    hidden = {!isBlocked}
+                    hidden = {!isTaken || !isBlocked || !isTakenByUser}
                     color="warning"
                     type="button"
                     onClick={() => unblockChange()}
@@ -232,7 +242,7 @@ function ChangeDetails(props) {
                     Desbloquear        
                     </Button>
                     <Button className="btn-fill"
-                    hidden = {isBlocked}
+                    hidden = {!isTaken || isBlocked || !isTakenByUser}
                     color="warning"
                     type="button"
                     onClick={() => blockChange()}
@@ -244,39 +254,56 @@ function ChangeDetails(props) {
     }
 
     function defineTooltipMessage() {
-        if (allItemsModified && !isBlocked) return "";
+        if (hasModifications && !isBlocked) return "";
         if (isBlocked) return "Cambio bloqueado";
-        return "Quedan ítems por modificar"; 
+        return "Tiene que modificar por lo menos un ítem"; 
     }
 
   function addButtons() {
-    if (!isEditable) return
     if (values === '') {
       return;
     }
-    if (values.status === "Resuelto" || values.status === "Rechazado") {
-        return;
-    }
-    if (isTaken) {
+    if (!isEditable || values.status === "Resuelto" || values.status === "Rechazado") {
         return (
-        <Grid align="center">
-            <Tooltip title={defineTooltipMessage()}>
+            <Row style={{justifyContent:"center"}}>
+                <Button className="btn-fill"
+                    color="primary"
+                    onClick={() => history.goBack()}
+                    >
+                    Volver        
+                </Button>
+            </Row>
+        )
+    }
+        return (
+        <Row style={{justifyContent:"center"}}>
+            <Button className="btn-fill" align="right"
+                hidden={isTaken}
+                color="success"
+                type="button"
+                onClick={() => takeChange()}
+                >
+                Tomar        
+            </Button>
+            <Tooltip title={defineTooltipMessage()} style={{paddingRight:"1px"}}>
             <span>
                 <Button
-                disabled = {!allItemsModified || isBlocked}
-                className="btn-fill"
-                color="info"
-                type="button"
-                onClick={() => applyChange()}
-                >
-                Aplicar        
+                    hidden = {!isTaken || !isTakenByUser}
+                    disabled = {!hasModifications || isBlocked}
+                    className="btn-fill"
+                    color="info"
+                    type="button"
+                    onClick={() => applyChange()}
+                    >
+                    Aplicar        
                 </Button>
             </span>
             </Tooltip>
-            &nbsp;
+            {isTaken ? <> &nbsp; </> : <></>}
             <Tooltip title={isBlocked ? "Cambio bloqueado" : ""}>
                 <span>
                     <Button
+                    hidden = {!isTaken || !isTakenByUser}
                     disabled = {isBlocked}
                     className="btn-fill"
                     color="danger"
@@ -288,23 +315,14 @@ function ChangeDetails(props) {
                 </span>
             </Tooltip>
             {addBlockButton()}
-
-        </Grid>
+            <Button className="btn-fill"
+                color="primary"
+                onClick={() => history.goBack()}
+                >
+                Volver        
+            </Button>
+        </Row>
         )
-    }
-    if (values.taken_by !== undefined) {
-    return (
-        <Grid align="center">
-        <Button className="btn-fill" align="right"
-        color="success"
-        type="button"
-        onClick={() => takeChange()}
-        >
-        Tomar        
-        </Button>
-        
-        </Grid>)
-    }
   }
 
   return (
@@ -324,7 +342,6 @@ function ChangeDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <DisabledInput
-                                  
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -337,8 +354,7 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                               <Label style={{ color:"#1788bd" }}>Estado</Label>
-                              <DisabledInput
-                                  
+                              <DisabledInput className="other_input"
                                   defaultValue= {currentValues.status}
                                   onChange = {function(e){updateCurrentValues("status", e.target.value)}}
                                   id = "type"
@@ -349,8 +365,7 @@ function ChangeDetails(props) {
                       <Col md="6">
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }}>Prioridad</Label>
-                              <DisabledInput
-                                  
+                              <DisabledInput className="other_input"
                                   defaultValue= {currentValues.priority}
                                   onChange = {function(e){updateCurrentValues("priority", e.target.value)}}
                                   id = "type"
@@ -374,7 +389,7 @@ function ChangeDetails(props) {
                       </Col>
                       <Col md="6">
                           <FormGroup>
-                          <Label style={{ color:"#1788bd" }}>Resuelto por</Label>
+                          <Label style={{ color:"#1788bd" }}>Tomado por</Label>
                               <DisabledInput  className="other_input"
                                   readOnly
                                   defaultValue = {currentValues.taken_by}
@@ -392,13 +407,15 @@ function ChangeDetails(props) {
                 <ChangeTable data={itemsCiData}
                              columns={itemsColumns}
                              addWatchColumn={true}
-                             excludeColumns={["id", "draft_change_id", "draft_id", "type"]}
+                             excludeColumns={["id", "draft_change_id", "draft_id", "type", "is_restoring_draft"]}
                              details_button_path={"/admin/item_details/"}
                              edit_button_path={"/admin/item_edit/"}
+                             restore_button_path={"/admin/item_restore/"}
                              type_row = {1}
                              change_callback_id = {change_id}
                              use_object_type = {true}
-                             change_status = {values.status}
+                             change_status = {[currentValues.status]} // si se pasa como puntero, se actualiza solo en la tabla
+                             taken_by = {[currentValues.taken_by]} // si se pasa como puntero, se actualiza solo en la tabla
                              />
                 </Grid>
                 </div>
@@ -406,11 +423,11 @@ function ChangeDetails(props) {
                 <Grid>
                 <h4 className="title">Incidentes y problemas</h4>
                 <SimpleTable data={itemsData}
-                             columns={incidentColumns}
-                             //addWatchColumn={true}
-                             excludeIdColumn={true} 
-                             //button_path={"/admin/incidents_details/"}
-                             use_object_type = {false}/>
+                             columns={incidentAndProblemsColumns}
+                             addWatchColumn={true}
+                             excludeColumns={["id", "type"]}
+                             button_path={"_details"}
+                             use_solvable_type = {true}/>
                 </Grid>
             </div>
               </CardBody>

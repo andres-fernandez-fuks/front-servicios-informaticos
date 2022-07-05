@@ -42,6 +42,7 @@ import SimpleTable from "components/Table/SimpleTable";
 import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import { DisabledInput } from "components/Form/DisabledInput";
 import toast, { Toaster } from 'react-hot-toast';
+import moment from "moment";
 
 
 export const KNOWN_ERROR_DETAILS_PATH = "/known_error_details";
@@ -58,8 +59,6 @@ const versionColumns = [
 ]
 
 
-
-
 function KnownErrorDetails(props) {
     const classes = useStyles();
     const history = useHistory();
@@ -73,7 +72,8 @@ function KnownErrorDetails(props) {
     var error_id = paths[paths.length - 1]
     const [bigChartData, setbigChartData] = React.useState(tableData);
     const [columns, setColumns] = React.useState(incidentColumns);
-    const [formFields, setFormFields] = React.useState([{}])
+    const [formFields, setFormFields] = React.useState([{}]);
+    const [counter, setCounter] = React.useState(-1);
 
     function updateCurrentValues(field, new_value) {
         currentValues[field] = new_value;
@@ -93,26 +93,19 @@ function KnownErrorDetails(props) {
 
     React.useEffect(() => {
         dbGet("errors/" + error_id).then(data => {
-            setValues(data);
-            setCurrentValues(data);
+            setValues({...data});
+            setCurrentValues({...data});
             getVersions();
             fetchItemsData();
         }).catch(err => {console.log(err)});
         }   , []);
 
-    function fetchValues() {
-        dbGet("errors/" + error_id).then(data => {
-            setValues(data);
-            getVersions()
-            //setCurrentValues(data);
-        }).catch(err => {console.log(err)});
-    }
-
     function restoreVersion(request_path, redirect_path, version_id) {
         dbPost(request_path, {"version": version_id}).then(data => {
             setValues(data);
-            setCurrentValues(data)
-            toast.success("Se ha restaurado la versión '" + version_id +"' correctamente")
+            setCurrentValues(data);
+            setCounter(counter -1);
+            toast.success("Se ha restaurado la versión '" + version_id +"' correctamente");
         }).catch(err => {console.log(err)});
     }
 
@@ -121,10 +114,12 @@ function KnownErrorDetails(props) {
             return <SimpleTable
                 data={values.versions}
                 columns={versionColumns}
-                addRestoreColumn={!localStorage.getItem("wasInChange")}
+                addRestoreColumn={true}
                 function={restoreVersion}
                 button_path={"/admin" + KNOWN_ERROR_DETAILS_PATH}
-                request_endpoint={"errors/" + values.id + "/restore"}/>
+                request_endpoint={"errors/" + values.id + "/restore"}
+                isKnownErrorTable={true}
+                  />
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>
@@ -136,7 +131,6 @@ function KnownErrorDetails(props) {
         cleaned_data["created_by"] = data["created_by"]
         cleaned_data["description"] = data["description"]
         cleaned_data["solution"] = data["solution"]
-        cleaned_data["created_at"] = data["created_at"]
         return cleaned_data
     }
 
@@ -149,20 +143,29 @@ function KnownErrorDetails(props) {
     }
 
   function addButtons() {
-    if (!isEditable) return
-      if (values === '') {
-      fetchValues();
-    }
-//todo ver que el boton de guardar ande
+    if (values === '') return;
+
     return (
+        <>
         <Button className="btn-fill"
-        color="primary"
-        type="submit"
-        onClick={(e) =>{e.preventDefault(); submitForm()}}
+            hidden={!isEditable}
+            disabled = {!enableCreateButton}
+            color="primary"
+            type="submit"
+            onClick={(e) =>{e.preventDefault(); submitForm()}}
+            >
+            Guardar
+        </Button>
+        <Button
+            className="btn-fill"
+            color="warning"
+            onClick={(e) =>{history.go(counter)}}
         >
-        Guardar
-        </Button>)
-    }
+            Volver
+        </Button>
+        </>
+    )
+  }
 
   return (
     <>
@@ -171,7 +174,7 @@ function KnownErrorDetails(props) {
         <Row>
           <Col md="6">
           <Form>
-          <Card className="error-card">
+          <Card style={{paddingBottom:"33px"}}>
               <CardHeader >
                   <h4 className="title">Detalles del Error</h4>
               </CardHeader>
@@ -182,7 +185,6 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="description">Descripción</Label>
                               <Input
-                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.description}
                                   onChange = {function(e){updateCurrentValues("description", e.target.value)}}
                                   id = "description"
@@ -194,7 +196,6 @@ function KnownErrorDetails(props) {
                           <FormGroup>
                           <Label style={{ color:"#1788bd" }} for="solution">Solución</Label>
                               <Input
-                                  readOnly = {!isEditable}
                                   defaultValue = {currentValues.solution}
                                   onChange = {function(e){updateCurrentValues("solution", e.target.value)}}
                                   id = "solution"
@@ -210,7 +211,6 @@ function KnownErrorDetails(props) {
                               <DisabledInput                                  
                                   readOnly = {!isEditable}
                                   defaultValue = {currentValues.created_by}
-                                  onChange = {function(e){updateCurrentValues("created_by", e.target.value)}}
                                   id = "serial_number"
                                   type="text"
                               />
@@ -234,7 +234,7 @@ function KnownErrorDetails(props) {
                              columns={columns}
                              addWatchColumn={true}
                              excludeIdColumn={true}
-                             button_path={"/admin/incidents_details/"}
+                             button_path={"/admin/incident_details/"}
                              use_object_type = {false}/>
             </div>
               </CardBody>

@@ -1,7 +1,7 @@
 import React from "react";
 import Grid from '@mui/material/Grid';
 import { dbGet, dbPatch } from 'utils/backendFetchers';
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
 import toast, { Toaster } from 'react-hot-toast';
@@ -27,6 +27,7 @@ import {DisabledInput} from "components/Form/DisabledInput.js";
 
 import SimpleTable from "components/Table/SimpleTable";
 import { dbPost } from "utils/backendFetchers";
+import ItemMultiTable from "components/Form/ItemMultiTable";
 
 export const SOFTWARE_ITEM_DETAILS_PATH = "/item_details/software";
 
@@ -35,7 +36,7 @@ const columns = [
     {"name": "created_at", "label": "Fecha de creación"},
 ]
 
-export default function SoftwareItemDetails() {
+export default function SoftwareItemDetails(props) {
     const classes = useStyles();
     const history = useHistory();
     var paths = window.location.pathname.split("/") 
@@ -44,6 +45,12 @@ export default function SoftwareItemDetails() {
     const [currentValues, setCurrentValues] = React.useState("");
     const isEditable = false;
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
+    const [counter, setCounter] = React.useState(-1);
+    
+    const location = useLocation();
+    const {allowVersionRestoring} = location.state || {allowVersionRestoring: false};
+    console.log("version restoring: ", allowVersionRestoring)
+
 
     function getPrice(price_string) {
         var price = price_string.split(" ")[1]
@@ -70,25 +77,23 @@ export default function SoftwareItemDetails() {
     }   , []);
 
 
-    function restoreVersion(request_path, redirect_path, version_id) {
-        dbPost(request_path, {"version": version_id}).then(data => {
-            redirect_path += "/" + data.id;
-            history.push(redirect_path);
-            window.location.reload();
-            // setValues(data);
+    function checkVersion(request_path, redirect_path, version_number) {
+        dbGet(request_path + "/" + version_number).then(data => {
+            setValues({...data});
+            setCurrentValues({...data});
+            setCounter(counter - 1);
         }).catch(err => {console.log(err)});
-}  
-
+    }  
 
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable
                         data={values.versions}
                         columns={columns}
-                        addRestoreColumn={!localStorage.getItem("wasInChange")}
-                        function={restoreVersion}
+                        addRestoreColumn={true}
+                        function={checkVersion}
                         button_path={"/admin" + SOFTWARE_ITEM_DETAILS_PATH}
-                        request_endpoint={"configuration-items/software/" + values.id + "/restore"}/>
+                        request_endpoint={"configuration-items/software/" + values.id + "/version"}/>
         }
         else if (values.versions && values.versions.length === 0) {
             return <div className="version_row">No hay otras versiones del ítem</div>
@@ -207,7 +212,7 @@ export default function SoftwareItemDetails() {
                     <Row>
                         <Col md="12">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado</Label>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado (creación)</Label>
                                 <DisabledInput
                                     defaultValue = {currentValues.change && currentValues.change.description}
                                     id = "description"
@@ -216,20 +221,28 @@ export default function SoftwareItemDetails() {
                         </Col>
                     </Row>
                 </CardBody>
+                <CardFooter style={{justifyContent:"center"}}>
+                <center>
+                <Button className="btn-fill"
+                        color="warning"
+                        onClick={() =>history.go(counter ? counter : -1)}
+                        >
+                        Volver        
+                </Button>
+                </center>
+                </CardFooter>
             </Card>
             </Form>
             </Col>
-            <Col md="6">
-              <Card className="incident-card">
-                <CardBody>
-                <div>
-                <h4 className="title">Otras versiones</h4>
-                    <div className="versions">
-                        {getVersions()}
-                    </div>
-                </div>
-                </CardBody>
-              </Card>
+            <Col md="6" className="multi-table-parent-col">
+                <ItemMultiTable
+                    item_id = {item_id}
+                    item_type = "software"
+                    item_details_path = {SOFTWARE_ITEM_DETAILS_PATH}
+                    check_version_function = {checkVersion}
+                    versions = {values.versions}
+                    comments = {values.comments}
+                />
             </Col>
           </Row>
         </div>

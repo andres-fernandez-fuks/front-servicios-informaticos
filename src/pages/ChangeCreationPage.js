@@ -167,9 +167,10 @@ function ChangeCreation(props) {
       formData["created_by"] = localStorage.getItem("username");
       formData["description"] = document.getElementById('description').value;
       formData["priority"] = values.priority;
-      dbPost("changes", formData);
-      toast.success("Cambios creado correctamente")
-      exitForm()
+      dbPost("changes", formData).then(data => {
+        toast.success("Cambios creado correctamente");
+        history.push(simple_routes.changes);
+      }).catch(err => {console.log(err)});
   }
 
   return (

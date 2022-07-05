@@ -19,8 +19,7 @@ import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
-
+import { dbGet } from "utils/backendFetchers";
 // reactstrap components
 import {
   Button,
@@ -42,19 +41,263 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 
-// core components
-import {
-  chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4,
-} from "variables/charts.js";
+
+import LineGraph from "components/Graphs/LineGraph";
+import {LastYearGraph, MonthlyGraph} from "components/Graphs/LastYearGraph";
+import moment from "moment";
+import BarGraph from "components/Graphs/BarGraph";
+import {SolvedByUserGraph} from "components/Graphs/SolvedByUserGraph";
+import { AvgGraph } from "components/Graphs/AvgGraph";
+import { PieGraph } from "components/Graphs/PieGraph";
+import { setSourceMapRange } from "typescript";
+import "./style.css";
+
+
+const endpoint_names  = {
+  "incidents": "Incidentes",
+  "changes": "Cambios",
+  "problems": "Problemas"
+}
+const names_endpoints  = {
+  "Incidentes": "incidents",
+  "Cambios": "changes",
+  "Problemas": "problems" 
+}
+
+const options = [
+  { value: 'Incidentes', label: 'Incidentes' },
+  { value: 'Problemas', label: 'Problemas' },
+]
 
 function Dashboard(props) {
-  const [bigChartData, setbigChartData] = React.useState("data1");
-  const setBgChartData = (name) => {
-    setbigChartData(name);
-  };
+  const [bigChartData, setbigChartData] = React.useState([]);
+  const [bigChartName, setbigChartName] = React.useState("");
+  const [centerChartData, setcenterChartData] = React.useState([]);
+  const [centerChartName, setcenterChartName] = React.useState("");
+  const [solvedRatio, setsolvedRatio] = React.useState(0);
+  const [solvedByUserData, setsolvedByUserData] = React.useState([]);
+  const [itemsWithMoreSolvables, setitemsWithMoreSolvables] = React.useState([]);
+  const [category, setCategory] = React.useState("incidents");
+  const [avgSolvingTime, setAvgSolvingTime] = React.useState(0);
+  const [avgData, setAvgData] = React.useState([]);
+  const [leftChartData, setleftChartData] = React.useState([]);
+  const [leftChartName, setleftChartName] = React.useState("");
+  const [createdLastMonth, setcreatedLastMonth] = React.useState("Cargando...");
+  const [pieData, setPieData] = React.useState([]);
+  const [solvableData, setSolvableData] = React.useState(null);
+  const [solvableSolvedData, setSolvableSolvedData] = React.useState(null);
+  const [itemsData, setItemsData] = React.useState(null);
+  const [maxCreationDay, setMaxCreationDay] = React.useState("Cargando...");
+  const [maxItemWithSolvables, setMaxItemWithSolvables] = React.useState("Cargando...");
+  const [mostSolvingUser, setMostSolvingUser] = React.useState("Cargando...");
+  const [creadosUltimoAño, setCreadosUltimoAño] = React.useState("Cargando...");
+  React.useEffect(() => {
+    getSolvableData(category);
+    getSolvableSolvedData(category);
+    getItemsData();
+  }, [category])
+
+  React.useEffect(() => {
+    getCreatedByDate();
+    getCreatedVSSolved();
+    getCreatedThisWeek();
+    getPieData();
+    }, [solvableData])
+
+  React.useEffect(() => {
+    getCreatedVSSolved();
+    getSolvedByUser();
+    getAverageData();
+    calculateAverageSolvingTime();
+    }, [solvableSolvedData])
+
+  React.useEffect(() => {
+    getItemsWithMoreSolvables(category);
+    }, [itemsData])
+
+  function getSolvableData(category) {
+    dbGet(category).then((data) => {
+        setSolvableData(data);
+    }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  function getSolvableSolvedData(category) {
+    dbGet(category + "/solved").then((data) => {
+        setSolvableSolvedData(data);
+    }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  function getItemsData() {
+    dbGet(`configuration-items/all?category=${category}`).then((data) => {
+        setItemsData(data);
+    }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  function getCreatedByDate(){
+    if (!solvableData) return;
+    let mapped = solvableData.map((element) => {
+        return element["created_at"]})
+      let counted = mapped.reduce((prev, curr) => {
+        prev[curr] = (prev[curr] || 0) + 1;
+        return prev;
+      }, {})
+      let consolidated = Object.entries(counted).map((element) => {
+        return {
+          x: new Date(moment(element[0], "DD/MM/YYYY").toDate().toDateString()),
+          y: element[1],
+        }
+      })
+      setbigChartData(consolidated);
+      setCreadosUltimoAño(consolidated.reduce((prev, curr) => {
+        return prev + curr.y;
+      }, 0 ))
+  }
+
+  function getItemsWithMoreSolvables(name){
+    if (!itemsData) return;
+
+    var data = itemsData["items"]
+    let mapped = data.map((element) => {
+      return [element["name"], element["value"]]})
+    let consolidated = mapped.map(element => {
+      return {
+        x: element[0],
+        y: element[1],
+      }
+    })
+
+    let max_item = data[0].name
+    setMaxItemWithSolvables(max_item)
+    setitemsWithMoreSolvables(consolidated);
+    setbigChartName(endpoint_names[name])
+  }
+
+  function getAverageData(){
+    if (!solvableSolvedData) return;
+
+    let mapped = solvableSolvedData.map((element) => {
+        return {solving_time:element["solving_time"], id:element["id"]}
+      })
+      let filtered = mapped.filter((element) => {
+        return element["solving_time"] != null || element["solving_time"] > 0;
+     })
+      let consolidated = filtered.map((element, i) => {
+        return {
+          x: i+1,
+          y: element["solving_time"],
+          id: element["id"]
+        }
+      })
+      setAvgData(consolidated);
+  }
+
+  function getPieData(){
+    if (!solvableData) return;
+    var solved = 0;
+    var notSolved = 0;
+    solvableData.forEach((element) => {
+      if(element.status === "Resuelto") solved++;
+      else notSolved++;
+    })
+    var data = {
+      labels: ["Resueltos", "No resueltos"],
+      values: [solved, notSolved],
+    }
+    setPieData(data);
+  }
+
+  function calculateAverageSolvingTime() {
+    if (!solvableSolvedData) return;
+    let mapped = solvableSolvedData.map((element) => {
+        return element["solving_time"]
+      })
+      let filtered = mapped.filter((element) => {
+          return element != null
+      })
+      let avg = filtered.reduce((prev, curr) => {
+          return prev + curr
+      }
+      , 0) / filtered.length
+      setAvgSolvingTime(avg ? avg : 0);
+  }
+
+  function getSolvedByUser(){
+    if (!solvableSolvedData) return;
+    let mapped = solvableSolvedData.map((element) => {
+        return element["taken_by"]})
+      let counted = mapped.reduce((prev, curr) => {
+        prev[curr] = (prev[curr] || 0) + 1;
+        return prev;
+      }, {})
+      let consolidated = Object.entries(counted).map((element) => {
+        return {
+          x: element[0],
+          y: element[1],
+        }
+      })
+      consolidated.sort((a, b) => {
+        return b.y - a.y;
+        }   // sort descending
+      )
+      consolidated = consolidated.slice(0, 5)
+      setsolvedByUserData(consolidated);
+      setMostSolvingUser(consolidated[0] ? consolidated[0].x : `No hay ${endpoint_names[category]} resueltos`);
+  }
+
+  function getCreatedThisWeek(){
+    if (!solvableData) return;
+
+    let solvables_by_week_day = {};
+
+    solvableData.forEach((element) => {
+        let date = moment(element["created_at"], "DD/MM/YYYY").weekday();
+        date = date === 0 ? 6 : date - 1;
+        solvables_by_week_day[date] = (solvables_by_week_day[date] || 0) + 1;
+    })
+
+    const day_names = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado", "Domingo"]
+
+    for (var i in day_names) {
+      if (solvables_by_week_day[i] === undefined) {
+          solvables_by_week_day[i] = 0;
+      }
+    }
+
+    let consolidated = Object.entries(solvables_by_week_day).map((element) => {
+        return {
+            x: day_names[element[0]],
+            y: element[1],
+        }
+    })
+    let max_day = Object.entries(solvables_by_week_day).reduce((a, b) => a[1] > b[1] ? a : b)[0]
+
+    setleftChartData(consolidated);
+    setMaxCreationDay(day_names[max_day]);
+  }
+  
+  function getCreatedVSSolved(name){
+    if (!solvableData || !solvableSolvedData) return;
+    let data = []
+    let aux = {
+        x: "Creados",
+        y: solvableData.length,
+      }
+      data.push(aux)
+      let aux2 = {
+        x: "Resueltos",
+        y: solvableSolvedData.length,
+      }
+      data.push(aux2)
+      setcenterChartData(data);
+      setcenterChartName(endpoint_names[name])
+      setsolvedRatio(data[1]["y"] / data[0]["y"])
+  }
   return (
     <>
       <div className="content">
@@ -64,8 +307,8 @@ function Dashboard(props) {
               <CardHeader>
                 <Row>
                   <Col className="text-left" sm="6">
-                    <h5 className="card-category">Creados en el último año</h5>
-                    <CardTitle tag="h2">Performance</CardTitle>
+                    <h5 className="card-category">{endpoint_names[category]} creados por mes en el último año</h5>
+                    <CardTitle tag="h2">Totales creados en el último año: {creadosUltimoAño}</CardTitle>
                   </Col>
                   <Col sm="6">
                     <ButtonGroup
@@ -75,12 +318,12 @@ function Dashboard(props) {
                       <Button
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "data1",
+                          active: category === "incidents",
                         })}
                         color="info"
                         id="0"
                         size="sm"
-                        onClick={() => setBgChartData("data1")}
+                        onClick={() => setCategory("incidents")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Incidentes
@@ -95,9 +338,9 @@ function Dashboard(props) {
                         size="sm"
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "data2",
+                          active: category === "problems",
                         })}
-                        onClick={() => setBgChartData("data2")}
+                        onClick={() => setCategory("problems")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Problemas
@@ -112,9 +355,9 @@ function Dashboard(props) {
                         size="sm"
                         tag="label"
                         className={classNames("btn-simple", {
-                          active: bigChartData === "data3",
+                          active: category === "changes",
                         })}
-                        onClick={() => setBgChartData("data3")}
+                        onClick={() => setCategory("changes")}
                       >
                         <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
                           Cambios
@@ -129,9 +372,11 @@ function Dashboard(props) {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
-                    data={chartExample1[bigChartData]}
-                    options={chartExample1.options}
+                  <LastYearGraph
+                    current_year={moment().get("year")}
+                    current_month={moment().get("month")}
+                    data={bigChartData}
+                    name={bigChartName}
                   />
                 </div>
               </CardBody>
@@ -142,16 +387,21 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Total Shipments</h5>
+                <h5 className="card-category">{endpoint_names[category]} Creados por día de semana</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-bell-55 text-info" /> 763,215
+                  <i className="tim-icons icon-bell-55 text-info" /> Día con más {endpoint_names[category].toLowerCase()}: {maxCreationDay}
                 </CardTitle>
+                
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
-                    data={chartExample2.data}
-                    options={chartExample2.options}
+                  <BarGraph
+                    data={leftChartData}
+                    name={leftChartName}
+                    frameInMonth = {false}
+                    showDataLabelsOnly = {false}
+                    noRotation={true}
+                    color = "teal"
                   />
                 </div>
               </CardBody>
@@ -160,17 +410,26 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Daily Sales</h5>
+                <Row>
+                <Col>
+                <h5 className="card-category">Ratio de resolución</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-delivery-fast text-primary" />{" "}
-                  3,500€
+                  {/*icon-check-2 */}
+                  <i className="tim-icons icon-notes text-primary" />{" "}
+                  {parseFloat(solvedRatio * 100).toFixed(0)+"%"}
                 </CardTitle>
+                </Col>
+                </Row>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Bar
-                    data={chartExample3.data}
-                    options={chartExample3.options}
+                  <PieGraph
+                    data={pieData}
+                    name={centerChartName}
+                    frameInMonth={true}
+                    showDataLabelsOnly={true}
+                    color = "purple"
+                    
                   />
                 </div>
               </CardBody>
@@ -179,351 +438,66 @@ function Dashboard(props) {
           <Col lg="4">
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Completed Tasks</h5>
+                <h5 className="card-category">{endpoint_names[category]} resueltos por usuario (top 5)</h5>
                 <CardTitle tag="h3">
-                  <i className="tim-icons icon-send text-success" /> 12,100K
+                  <i className="tim-icons icon-user-run text-success" /> Top: {mostSolvingUser}
                 </CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
-                    data={chartExample4.data}
-                    options={chartExample4.options}
-                  />
-                </div>
-              </CardBody>
+                    <SolvedByUserGraph
+                      data={solvedByUserData}
+                      name={"leftChartName"}
+                      frameInMonth={false}
+                      showDataLabelsOnly={true}
+                    />
+                  </div>
+                </CardBody>
             </Card>
           </Col>
         </Row>
         <Row>
-          <Col lg="6" md="12">
-            <Card className="card-tasks">
+          <Col lg="8">
+            <Card className="card-chart">
               <CardHeader>
-                <h6 className="title d-inline">Tasks(5)</h6>
-                <p className="card-category d-inline"> today</p>
-                <UncontrolledDropdown>
-                  <DropdownToggle
-                    caret
-                    className="btn-icon"
-                    color="link"
-                    data-toggle="dropdown"
-                    type="button"
-                  >
-                    <i className="tim-icons icon-settings-gear-63" />
-                  </DropdownToggle>
-                  <DropdownMenu aria-labelledby="dropdownMenuLink" right>
-                    <DropdownItem
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Action
-                    </DropdownItem>
-                    <DropdownItem
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Another action
-                    </DropdownItem>
-                    <DropdownItem
-                      href="#pablo"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Something else
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
+                <h5 className="card-category">Ítems con más {endpoint_names[category]}</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-settings-gear-63 text-info" /> Ítem: {maxItemWithSolvables}
+                </CardTitle>
               </CardHeader>
               <CardBody>
-                <div className="table-full-width table-responsive">
-                  <Table>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Update the Documentation</p>
-                          <p className="text-muted">
-                            Dwuamish Head, Seattle, WA 8:47 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip636901683"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip636901683"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input
-                                defaultChecked
-                                defaultValue=""
-                                type="checkbox"
-                              />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">GDPR Compliance</p>
-                          <p className="text-muted">
-                            The GDPR is a regulation that requires businesses to
-                            protect the personal data and privacy of Europe
-                            citizens for transactions that occur within EU
-                            member states.
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip457194718"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip457194718"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Solve the issues</p>
-                          <p className="text-muted">
-                            Fifty percent of all respondents said they would be
-                            more likely to shop at a company
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip362404923"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip362404923"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Release v2.0.0</p>
-                          <p className="text-muted">
-                            Ra Ave SW, Seattle, WA 98116, SUA 11:19 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip818217463"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip818217463"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Export the processed files</p>
-                          <p className="text-muted">
-                            The report also shows that consumers will not easily
-                            forgive a company once a breach exposing their
-                            personal data occurs.
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip831835125"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip831835125"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <FormGroup check>
-                            <Label check>
-                              <Input defaultValue="" type="checkbox" />
-                              <span className="form-check-sign">
-                                <span className="check" />
-                              </span>
-                            </Label>
-                          </FormGroup>
-                        </td>
-                        <td>
-                          <p className="title">Arival at export process</p>
-                          <p className="text-muted">
-                            Capitol Hill, Seattle, WA 12:34 AM
-                          </p>
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            color="link"
-                            id="tooltip217595172"
-                            title=""
-                            type="button"
-                          >
-                            <i className="tim-icons icon-pencil" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip217595172"
-                            placement="right"
-                          >
-                            Edit Task
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
-              </CardBody>
+                <div className="chart-area">
+                    <BarGraph
+                      data={itemsWithMoreSolvables}
+                      name={"Ítems con más incidentes"}
+                      frameInMonth={false}
+                      showDataLabelsOnly={true}
+                      noRotation={true}
+                      color = "darkred"
+                    />
+                  </div>
+                </CardBody>
             </Card>
           </Col>
-          <Col lg="6" md="12">
-            <Card>
+          <Col lg="4">
+            <Card className="card-chart">
               <CardHeader>
-                <CardTitle tag="h4">Simple Table</CardTitle>
+                <h5 className="card-category">Tiempo de resolución promedio</h5>
+                <CardTitle tag="h3">
+                  <i className="tim-icons icon-watch-time text-info" /> Promedio: {parseInt(avgSolvingTime)} días
+                </CardTitle>
               </CardHeader>
               <CardBody>
-                <Table className="tablesorter" responsive>
-                  <thead className="text-primary">
-                    <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-center">Salary</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Dakota Rice</td>
-                      <td>Niger</td>
-                      <td>Oud-Turnhout</td>
-                      <td className="text-center">$36,738</td>
-                    </tr>
-                    <tr>
-                      <td>Minerva Hooper</td>
-                      <td>Curaçao</td>
-                      <td>Sinaai-Waas</td>
-                      <td className="text-center">$23,789</td>
-                    </tr>
-                    <tr>
-                      <td>Sage Rodriguez</td>
-                      <td>Netherlands</td>
-                      <td>Baileux</td>
-                      <td className="text-center">$56,142</td>
-                    </tr>
-                    <tr>
-                      <td>Philip Chaney</td>
-                      <td>Korea, South</td>
-                      <td>Overland Park</td>
-                      <td className="text-center">$38,735</td>
-                    </tr>
-                    <tr>
-                      <td>Doris Greene</td>
-                      <td>Malawi</td>
-                      <td>Feldkirchen in Kärnten</td>
-                      <td className="text-center">$63,542</td>
-                    </tr>
-                    <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$78,615</td>
-                    </tr>
-                    <tr>
-                      <td>Jon Porter</td>
-                      <td>Portugal</td>
-                      <td>Gloucester</td>
-                      <td className="text-center">$98,615</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </CardBody>
+                <div className="chart-area">
+                  <AvgGraph
+                    current_year={moment().get("year")}
+                    current_month={moment().get("month")}
+                    data={avgData}
+                    name={bigChartName}
+                    avg={avgSolvingTime}
+                  />
+                </div>
+                </CardBody>
             </Card>
           </Col>
         </Row>

@@ -15,8 +15,8 @@ function choosePriorityColor(priority) {
         case "Alta": return "#BB2E2E";
         case "Media": return "#BF6B40";
         case "En proceso": return "#BF6B40";
-        case "Baja": return "#6F975C";
-        case "Resuelto": return "#6F975C";
+        case "Baja": return "#205C2A";
+        case "Resuelto": return "#205C2A";
         case "Rechazado": return "#736464";
         default: return "red"
     }

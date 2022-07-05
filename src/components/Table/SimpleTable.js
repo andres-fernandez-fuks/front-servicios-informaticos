@@ -10,6 +10,7 @@ import useStyles from "pages/control/styles";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import RestoreIcon from '@mui/icons-material/Restore';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { PersonPin } from "@mui/icons-material";
 
 export default function SimpleTable(props) {
 
@@ -70,7 +71,7 @@ export default function SimpleTable(props) {
             options: {
                 filter: false,
                 sort: false,
-                display	: props.excludeIdColumn && value.name === "id" ? false : true,
+                display	: !props.excludeColumns || !props.excludeColumns.includes(value.name),
                 setCellHeaderProps: () => ({
                     style: {whiteSpace: "nowrap", justifyContent: "center"},
                 }),
@@ -81,10 +82,10 @@ export default function SimpleTable(props) {
         }  
     }
     );
-
-    if (props.addRestoreColumn === true) {
+    
+    if (props.addRestoreColumn) {
         new_columns.push({
-            name: "Restaurar",
+            name: props.isKnownErrorTable ? "Restaurar" : "Detalles",
             options: {
             download: false,
             filter: false,
@@ -96,23 +97,23 @@ export default function SimpleTable(props) {
                 style: { whiteSpace: "nowrap", textAlign:"center", verticalAlign: "top"},
             }),
             customBodyRender: (value, tableMeta, updateValue) => {
-                var object_id = tableMeta.rowData[0];
+                var object_id = props.isVersionsTable ? tableMeta.rowData[0] : tableMeta.rowData[0];
                 
-                return (
-                <>
-                    <Tooltip title="Restaurar">
-                    <IconButton
-                        className={classes.onlyButtonSpacing}
-                        color="inherit"
-                        size="small"
-                        component={Link}
-                        onClick={() => props.function(props.request_endpoint, props.button_path, object_id)}
-                        path >
-                        <RestoreIcon />
-                    </IconButton>
-                    </Tooltip>
-                </>
-                );
+            return (
+            <>
+                <Tooltip title="Restaurar">
+                <IconButton
+                    className={classes.onlyButtonSpacing}
+                    color="inherit"
+                    size="small"
+                    component={Link}
+                    onClick={() => props.function(props.request_endpoint, props.button_path, object_id)}
+                    path >
+                    {props.isKnownErrorTable ? <RestoreIcon/> : <VisibilityIcon/>}
+                </IconButton>
+                </Tooltip>
+            </>
+            );
             },
             },
         });
@@ -134,12 +135,14 @@ export default function SimpleTable(props) {
             customBodyRender: (value, tableMeta, updateValue) => {
                 var object_id = tableMeta.rowData[0];
                 console.log("ID DE OBJETO: " + object_id);
+                var path;
 
                 if (props.use_object_type) {
                     var object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
-                    console.log("OBJECT TYPE: ", object_type);
-                    var path;
                     path = props.button_path + object_type + "/" + object_id;
+                } else if (props.use_solvable_type) {
+                    object_type = tableMeta.rowData[props.type_row || 2].toLowerCase();
+                    path = "/admin/" + object_type + props.button_path + "/" + object_id;
                 } else {
                     path = props.button_path + object_id;
                 }

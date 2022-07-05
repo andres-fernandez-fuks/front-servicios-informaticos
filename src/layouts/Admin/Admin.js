@@ -27,7 +27,7 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 
 import routes from "utils/routes.js";
 
-import logo from "assets/img/logo.jpg";
+import logo from "assets/img/logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import { INCIDENT_DETAILS_PATH } from "pages/IncidentDetailsPage.js";
 import { CHANGE_DETAILS_PATH } from "pages/ChangeDetailsPage.js";
@@ -53,14 +53,20 @@ import { SLA_ITEM_DETAILS_PATH } from "pages/items/SLAItemDetailsPage";
 import { HARDWARE_ITEM_EDIT_PATH } from "pages/items/HardwareItemEditPage";
 import { SLA_ITEM_EDIT_PATH } from "pages/items/SLAItemEditPage";
 import { SOFTWARE_ITEM_EDIT_PATH } from "pages/items/SoftwareItemEditPage";
+import { SOFTWARE_ITEM_RESTORE_PATH } from "pages/items/SoftwareItemRestorePage";
+import { HARDWARE_ITEM_RESTORE_PATH } from "pages/items/HardwareItemRestorePage";
+import { SLA_ITEM_RESTORE_PATH } from "pages/items/SLAItemRestorePage";
 import HardwareItemDetails from "pages/items/HardwareItemDetailsPage.js";
 import HardwareItemCreation from "pages/items/HardwareItemCreationPage.js";
 import HardwareItemEdit from "pages/items/HardwareItemEditPage.js";
+import HardwareItemRestore from "pages/items/HardwareItemRestorePage.js";
 import SoftwareItemDetails from "pages/items/SoftwareItemDetailsPage.js";
 import SoftwareCreation from "pages/items/SoftwareItemCreationPage";
+import SoftwareItemEdit from "pages/items/SoftwareItemEditPage.js";
+import SoftwareItemRestore from "pages/items/SoftwareItemRestorePage.js";
 import SLAItemDetails from "pages/items/SLAItemDetailsPage.js";
 import SLAItemEdit from "pages/items/SLAItemEditPage.js";
-import SoftwareItemEdit from "pages/items/SoftwareItemEditPage.js";
+import SLAItemRestore from "pages/items/SLAItemRestorePage.js";
 
 var ps;
 
@@ -136,11 +142,13 @@ function Admin(props) {
     function checkIfLoggedIn() {
       if (window.location.pathname == simple_routes.login) {
         return
-      } else if (localStorage.getItem("token") === null) {
+      } else if (!localStorage.getItem("token")) {
         window.location.pathname = simple_routes.login;
       }
     }
   )
+
+  console.log("admin location: ", location.state)
   
   return (
     <BackgroundColorContext.Consumer>
@@ -150,7 +158,6 @@ function Admin(props) {
             <Sidebar
               routes={routes}
               logo={{
-                outterLink: "https://www.creative-tim.com/",
                 text: "ITIL Management",
                 imgSrc: logo,
               }}
@@ -181,6 +188,10 @@ function Admin(props) {
                 component={SLAItemEdit}
                 />
                 <Route
+                path={'/admin' + SLA_ITEM_RESTORE_PATH}
+                component={SLAItemRestore}
+                />
+                <Route
                 path={'/admin' + HARDWARE_ITEM_DETAILS_PATH}
                 component={HardwareItemDetails}
                 />
@@ -193,6 +204,10 @@ function Admin(props) {
                 component={HardwareItemEdit}
                 />
                 <Route
+                path={'/admin' + HARDWARE_ITEM_RESTORE_PATH}
+                component={HardwareItemRestore}
+                />
+                <Route
                 path={'/admin' + SOFTWARE_ITEM_DETAILS_PATH}
                 component={SoftwareItemDetails}
                 />
@@ -203,6 +218,10 @@ function Admin(props) {
                 <Route
                 path={'/admin' + SOFTWARE_ITEM_EDIT_PATH}
                 component={SoftwareItemEdit}
+                />
+                <Route
+                path={'/admin' + SOFTWARE_ITEM_RESTORE_PATH}
+                component={SoftwareItemRestore}
                 />
                 <Route
                 path={'/admin' + INCIDENT_DETAILS_PATH}
