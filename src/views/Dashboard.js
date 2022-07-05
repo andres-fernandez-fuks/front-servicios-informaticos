@@ -132,7 +132,7 @@ function Dashboard(props) {
   }
 
   function getItemsData() {
-    dbGet("configuration-items/all").then((data) => {
+    dbGet(`configuration-items/all?category=${category}`).then((data) => {
         setItemsData(data);
     }).catch((err) => {
         console.log(err);

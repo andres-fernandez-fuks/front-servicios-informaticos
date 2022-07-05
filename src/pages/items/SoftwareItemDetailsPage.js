@@ -212,7 +212,7 @@ export default function SoftwareItemDetails(props) {
                     <Row>
                         <Col md="12">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Último cambio asociado</Label>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado (creación)</Label>
                                 <DisabledInput
                                     defaultValue = {currentValues.change && currentValues.change.description}
                                     id = "description"

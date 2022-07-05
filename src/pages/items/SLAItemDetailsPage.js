@@ -256,7 +256,7 @@ export default function SLADetailsPage() {
                     <Row>
                         <Col md="12">
                             <FormGroup>
-                            <Label style={{ color:"#1788bd" }} for="description">Último cambio asociado</Label>
+                            <Label style={{ color:"#1788bd" }} for="description">Cambio asociado (creación)</Label>
                                 <DisabledInput
                                     readOnly
                                     defaultValue = {currentValues.change && currentValues.change.description}

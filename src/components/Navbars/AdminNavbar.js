@@ -145,14 +145,14 @@ function AdminNavbar(props) {
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item" href={simple_routes.profile}>Mi perfil</DropdownItem>
+                    <DropdownItem style={{"color":"black"}} href={simple_routes.profile}>Mi perfil</DropdownItem>
                   </NavLink>
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item">Settings</DropdownItem>
+                    <DropdownItem style={{"color":"black"}}>Settings</DropdownItem>
                   </NavLink>
                   <DropdownItem divider tag="li" />
                   <NavLink tag="li">
-                    <DropdownItem className="nav-item" onClick={(e) =>{logOut(e)}}>Cerrar sesión</DropdownItem>
+                    <DropdownItem style={{"color":"black"}} onClick={(e) =>{logOut(e)}}>Cerrar sesión</DropdownItem>
                   </NavLink>
                 </DropdownMenu>
               </UncontrolledDropdown>

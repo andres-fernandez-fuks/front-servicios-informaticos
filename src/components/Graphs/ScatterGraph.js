@@ -105,7 +105,7 @@ export default function DotGraph(props) {
                     data: lineData,
                     borderColor: 'rgb(53, 162, 235)',
                     fill:false,
-                    pointRadius: 1,
+                    pointRadius: 0,
                     borderWidth: 2,
                   },
             ],
