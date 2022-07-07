@@ -23,6 +23,7 @@ jobs:
           heroku_email: ${{secrets.HEROKU_MAIL}}
           usedocker: true
           stack: "container"
+          branch: "staging"
 
   deploy-production:
     runs-on: ubuntu-latest
