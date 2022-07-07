@@ -17,7 +17,7 @@ jobs:
       - name: Piso el .env 
         run: |
           mv .env.staging .env
-          # git config user.name "<NAME>" && git config user.email "<EMAIL>" # You may have to do this as well
+          git config user.name "manusturla" && git config user.email "manuelsturla@gmail.com" # You may have to do this as well
           git remote add heroku git@heroku.com:${{secrets.HEROKU_APP}}.git
           git push heroku master 
       - uses: akhileshns/heroku-deploy@v3.12.12 # Deploy a heroku action
