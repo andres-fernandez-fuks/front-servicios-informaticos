@@ -16,19 +16,7 @@ jobs:
         run: mv Dockerfile.prod Dockerfile 
       - name: Piso el .env
         run: mv .env.staging .env      
-      - uses: akhileshns/heroku-deploy@v3.12.12 # Deploy a heroku action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: ${{secrets.HEROKU_APP}} #Must be unique in Heroku
-          heroku_email: ${{secrets.HEROKU_MAIL}}
-          usedocker: true
-          stack: "container"
-          branch: "staging"
-      - run: |
-          # git config user.name "<NAME>" && git config user.email "<EMAIL>" # You may have to do this as well
-          git remote add heroku git@heroku.com:<HEROKU_APP_NAME>.git
-          git push heroku master
-
+        
   deploy-production:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
