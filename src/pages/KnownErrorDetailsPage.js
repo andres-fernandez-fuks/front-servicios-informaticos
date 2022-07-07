@@ -22,6 +22,7 @@ import "pages/ic.css";
 import { useHistory } from "react-router-dom";
 import simple_routes from "utils/routes_simple.js"
 import useStyles from "styles"
+import ModalDialog from "components/Modal/ModalDialog"
 // reactstrap components
 import {
     Button,
@@ -34,8 +35,10 @@ import {
     Form,
     Input,
     Label,
+    Modal,
     Row,
     Col,
+    Select
   } from "reactstrap";
 
 import SimpleTable from "components/Table/SimpleTable";
@@ -67,13 +70,14 @@ function KnownErrorDetails(props) {
     const [currentValues, setCurrentValues] = React.useState("");
     const isEditable = checkPermissions(TABLES.KNOWN_ERROR, PERMISSIONS.UPDATE);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
-    const [itemsData, setItemsData] = React.useState([]);
+    const [incidentsData, setIncidentsData] = React.useState([]);
     var paths = window.location.pathname.split("/")
     var error_id = paths[paths.length - 1]
     const [bigChartData, setbigChartData] = React.useState(tableData);
     const [columns, setColumns] = React.useState(incidentColumns);
     const [formFields, setFormFields] = React.useState([{}]);
     const [counter, setCounter] = React.useState(-1);
+    const [modalShow, setModalShow] = React.useState(false);
 
     function updateCurrentValues(field, new_value) {
         currentValues[field] = new_value;
@@ -84,10 +88,10 @@ function KnownErrorDetails(props) {
         }
     }
 
-    function fetchItemsData() {
+    function fetchIncidentsData() {
         dbGet("errors/" + error_id).then(data => {
             var incidents_data = data["incidents"]
-            setItemsData(incidents_data);
+            setIncidentsData(incidents_data);
         }).catch(err => {console.log(err)});
     }
 
@@ -96,14 +100,15 @@ function KnownErrorDetails(props) {
             setValues({...data});
             setCurrentValues({...data});
             getVersions();
-            fetchItemsData();
+            fetchIncidentsData();
         }).catch(err => {console.log(err)});
         }   , []);
 
     function restoreVersion(request_path, redirect_path, version_id) {
         dbPost(request_path, {"version": version_id}).then(data => {
-            setValues(data);
-            setCurrentValues(data);
+            setValues({...data});
+            setCurrentValues({...data});
+            setIncidentsData(data.incidents);
             setCounter(counter -1);
             toast.success("Se ha restaurado la versión '" + version_id +"' correctamente");
         }).catch(err => {console.log(err)});
@@ -112,13 +117,13 @@ function KnownErrorDetails(props) {
     function getVersions() {
         if (values.versions && values.versions.length > 0) {
             return <SimpleTable
-                data={values.versions}
-                columns={versionColumns}
-                addRestoreColumn={true}
-                function={restoreVersion}
-                button_path={"/admin" + KNOWN_ERROR_DETAILS_PATH}
-                request_endpoint={"errors/" + values.id + "/restore"}
-                isKnownErrorTable={true}
+                        data={values.versions}
+                        columns={versionColumns}
+                        addRestoreColumn={true}
+                        function={restoreVersion}
+                        button_path={"/admin" + KNOWN_ERROR_DETAILS_PATH}
+                        request_endpoint={"errors/" + values.id + "/restore"}
+                        isKnownErrorTable={true}
                   />
         }
         else if (values.versions && values.versions.length === 0) {
@@ -137,10 +142,20 @@ function KnownErrorDetails(props) {
     const submitForm = (data) => {
         var cleaned_data = cleanPostValues(currentValues)
         dbPost("errors/" + error_id + "/version", cleaned_data).then(data => {
-            setValues(data)
-            toast.success("Se ha creado la versión correctamente")
+            setValues({...data});
+            setCurrentValues({...data});
+            setIncidentsData(data.incidents);
+            toast.success("Se ha creado la versión correctamente");
         });
     }
+
+    const addIncidentToError = (selectedIncident) => {
+        dbPost("errors/incident", {error_id: error_id, incident_name: selectedIncident}).then(data => {
+            setIncidentsData(data.incidents)
+            toast.success("Se ha agregado el incidente correctamente");
+
+        }).catch(err => {console.log(err)});
+      };
 
   function addButtons() {
     if (values === '') return;
@@ -229,15 +244,23 @@ function KnownErrorDetails(props) {
                   </Row>
                 </div>
             <div class="items-div">
-                <h4 className="title">Ítems asociados</h4>
-                <SimpleTable data={itemsData}
-                             columns={columns}
-                             addWatchColumn={true}
-                             excludeIdColumn={true}
-                             button_path={"/admin/incident_details/"}
-                             use_object_type = {false}/>
+                <h4 className="title">Incidentes asociados</h4>
+                <ModalDialog
+                    error_id = {error_id}
+                    show={modalShow}
+                    onHide={() => setModalShow(false)}
+                    addFunction={addIncidentToError}
+                />
+                <SimpleTable
+                    data={incidentsData}
+                    columns={columns}
+                    addWatchColumn={true}
+                    excludeIdColumn={true}
+                    use_object_type = {false}
+                />
             </div>
-              </CardBody>
+        </CardBody>
+        
               <CardFooter className="form_col">
               {addButtons()}
               </CardFooter>

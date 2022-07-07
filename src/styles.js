@@ -15,6 +15,10 @@ export default makeStyles((theme) => ({
     marginTop: 17,
     alignItems: "left"
   },
+  BigPaddedGrip: {
+    marginTop: 10,
+    marginLeft: 8
+  },
   LeftPaddedForm: {
     marginLeft: 2
   },
