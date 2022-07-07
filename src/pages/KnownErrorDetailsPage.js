@@ -46,6 +46,7 @@ import {TABLES, PERMISSIONS, checkPermissions} from 'utils/permissions'
 import { DisabledInput } from "components/Form/DisabledInput";
 import toast, { Toaster } from 'react-hot-toast';
 import moment from "moment";
+import { INCIDENT_DETAILS_PATH } from "./IncidentDetailsPage";
 
 
 export const KNOWN_ERROR_DETAILS_PATH = "/known_error_details";
@@ -257,6 +258,7 @@ function KnownErrorDetails(props) {
                     addWatchColumn={true}
                     excludeIdColumn={true}
                     use_object_type = {false}
+                    button_path={"/admin" + INCIDENT_DETAILS_PATH + "/"}
                 />
             </div>
         </CardBody>
