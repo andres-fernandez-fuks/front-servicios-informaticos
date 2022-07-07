@@ -15,7 +15,11 @@ jobs:
       - name: Preparo la Dockerfile para que funcione con la accion
         run: mv Dockerfile.prod Dockerfile 
       - name: Piso el .env
-        run: mv .env.staging .env       
+        run: mv .env.staging .env      
+        run: |
+          # git config user.name "<NAME>" && git config user.email "<EMAIL>" # You may have to do this as well
+          git remote add heroku git@heroku.com:${{secrets.HEROKU_APP}}.git
+          git push heroku master 
       - uses: akhileshns/heroku-deploy@v3.12.12 # Deploy a heroku action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
