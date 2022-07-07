@@ -12,10 +12,10 @@ jobs:
     if: github.ref == 'refs/heads/staging'
     steps:
       - uses: actions/checkout@v2
-      - name: Preparo la Dockerfile para que funcione con la accion
-        run: mv Dockerfile.prod Dockerfile 
-      - name: Piso el .env
-        run: mv .env.staging .env      
+      # - name: Preparo la Dockerfile para que funcione con la accion
+      #   run: mv Dockerfile.prod Dockerfile 
+      # - name: Piso el .env
+      #   run: mv .env.staging .env      
         
   deploy-production:
     runs-on: ubuntu-latest
