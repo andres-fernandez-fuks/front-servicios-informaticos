@@ -8,3 +8,6 @@ package-lock.json
 /build
 .vscode
 .eslintcache
+.git
+dist
+node_modules
