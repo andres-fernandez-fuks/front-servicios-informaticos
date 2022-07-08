@@ -14,7 +14,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile_heroku
     volumes:
       - ./src:/app/src
     ports:
