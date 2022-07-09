@@ -88,7 +88,7 @@ function ErrorsTable() {
             <Card className={classes.card} style={{paddingTop:5}}>
               <CardHeader>
                 <CardTitle
-                tag="h3">Errores &nbsp; &nbsp;
+                tag="h3">Errores conocidos &nbsp; &nbsp;
                 <Button
                     size="sm"
                     aria-label="Crear Error"

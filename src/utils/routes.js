@@ -70,7 +70,7 @@ var routes = [
   },
   {
     path: "/errors",
-    name: "Errores",
+    name: "Errores conocidos",
     rtlName: "قائمة الجدول",
     icon: "tim-icons icon-alert-circle-exc",
     component: ErrorsTable,
