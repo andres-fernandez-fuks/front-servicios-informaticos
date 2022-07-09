@@ -17,6 +17,7 @@ const dialogStyles = makeStyles(theme => ({
         height : '400px',
         width : '400px',
         justifyContent: "center",
+        backgroundColor: "white",
     },
 }));
 
