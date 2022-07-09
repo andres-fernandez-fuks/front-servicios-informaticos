@@ -13,6 +13,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { dbPost } from 'utils/backendFetchers';
 
 const dialogStyles = makeStyles(theme => ({
+    root: {
+        color: 'black',
+    },
     dialogPaper: {
         height : '400px',
         width : '400px',
