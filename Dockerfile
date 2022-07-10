@@ -7,6 +7,7 @@ WORKDIR /app
 COPY package.json ./
 RUN yarn install
 COPY . ./
+RUN mv .env.staging .env
 
 
 RUN yarn build

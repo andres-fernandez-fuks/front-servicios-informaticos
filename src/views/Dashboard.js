@@ -172,7 +172,7 @@ function Dashboard(props) {
       }
     })
 
-    let max_item = data[0].name
+    let max_item = data[0] ? data[0].name : null;
     setMaxItemWithSolvables(max_item)
     setitemsWithMoreSolvables(consolidated);
     setbigChartName(endpoint_names[name])
@@ -276,9 +276,8 @@ function Dashboard(props) {
         }
     })
     let max_day = Object.entries(solvables_by_week_day).reduce((a, b) => a[1] > b[1] ? a : b)[0]
-
     setleftChartData(consolidated);
-    setMaxCreationDay(day_names[max_day]);
+    setMaxCreationDay(solvables_by_week_day[max_day] > 0 ? day_names[max_day] : `No hay ${endpoint_names[category]} resueltos`);
   }
   
   function getCreatedVSSolved(name){
@@ -296,7 +295,14 @@ function Dashboard(props) {
       data.push(aux2)
       setcenterChartData(data);
       setcenterChartName(endpoint_names[name])
-      setsolvedRatio(data[1]["y"] / data[0]["y"])
+      if (data[0]["y"] > 0){
+        console.log(data[0])
+        let ratio = parseFloat((data[1]["y"] / data[0]["y"]) * 100).toFixed(0)
+        setsolvedRatio(ratio + "%");
+      } else {
+        setsolvedRatio(`No hay ${endpoint_names[category]} creados`);
+      }
+      
   }
   return (
     <>
@@ -416,7 +422,7 @@ function Dashboard(props) {
                 <CardTitle tag="h3">
                   {/*icon-check-2 */}
                   <i className="tim-icons icon-notes text-primary" />{" "}
-                  {parseFloat(solvedRatio * 100).toFixed(0)+"%"}
+                  {solvedRatio}
                 </CardTitle>
                 </Col>
                 </Row>
