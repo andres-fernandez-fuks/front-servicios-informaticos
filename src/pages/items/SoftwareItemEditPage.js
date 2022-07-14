@@ -52,7 +52,7 @@ export default function SoftwareItemDetails() {
     }
 
     function setEditability(is_draft) {
-        var has_permissions = checkPermissions(TABLES.SOFTWARE, PERMISSIONS.UPDATE);
+        var has_permissions = checkPermissions(TABLES.ITEM, PERMISSIONS.UPDATE);
         setIsEditable(has_permissions && is_draft);
     }
 

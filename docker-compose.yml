@@ -4,13 +4,13 @@ services:
   appdev:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - ./src:/app/src
     ports:
       - "8080:8080"
     environment:
-      REACT_APP_API_URI: ${REACT_APP_API_URI}
+      REACT_APP_API_URI: http://127.0.0.1:5000
   app:
     build:
       context: .

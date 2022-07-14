@@ -1,7 +1,7 @@
 
 export const TABLES = {
     ITEM: "items",
-    SLA_ITEM: "SLA",
+    SLA_ITEM: "sla",
     HARDWARE_ITEM: "hardware",
     SOFTWARE_ITEM: "software",
     PROBLEM: "problems",

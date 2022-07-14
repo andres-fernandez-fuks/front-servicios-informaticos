@@ -42,7 +42,7 @@ export default function App() {
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.UPDATE);
+    const isEditable = checkPermissions(TABLES.ITEM, PERMISSIONS.UPDATE);
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
 
     function getPrice(price_string) {

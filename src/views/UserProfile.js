@@ -56,14 +56,16 @@ function mapPermissions(permissions) {
     if (has_total_access) return total_permissions;
 
     const TABLE_TRANSLATION = {
-        "incidents": "Incidentes", "problems": "Problemas", "changes": "Cambios", "items": "Items", "errors": "Errores"
+        "incidents": "Incidentes", "problems": "Problemas", "changes": "Cambios", "items": "Ítems", "errors": "Errores"
     }
 
     const PERMISSION_TRANSLATION = { "see": "Lectura", "create": "Creación", "update": "Edición", "delete": "Eliminación" }
 
     permissions.forEach(permission => {
+
         var table = TABLE_TRANSLATION[permission.split("_")[0]];
         var permission_type = PERMISSION_TRANSLATION[permission.split("_")[1]];
+        console.log(table, permission_type);
         total_permissions[table][permission_type] = 1;
     });
 
