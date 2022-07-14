@@ -4,7 +4,7 @@ services:
   appdev:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     volumes:
       - ./src:/app/src
     ports:
