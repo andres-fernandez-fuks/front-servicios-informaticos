@@ -29,6 +29,8 @@ const selectStyles = {
         ...styles,
         zIndex: 999,
         overflow: 'visible',
+        color: "black",
+        backgroundColor: "white",
     })
 }
 
@@ -75,7 +77,7 @@ export default function FormDialog(props) {
           </DialogContentText>
           <div style={{marginTop:"10px"}}/>
           <Select
-            style = {{overflow: 'visible'}}
+            
             id={"incident"}
             options={incidents}
             styles = {selectStyles}

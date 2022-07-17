@@ -6,7 +6,7 @@ export const TABLES = {
     SOFTWARE_ITEM: "software",
     PROBLEM: "problems",
     INCIDENT: "incidents",
-    KNOWN_ERROR: "known_errors",
+    KNOWN_ERROR: "errors",
     CHANGE: "changes",
 }
 export const PERMISSIONS = {
