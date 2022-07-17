@@ -147,9 +147,6 @@ function AdminNavbar(props) {
                   <NavLink tag="li">
                     <DropdownItem style={{"color":"black"}} href={simple_routes.profile}>Mi perfil</DropdownItem>
                   </NavLink>
-                  <NavLink tag="li">
-                    <DropdownItem style={{"color":"black"}}>Settings</DropdownItem>
-                  </NavLink>
                   <DropdownItem divider tag="li" />
                   <NavLink tag="li">
                     <DropdownItem style={{"color":"black"}} onClick={(e) =>{logOut(e)}}>Cerrar sesión</DropdownItem>

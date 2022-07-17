@@ -157,7 +157,7 @@ export default function App() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
@@ -210,7 +210,7 @@ export default function App() {
                         <Col className="pb-md-2" md="5">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Fecha de compra</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     
                                     defaultValue = {currentValues.purchase_date}
                                     onChange = {function(e){updateCurrentValues("purchase_date", e.target.value)}}
@@ -222,7 +222,7 @@ export default function App() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Precio</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     
                                     defaultValue = {currencyFormat(currentValues.price)}
                                     onChange = {function(e){updateCurrentValues("price", e.target.value)}}
@@ -233,7 +233,7 @@ export default function App() {
                         <Col md="3">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     readOnly
                                     defaultValue = {currentValues.current_version_number}
                                     id = "description"
