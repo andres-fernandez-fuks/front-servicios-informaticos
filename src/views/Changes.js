@@ -140,7 +140,7 @@ function ChangesTable() {
                 </span>
                 </Button>
                 <Button
-                hidden={!checkPermissions(TABLES.CHANGE, PERMISSIONS.EDIT)}
+                hidden={!checkPermissions(TABLES.CHANGE, PERMISSIONS.UPDATE)}
                 tag="label"
                 className={classNames("btn-simple", {
                     active: category === "Mis cambios",
