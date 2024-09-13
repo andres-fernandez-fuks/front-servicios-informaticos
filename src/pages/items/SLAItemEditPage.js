@@ -48,7 +48,7 @@ export default function SLADetailsPage() {
     var item_id = paths[paths.length - 1]
     const [values, setValues] = React.useState("");
     const [currentValues, setCurrentValues] = React.useState("");
-    const isEditable = checkPermissions(TABLES.SLA_ITEM, PERMISSIONS.UPDATE)
+    const isEditable = checkPermissions(TABLES.ITEM, PERMISSIONS.UPDATE)
     const [enableCreateButton, setEnableCreateButton] = React.useState(false);
 
     function getPrice(price_string) {
@@ -168,6 +168,7 @@ export default function SLADetailsPage() {
                             <br></br> &nbsp; &nbsp; &nbsp;
                                 <Input
                                     id = "is_crucial"
+                                    value = {currentValues.is_crucial}
                                     onChange={function(e){updateCurrentValues("is_crucial", e.target.checked)}}
                                     checked = {currentValues.is_crucial}
                                     type="checkbox"
@@ -256,7 +257,7 @@ export default function SLADetailsPage() {
                                     defaultValue = {currentValues.starting_date}
                                     onChange = {function(e){updateCurrentValues("starting_date", e.target.value)}}
                                     id = "starting_date"
-                                    type="date"
+                                    type="text"
                                     readOnly = {!isEditable}
                                 />
                             </FormGroup>

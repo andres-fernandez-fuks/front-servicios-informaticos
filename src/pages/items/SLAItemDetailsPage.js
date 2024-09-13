@@ -123,8 +123,7 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Cliente</Label>
-                                <DisabledInput
-                                    
+                                <DisabledInput className="other_input"
                                     defaultValue= {currentValues.client}
                                     onChange = {function(e){updateCurrentValues("client", e.target.value)}}
                                     id = "client"
@@ -163,7 +162,7 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo de servicio</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     
                                     defaultValue= {currentValues.service_type}
                                     onChange = {function(e){updateCurrentValues("service_type", e.target.value)}}
@@ -175,7 +174,7 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Gerente</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     
                                     defaultValue= {currentValues.service_manager}
                                     onChange = {function(e){updateCurrentValues("manager", e.target.value)}}
@@ -189,7 +188,7 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Unidad de medida</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     defaultValue = {currentValues.measurement_unit}
                                     styles={selectStyles}
                                     isDisabled = {!isEditable}
@@ -202,7 +201,7 @@ export default function SLADetailsPage() {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Valor de la medida</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     
                                     defaultValue= {currentValues.measurement_value}
                                     onChange = {function(e){updateCurrentValues("measurement_value", e.target.value)}}
@@ -245,7 +244,7 @@ export default function SLADetailsPage() {
                         <Col md="4">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} >Versión</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     readOnly
                                     defaultValue = {currentValues.current_version_number}
                                     id = "description"

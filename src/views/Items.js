@@ -174,7 +174,7 @@ function ItemsTable() {
                   size="sm" 
                   aria-label="Crear ítem"
                   color="warning"
-                  hidden={!checkPermissions(TABLES.HARDWARE_ITEM, PERMISSIONS.EDIT)}
+                  hidden={!checkPermissions(TABLES.ITEM, PERMISSIONS.CREATE)}
                   onClick={() => {redirectToItemCreation();}}
                   >
                   <AddIcon /> Nuevo &nbsp;

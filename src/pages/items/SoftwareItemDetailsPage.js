@@ -154,7 +154,7 @@ export default function SoftwareItemDetails(props) {
                         <Col md="6">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="type">Tipo</Label>
-                                <DisabledInput
+                                <DisabledInput className="other_input"
                                     defaultValue= {currentValues.type}
                                     onChange = {function(e){updateCurrentValues("type", e.target.value)}}
                                     id = "type"
@@ -180,7 +180,7 @@ export default function SoftwareItemDetails(props) {
                         <Col md="5">
                             <FormGroup>
                                 <Label style={{ color:"#1788bd" }}>Proveedor</Label>
-                                <DisabledInput
+                                <DisabledInput  className="other_input"
                                     defaultValue = {currentValues.provider}
                                     onChange = {function(e){updateCurrentValues("provider", e.target.value)}}
                                     id = "provider"
@@ -191,7 +191,7 @@ export default function SoftwareItemDetails(props) {
                         <Col md="5">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }}>Versión del Software</Label>
-                                <DisabledInput
+                                <DisabledInput  className="other_input"
                                     defaultValue = {currentValues.software_version}
                                     onChange = {function(e){updateCurrentValues("software_version", e.target.value)}}
                                     id = "software_version"
@@ -202,7 +202,7 @@ export default function SoftwareItemDetails(props) {
                         <Col md="2">
                             <FormGroup>
                             <Label style={{ color:"#1788bd" }} for="description">Versión</Label>
-                                <DisabledInput
+                                <DisabledInput  className="other_input"
                                     defaultValue = {currentValues.current_version_number}
                                     id = "version"
                                     type="text"/>
