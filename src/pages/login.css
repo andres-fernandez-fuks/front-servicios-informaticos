@@ -3,6 +3,11 @@
     text-align: center;
 }
 
+.login-message {
+  color: #32b43d !important;
+  text-align: center;
+}
+
 .login {
     background: url("http://web3canvas.com/wp-content/uploads/2014/02/littlevisuals-high-quality-hd-banner-images-stock-photos-free-laptop-topview-download.jpg") no-repeat; 
     background-size: cover;
